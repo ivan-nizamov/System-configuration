@@ -23,6 +23,11 @@
       alias ll="ls -alF"
       alias gs="git status -sb"
       alias gc="git commit"
+      
+      # NixOS rebuild aliases for flake-based config
+      alias nrs="sudo nixos-rebuild switch --flake /home/navi/System-configuration#laptop"
+      alias nrt="sudo nixos-rebuild test --flake /home/navi/System-configuration#laptop"
+      alias nrb="sudo nixos-rebuild boot --flake /home/navi/System-configuration#laptop"
     '';
   };
 
