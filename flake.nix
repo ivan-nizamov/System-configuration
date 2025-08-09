@@ -16,7 +16,6 @@
 
   outputs = inputs@{ nixpkgs, home-manager, ... }:
   let
-    lib = nixpkgs.lib;
     # Helper to build a host.  Pass the host name and the type of
     # acceleration ("cuda" for NVIDIA GPUs, "rocm" for AMD GPUs,
     # "cpu" otherwise).  The specialArgs expose these values to
