@@ -56,7 +56,7 @@
 
   # Label your generations in the boot menu so you can quickly
   # identify which host they belong to.  This string will appear
-  # alongside the generation number and date:contentReference[oaicite:0]{index=0}.
+  # alongside the generation number and date.
   system.nixos.label = "nixos-${host.name}";
 
   # The state version must match the release you initially

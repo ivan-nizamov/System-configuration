@@ -18,7 +18,7 @@
     enableCompletion = true;
     autosuggestion.enable = true;
     syntaxHighlighting.enable = true;
-    initExtra = ''
+    initContent = ''
       # Common aliases shared on all hosts
       alias ll="ls -alF"
       alias gs="git status -sb"
@@ -44,7 +44,7 @@
     htop
     chromium
     rnote
-    okular
+    kdePackages.okular  # Qt6-based PDF viewer
   ];
 
   # Example secret decrypted via sops.  The age.keyFile path

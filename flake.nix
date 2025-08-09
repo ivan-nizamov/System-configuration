@@ -20,9 +20,9 @@
     # acceleration ("cuda" for NVIDIA GPUs, "rocm" for AMD GPUs,
     # "cpu" otherwise).  The specialArgs expose these values to
     # modules.  Each host pulls in the common system configuration,
-    # optional GPU configuration, integrated home‑manager, hardware
-    # configuration, and any host‑specific overrides.
-     lib = nixpkgs.lib;
+    # integrated home‑manager, hardware configuration, and any
+    # host‑specific overrides.
+    lib = nixpkgs.lib;
     mkHost = { name, accel ? "cpu" }:
       lib.nixosSystem {
         system = "x86_64-linux";
@@ -38,8 +38,11 @@
         ];
       };
  in {
-    # This host name matches your current config: networking.hostName = "nixos"
-    nixosConfigurations.nixos = mkHost { name = "laptop"; accel = "cpu"; };
+    # Desktop configuration with GPU support
+    nixosConfigurations.desktop = mkHost { name = "desktop"; accel = "cuda"; };
+    
+    # Laptop configuration (CPU only)
+    nixosConfigurations.laptop = mkHost { name = "laptop"; accel = "cpu"; };
 
     # Standalone HM (no sudo) profile for servers
     homeConfigurations."navi@server" =

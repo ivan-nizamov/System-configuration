@@ -12,7 +12,7 @@ This doc is your **map**. It tells you **where things live**, **who owns what**,
   - **Integrated**: NixOS + Home-Manager switch atomically on your machines.
   - **Standalone HM**: user-only profile for servers (no sudo).
 - **Two hosts** today: `desktop` (GPU) and `laptop` (CPU). Pattern supports more.
-- **Host differences** are isolated (GPU/Ollama, disks, login).
+- **Host differences** are isolated (GPU drivers, disks, login).
 - **Secrets** optional via `sops-nix`, per-host keys.
 
 ---
@@ -20,13 +20,12 @@ This doc is your **map**. It tells you **where things live**, **who owns what**,
 ## Directory Structure (what each path is for)
 
 ```
-
-nix/
-├─ flake.nix
+.
+├─ flake.nix                          # Orchestrator & pinning (versions, outputs, host facts)
+├─ flake.lock                         # Locked dependency versions
 ├─ modules/
-│  ├─ common-system.nix        # Shared OS config (users, boot, SSH, nix settings)
-│  ├─ common-home.nix          # Shared HM glue (integrates HM; passes host facts)
-│  └─ services-ollama.nix      # Feature module; enabled only if GPU is present
+│  ├─ common-system.nix               # Shared OS config (users, boot, SSH, nix settings)
+│  └─ common-home.nix                 # Shared HM glue (integrates HM; passes host facts)
 ├─ hosts/
 │  ├─ desktop/
 │  │  ├─ hardware-configuration.nix   # Generated per machine; never shared
@@ -41,7 +40,7 @@ nix/
 │     ├─ home.nix                     # Shared HM profile (shell, git, CLI apps)
 │     └─ server-cli.nix               # Minimal HM profile for servers (no sudo)
 └─ secrets/
-└─ server.yaml                     # (optional) Encrypted with sops; per-host keys
+   └─ server.yaml                     # (optional) Encrypted with sops; per-host keys
 
 ````
 
@@ -106,8 +105,8 @@ nix/
 - All hosts → `modules/common-system.nix`
 - One host → `hosts/<name>/host.nix`
 
-**GPU-only feature (e.g., Ollama)**
-- Put logic in `modules/services-ollama.nix`
+**GPU-only feature**
+- Put logic in a dedicated module under `modules/`
 - Enable via `lib.mkIf (host.accel != "cpu")`
 
 **Host-specific filesystem**
@@ -215,13 +214,12 @@ git clone <repo> ~/dotfiles && cd ~/dotfiles
 mkdir -p ~/.config/nix
 printf 'experimental-features = nix-command flakes\n' > ~/.config/nix/nix.conf
 nix run github:nix-community/home-manager/release-25.05 -- \
-  switch --flake ./nix#"navi@server"
+  switch --flake .#"navi@server"
 ```
 
 **Pin updates**
 
 ```bash
-cd nix
 nix flake update
 git add flake.lock flake.nix
 git commit -m "flake: update nixpkgs + HM (25.05)"
@@ -260,7 +258,7 @@ git push
 | User pkg / alias    | `home/navi/home.nix` (or `hosts/<name>/home-overrides.nix`)          |
 | Service (all hosts) | `modules/common-system.nix`                                          |
 | Service (one host)  | `hosts/<name>/host.nix`                                              |
-| GPU-only feature    | `modules/services-ollama.nix` (`mkIf host.accel`)                    |
+| GPU-only feature    | Create module in `modules/` with `lib.mkIf (host.accel != "cpu")`   |
 | Add new host        | `hosts/<name>/` + `flake.nix` (`nixosConfigurations.<name>`)         |
 | Server HM target    | `flake.nix` → `homeConfigurations."user@tag"`                        |
 | Boot label          | `modules/common-system.nix` → `system.nixos.label`                   |
@@ -270,17 +268,6 @@ git push
 
 ---
 
-## How to add this file as the repo README
+## About this README
 
-1. Save this as `README.md` at the **repo root** (same level as the `nix/` folder).
-2. Commit:
-
-   ```bash
-   git add README.md
-   git commit -m "docs: add NixOS config design & operating guide (25.05)"
-   git push
-   ```
-
-```
-::contentReference[oaicite:0]{index=0}
-```
+This file serves as the operating guide for your NixOS configuration. It's located at the repo root and documents the design patterns, ownership model, and safe practices for maintaining your system configuration.
