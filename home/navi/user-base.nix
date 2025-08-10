@@ -1,10 +1,11 @@
-{ config, pkgs, lib, host, inputs, ... }:
+{ config, pkgs, pkgs-unstable, lib, host, inputs, ... }:
 
 {
-  # Import the sops‑nix module to enable secrets management for
-  # Home‑Manager.  If you do not plan to manage secrets, you can
-  # remove this line.  The module is provided via common‑home.nix.
-  # imports = [ inputs.sops-nix.homeManagerModules.sops ];
+  # Import desktop configuration for all machines
+  imports = [ 
+    ./wayland-desktop.nix 
+    # inputs.sops-nix.homeManagerModules.sops  # Uncomment if you need secrets
+  ];
 
   # Declare your user.  The name and home directory should match
   # the values in nix/modules/common-system.nix.
@@ -42,15 +43,35 @@
   # environment.  These do not require root and will not affect
   # other users.
   home.packages = with pkgs; [
+    # Original packages
     ripgrep
     fd
     bat
     jq
     htop
-    chromium
     rnote
-    kdePackages.okular  # Qt6-based PDF viewer
-  ];
+    
+    # Newly requested packages (stable)
+    kitty
+    anki-bin
+    audacity
+    obs-studio
+    fastfetch
+    btop
+    neo-cowsay
+    easyeffects
+    pavucontrol
+    vscode
+    sqlite
+    graphviz
+    qbittorrent
+    # maple-mono.NF-CN - need to verify exact font package name
+  ] ++ (with pkgs-unstable; [
+    # Unstable/nightly packages
+    vlc              # vlc-unsafe(nightly)
+    chromium         # chromium-unstable(nightly)
+    warp-terminal    # warp-terminal-unsafe(nightly)
+  ]);
 
   # Example secret decrypted via sops.  The age.keyFile path
   # references an Age private key stored in your XDG config dir.

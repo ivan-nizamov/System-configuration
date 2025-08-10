@@ -52,7 +52,7 @@
   # support, you may switch to GRUB.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.loader.systemd-boot.configurationLimit = 3;  # Reduced from 5 to save /boot space
+  # boot.loader.systemd-boot.configurationLimit = 3;  # Commented out to keep all generations
 
   # Label your generations in the boot menu so you can quickly
   # identify which host they belong to.  This string will appear

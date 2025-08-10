@@ -5,16 +5,17 @@
   # home‑manager and sops‑nix in lockstep with nixpkgs.  This
   # ensures reproducibility and avoids mismatched versions.
   inputs = {
-    # Provide a simple way to manage secrets.  If you don’t need
+    # Provide a simple way to manage secrets.  If you don't need
     # secrets yet you can remove sops‑nix from your inputs and
     # comment out the related configuration in home profiles.
     # sops-nix.url = "github:Mic92/sops-nix";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
+    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     home-manager.url = "github:nix-community/home-manager/release-25.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = inputs@{ nixpkgs, home-manager, ... }:
+  outputs = inputs@{ nixpkgs, nixpkgs-unstable, home-manager, ... }:
   let
     # Helper to build a host.  Pass the host name and the type of
     # acceleration ("cuda" for NVIDIA GPUs, "rocm" for AMD GPUs,
@@ -31,10 +32,9 @@
           ./modules/common-system.nix
           # Integrated HM
           home-manager.nixosModules.home-manager
-          ./modules/common-home.nix
+          ./modules/home-manager-integration.nix
           ./hosts/${name}/hardware-configuration.nix
           ./hosts/${name}/host.nix
-          ./hosts/${name}/home-overrides.nix
         ];
       };
  in {
@@ -43,15 +43,6 @@
     
     # Laptop configuration (CPU only)
     nixosConfigurations.laptop = mkHost { name = "laptop"; accel = "cpu"; };
-
-    # Standalone HM (no sudo) profile for servers
-    homeConfigurations."navi@server" =
-      let pkgs = import nixpkgs { system = "x86_64-linux"; };
-      in home-manager.lib.homeManagerConfiguration {
-        inherit pkgs;
-        modules = [ ./home/navi/server-cli.nix ];
-        extraSpecialArgs = { host = { name = "server"; accel = "cpu"; }; inputs = inputs; };
-      };
   };
 }
 
