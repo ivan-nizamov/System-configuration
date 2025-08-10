@@ -21,19 +21,20 @@
     enableCompletion = true;
     autosuggestion.enable = true;
     syntaxHighlighting.enable = true;
-    initContent = ''
-      # Common aliases shared on all hosts
-      alias ll="ls -alF"
-      alias gs="git status -sb"
-      alias gc="git commit"
-      
-      # NixOS rebuild aliases for flake-based config
-      alias nrs="sudo nixos-rebuild switch --flake /home/navi/System-configuration#laptop"
-      alias nrt="sudo nixos-rebuild test --flake /home/navi/System-configuration#laptop"
-      alias nrb="sudo nixos-rebuild boot --flake /home/navi/System-configuration#laptop"
 
-      # Initialize 'thefuck' so that the 'fuck' command works in zsh
-      if command -v thefuck >/dev/null 2>&1; then
+    # Prefer declarative aliases; host.name keeps them working on all hosts
+    shellAliases = {
+      ll = "ls -alF";
+      gs = "git status -sb";
+      gc = "git commit";
+      nrs = "sudo nixos-rebuild switch --flake /home/navi/System-configuration#${host.name}";
+      nrt = "sudo nixos-rebuild test --flake /home/navi/System-configuration#${host.name}";
+      nrb = "sudo nixos-rebuild boot --flake /home/navi/System-configuration#${host.name}";
+    };
+
+    # Extra Zsh init content (non-alias), e.g., initializing 'thefuck'
+    initContent = ''
+      if command -v thefuck \u003e /dev/null 2\u003e\u00261; then
         eval "$(thefuck --alias)"
       fi
     '';

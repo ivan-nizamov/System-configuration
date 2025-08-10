@@ -1,11 +1,7 @@
-# Waybar configuration with Gruvbox theme
+# Waybar configuration imported from prototype (Gruvbox + icon set)
 { pkgs, lib, config, ... }:
 
 {
-  # Make sure you have a Nerd Font installed for icons
-  # You can add this to your home.packages or systemPackages
-  # home.packages = [ pkgs.nerdfonts ]; # Example using nerdfonts package
-
   programs.waybar = {
     enable = true;
 
@@ -26,30 +22,30 @@
             "1" = []; "2" = []; "3" = []; "4" = []; "5" = []; "6" = [];
           };
           format-icons = {
-            "1" = ""; "2" = ""; "3" = ""; "4" = ""; "5" = ""; "6" = "";
-            "default" = ""; "urgent" = ""; "focused" = ""; "empty" = "";
+            "1" = ""; "2" = ""; "3" = ""; "4" = ""; "5" = ""; "6" = "";
+            "default" = ""; "urgent" = ""; "focused" = ""; "empty" = "";
           };
           on-click = "activate";
           sort-by-number = true;
         };
 
         "clock" = {
-          format = " {:%H:%M:%S}";
-          format-alt = " {:%Y-%m-%d}  {:%H:%M:%S}";
+          format = " {:%H:%M:%S}";
+          format-alt = " {:%Y-%m-%d}  {:%H:%M:%S}";
           tooltip-format = "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>";
           interval = 1;
         };
 
         "pulseaudio" = {
           format = "{volume}% {icon} {format_source}";
-          format-bluetooth = "{volume}% {icon} {format_source}";
-          format-bluetooth-muted = "󰖁 {icon} {format_source}";
+          format-bluetooth = "{volume}% {icon} {format_source}";
+          format-bluetooth-muted = "󰖁 {icon} {format_source}";
           format-muted = "Muted 󰖁 {format_source}";
-          format-source = "  {volume}%";
-          format-source-muted = "   Muted";
+          format-source = "  {volume}%";
+          format-source-muted = "   Muted";
           format-icons = {
-            headphone = ""; hands-free = "󰋎"; headset = "󰋎"; phone = "";
-            portable = ""; car = ""; default = ["󰕿" "󰖀" "󰕾"];
+            headphone = ""; hands-free = "󰋎"; headset = "󰋎"; phone = "";
+            portable = ""; car = ""; default = ["󰕿" "󰖀" "󰕾"];
           };
           on-click = "pavucontrol";
         };
@@ -57,7 +53,7 @@
         "network" = {
           format-wifi = "{essid} ({signalStrength}%)";
           format-ethernet = "{ifname}: {ipaddr}/{cidr} 󰈀";
-          tooltip-format = "{ifname} via {gwaddr} ";
+          tooltip-format = "{ifname} via {gwaddr} ";
           format-linked = "{ifname} (No IP) 󰈀";
           format-disconnected = "Disconnected ⚠";
           on-click = "kitty bash -c nmtui";
@@ -67,7 +63,7 @@
           states = { good = 95; warning = 30; critical = 15; };
           format = "{capacity}% {icon}";
           format-charging = "{capacity}% 󰂄";
-          format-plugged = "{capacity}% ";
+          format-plugged = "{capacity}% ";
           format-alt = "{time} {icon}";
           format-icons = ["󰁺" "󰁻" "󰁼" "󰁽" "󰁾" "󰁿" "󰂀" "󰂁" "󰂂" "󰁹"];
         };
@@ -77,7 +73,7 @@
           tooltip-format = "Power profile: {profile}\nDriver: {driver}";
           tooltip = true;
           format-icons = {
-            default = ""; performance = ""; balanced = ""; power-saver = "";
+            default = ""; performance = ""; balanced = ""; power-saver = "";
           };
         };
 
@@ -127,7 +123,7 @@
       * {
         border: none;
         border-radius: 0;
-        font-family: "JetBrainsMono Nerd Font", FontAwesome, sans-serif;
+        font-family: "Maple Mono NF CN", FontAwesome, sans-serif;
         font-size: 14px;
         min-height: 0;
       }
@@ -198,68 +194,33 @@
       }
 
       #battery.warning:not(.charging) {
-        background-color: @gruvbox_warning; /* yellow for warning battery */
-        color: @gruvbox_text_on_warning; /* darker text on yellow */
+        background-color: @gruvbox_warning; /* yellow for warning */
+        color: @gruvbox_text_on_warning;  /* dark text on yellow */
       }
-
-      #network.disconnected {
-        background-color: @gruvbox_urgent; /* red for disconnected */
-        color: @gruvbox_text_on_accent;
-      }
-
-      /* Add transparency overlay on hover */
-      #clock, #pulseaudio, #network, #battery, #power-profiles-daemon {
-        position: relative;
+      
+      #battery.good:not(.charging), #battery.plugged, #battery.charging {
+        /* Optional: could use green or keep default module bg */
+        /* background-color: @green; */
+        /* color: @gruvbox_text_on_accent; */
       }
 
       tooltip {
-        background-color: @gruvbox_tooltip_bg;
-        color: @gruvbox_text;
-        border: 1px solid @gruvbox_accent;
+        background-color: @gruvbox_tooltip_bg; /* bg2 solid */
+        border: 1px solid @gruvbox_accent_hover; /* aqua */
         border-radius: 8px;
-        padding: 8px;
       }
-
-      /* Custom workspace-specific colors if desired */
-      #workspaces button.empty {
-        color: @gruvbox_text_dim;
-        opacity: 0.5;
-      }
-
-      #workspaces button.visible {
-        background-color: alpha(@gruvbox_accent, 0.3);
+      tooltip label {
         color: @gruvbox_text;
+        padding: 5px;
       }
 
-      /* Add some animation for smoothness */
-      @keyframes blink {
-        to {
-          background-color: @gruvbox_accent;
-          color: @gruvbox_text_on_accent;
-        }
-      }
-
-      #battery.critical:not(.charging) {
-        animation-name: blink;
-        animation-duration: 0.5s;
-        animation-timing-function: linear;
-        animation-iteration-count: infinite;
-        animation-direction: alternate;
-      }
-
-      /* Extra styling for modules */
-      #pulseaudio.muted {
-        background-color: alpha(@gruvbox_urgent, 0.5);
-        color: @gruvbox_text_dim;
-      }
-
-      #tray > .passive {
-        -gtk-icon-effect: dim;
-      }
-
+      #tray > .passive { -gtk-icon-effect: dim; color: @gruvbox_text_dim; }
       #tray > .needs-attention {
         -gtk-icon-effect: highlight;
         background-color: @gruvbox_urgent;
+        color: @gruvbox_text_on_accent;
+        border-radius: 5px;
+        padding: 0 3px; /* Add a bit of padding if bg is applied */
       }
     '';
   };

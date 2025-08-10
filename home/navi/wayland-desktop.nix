@@ -26,15 +26,56 @@ in
     libnotify     # notifications (notify-send)
     # Desktop applications
     # warp-terminal - removed to avoid collision (defined in home.nix from unstable)
+    # kitty - now configured via programs.kitty in user-base.nix
     vscode
-    kitty
     yazi
     firefox
     # emacs - now configured via programs.emacs in emacs.nix
     # pavucontrol - moved to user-base.nix common packages
-    nerd-fonts.jetbrains-mono  # For waybar and rofi icons
+    nerd-fonts.jetbrains-mono  # For waybar and rofi icons (keeping for icon support)
     mako  # Notification daemon for Wayland
   ];
+
+  # macOS-like notifications (mako) with Gruvbox Dark palette
+  services.mako = {
+    enable = true;
+    settings = {
+      # Layout and positioning
+      anchor = "top-right";
+      layer = "overlay";
+      width = 400;
+      height = 160;
+      margin = "12,12,12,12";
+      padding = "12";
+
+      # Appearance
+      font = "Inter 11";
+      "background-color" = "#282828E6";  # Gruvbox bg with ~90% opacity
+      "text-color" = "#ebdbb2";           # Gruvbox fg
+      "border-color" = "#458588CC";       # Gruvbox blue accent w/ opacity
+      "border-size" = 2;
+      "border-radius" = 14;                # Rounded corners (macOS-like)
+      "progress-color" = "over #83a598CC"; # Softer blue progress
+      icons = 1;
+      "max-icon-size" = 64;
+
+      # Behavior
+      "default-timeout" = 5000;
+      "ignore-timeout" = 0;
+      "max-history" = 10;
+
+      # Urgency overrides as nested sections
+      "urgency=low" = {
+        "border-color" = "#3c3836CC";
+      };
+      "urgency=normal" = {
+        "border-color" = "#458588CC";
+      };
+      "urgency=critical" = {
+        "border-color" = "#fb4934CC";
+      };
+    };
+  };
 
   systemd.user.services.polkit-gnome-authentication-agent-1 = {
     Unit = {
@@ -60,6 +101,12 @@ in
     XDG_CURRENT_DESKTOP = "Hyprland";
     XDG_SESSION_TYPE = "wayland";
     XDG_SESSION_DESKTOP = "Hyprland";
+    
+    # Global theming environment variables
+    GTK_THEME = "Gruvbox-Dark-BL";
+    XCURSOR_THEME = "macOS";
+    XCURSOR_SIZE = "26";
+    QT_QPA_PLATFORMTHEME = "gtk3";
   };
   
   # Hyprland Window Manager
@@ -71,6 +118,7 @@ in
       settings = {
         # Wallpaper is now managed by home-manager wallpaper service
         exec-once = [
+          "hyprctl setcursor macOS 26"
           "waybar"
           "gammastep -o"  # Apply red tint once at startup
           "kitty"  # Launch kitty terminal on startup
@@ -110,15 +158,22 @@ in
           };
         };
 
+        # Export cursor theme/size to Hyprland session
+        env = [
+          "XCURSOR_THEME,macOS"
+          "XCURSOR_SIZE,26"
+        ];
+
         gestures = {
           workspace_swipe = true;
           workspace_swipe_fingers = 3;
         };
 
+
         bind = [
           "${mod}, RETURN, exec, ${pkgs.kitty}/bin/kitty"
           "${mod}, C, exec, ${pkgs.vscode}/bin/code"
-          "${mod}, F, exec, ${pkgs.kitty}/bin/kitty bash -c yazi"
+          "${mod}, F, exec, ${pkgs.nautilus}/bin/nautilus"
           "${mod}, T, exec, ${pkgs.rofi}/bin/rofi -show drun -theme ~/.config/rofi/theme"
           "${mod}, B, exec, ${pkgs.firefox}/bin/firefox"
           "${mod}, E, exec, emacs"

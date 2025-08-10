@@ -99,11 +99,11 @@ in {
   config = mkIf cfg.enable {
     home.packages = [ pkgs.swaybg wallpaperScript ];
 
-    # Create wallpapers directory
-    home.activation.createWallpaperDir = lib.hm.dag.entryAfter ["writeBoundary"] ''
-      $DRY_RUN_CMD mkdir -p "$HOME/Pictures/Wallpapers"
-      $DRY_RUN_CMD chmod 700 "$HOME/Pictures/Wallpapers"
-    '';
+    # Deploy repo wallpapers into user Pictures/Wallpapers
+    home.file."Pictures/Wallpapers" = {
+      source = ./../Wallpapers;
+      recursive = true;
+    };
 
     systemd.user.services.random-wallpaper = {
       Unit = {

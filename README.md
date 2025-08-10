@@ -271,6 +271,9 @@ git push
 | Secrets             | `home/navi/*.nix` + `secrets/*.yaml` (encrypted)                     |
 | Wayland/Hypr env    | `hosts/<name>/host.nix` → `environment.sessionVariables`             |
 | Hyprland auto-login | `hosts/<name>/host.nix` → `services.greetd.settings.default_session` |
+| Global theming      | `home/navi/user-base.nix` → `gtk`, `qt`, `dconf.settings`            |
+| Terminal config     | `home/navi/user-base.nix` → `programs.kitty`                         |
+| File manager        | Nautilus bound to `Super+F`, configured in `wayland-desktop.nix`     |
 
 ---
 

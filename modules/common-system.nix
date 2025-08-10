@@ -25,8 +25,12 @@
   # wheel group so that they can use sudo.
   users.users.navi = {
     isNormalUser = true;
+    shell = pkgs.zsh;
     extraGroups = [ "wheel" "networkmanager" "input" "video"];
   };
+
+  # Enable zsh system-wide
+  programs.zsh.enable = true;
 
   # Set a consistent timezone.  Adjust if you live outside
   # Europe/Bucharest.
@@ -45,6 +49,7 @@
     vim
     wget
     bat
+    gh
   ];
 
   # Configure the bootloader.  systemd‑boot works on UEFI
