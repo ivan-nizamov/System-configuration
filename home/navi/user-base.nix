@@ -3,7 +3,8 @@
 {
   # Import desktop configuration for all machines
   imports = [ 
-    ./wayland-desktop.nix 
+    ./wayland-desktop.nix
+    ./programs/emacs.nix
     # inputs.sops-nix.homeManagerModules.sops  # Uncomment if you need secrets
   ];
 
@@ -43,29 +44,39 @@
   # environment.  These do not require root and will not affect
   # other users.
   home.packages = with pkgs; [
-    # Original packages
+    # Core command-line tools
     ripgrep
     fd
     bat
     jq
-    htop
-    rnote
+    gh
     
-    # Newly requested packages (stable)
-    kitty
-    anki-bin
-    audacity
-    obs-studio
-    fastfetch
-    btop
-    neo-cowsay
-    easyeffects
+    # Media and audio
+    mpv
     pavucontrol
+    
+    # Productivity and creative
+    rnote
+    anki-bin
+    
+    # Development and terminal
+    kitty
     vscode
     sqlite
     graphviz
+    
+    # System utilities
+    fastfetch
+    btop
+    neo-cowsay
+    
+    # Media production
+    audacity
+    obs-studio
+    easyeffects
+    
+    # Network and file sharing
     qbittorrent
-    # maple-mono.NF-CN - need to verify exact font package name
   ] ++ (with pkgs-unstable; [
     # Unstable/nightly packages
     vlc              # vlc-unsafe(nightly)
