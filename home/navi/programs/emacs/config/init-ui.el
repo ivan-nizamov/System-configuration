@@ -73,10 +73,8 @@
 (use-package dashboard
   :ensure t
   :init
-  ;; Set up dashboard to show on startup
-  (setq initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
+  (setq initial-buffer-choice (lambda () (dashboard-open) (current-buffer)))
   :config
-  (dashboard-setup-startup-hook)
   (setq dashboard-startup-banner 'official)
   (setq dashboard-items '((recents  . 5)
                           (projects . 5)))
@@ -85,7 +83,10 @@
   (setq dashboard-banner-logo-title "Welcome back, mighty Emacs wizard!")
   
   ;; Disable footer for faster loading
-  (setq dashboard-set-footer nil))
+  (setq dashboard-set-footer nil)
+  
+  ;; Initialize dashboard
+  (dashboard-setup-startup-hook))
 
 ;; ---------------------------------------------------------------------------
 ;; Additional UI improvements
