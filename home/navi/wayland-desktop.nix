@@ -105,7 +105,7 @@ in
     # Global theming environment variables
     GTK_THEME = "Gruvbox-Dark-BL";
     XCURSOR_THEME = "macOS";
-    XCURSOR_SIZE = "26";
+    XCURSOR_SIZE = "32";
     QT_QPA_PLATFORMTHEME = "gtk3";
   };
   
@@ -118,7 +118,7 @@ in
       settings = {
         # Wallpaper is now managed by home-manager wallpaper service
         exec-once = [
-          "hyprctl setcursor macOS 26"
+          "hyprctl setcursor macOS 32"
           "waybar"
           "gammastep -o"  # Apply red tint once at startup
           "kitty"  # Launch kitty terminal on startup
@@ -161,7 +161,7 @@ in
         # Export cursor theme/size to Hyprland session
         env = [
           "XCURSOR_THEME,macOS"
-          "XCURSOR_SIZE,26"
+          "XCURSOR_SIZE,32"
         ];
 
         gestures = {
@@ -209,11 +209,11 @@ in
           ", XF86MonBrightnessUp, exec, brightnessctl set 5%+"
           ", XF86MonBrightnessDown, exec, brightnessctl set 5%-"
           # Volume control keys
-          ", XF86AudioRaiseVolume, exec, pactl set-sink-volume @DEFAULT_SINK@ +5%"
-          ", XF86AudioLowerVolume, exec, pactl set-sink-volume @DEFAULT_SINK@ -5%"
-          ", XF86AudioMute, exec, pactl set-sink-mute @DEFAULT_SINK@ toggle"
+          ", XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"
+          ", XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
+          ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
           # Mic toggle
-          ", XF86AudioMicMute, exec, pactl set-source-mute @DEFAULT_SOURCE@ toggle"
+          ", XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
 
           # MOVED: Mako keybindings now live here, where they belong.
           "SUPER, semicolon, exec, makoctl dismiss"
