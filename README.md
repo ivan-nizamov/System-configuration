@@ -1,7 +1,6 @@
-```markdown
 # NixOS Config Design & Operating Guide (25.05)
 
-This doc is your **map**. It tells you **where things live**, **who owns what**, and **how to change stuff safely**—even if you (or an LLM agent) aren’t fully acquainted with the codebase yet. It stays useful even after files evolve because it documents **responsibilities and patterns**, not just today’s content.
+This doc is your **map**. It tells you **where things live**, **who owns what**, and **how to change stuff safely**—even if you (or an LLM agent) aren't fully acquainted with the codebase yet. It stays useful even after files evolve because it documents **responsibilities and patterns**, not just today's content.
 
 ---
 
@@ -12,8 +11,9 @@ This doc is your **map**. It tells you **where things live**, **who owns what**,
   - **Integrated**: NixOS + Home-Manager switch atomically on your machines.
   - **Standalone HM**: user-only profile for servers (no sudo).
 - **Two hosts** today: `desktop` (GPU) and `laptop` (CPU). Pattern supports more.
-- **Host differences** are isolated (GPU drivers, disks, login).
+- **Host differences** are isolated (GPU drivers, disks, login, display configuration).
 - **Secrets** optional via `sops-nix`, per-host keys.
+- **Clear naming**: File names clearly indicate their purpose and scope.
 
 ---
 
@@ -25,20 +25,26 @@ This doc is your **map**. It tells you **where things live**, **who owns what**,
 ├─ flake.lock                         # Locked dependency versions
 ├─ modules/
 │  ├─ common-system.nix               # Shared OS config (users, boot, SSH, nix settings)
-│  └─ common-home.nix                 # Shared HM glue (integrates HM; passes host facts)
+│  └─ home-manager-integration.nix    # Home-Manager ↔ NixOS integration layer
 ├─ hosts/
 │  ├─ desktop/
 │  │  ├─ hardware-configuration.nix   # Generated per machine; never shared
 │  │  ├─ host.nix                     # Desktop-only OS settings (GPU, disks)
-│  │  └─ home-overrides.nix           # Desktop-only HM tweaks (small/optional)
+│  │  └─ user-config.nix              # Desktop-specific user settings & overrides
 │  └─ laptop/
 │     ├─ hardware-configuration.nix
-│     ├─ host.nix                     # Laptop-only OS settings (power/touchpad)
-│     └─ home-overrides.nix
+│     ├─ host.nix                     # Laptop-only OS settings (power/touchpad, display)
+│     └─ user-config.nix              # Laptop-specific user settings & overrides
 ├─ home/
 │  └─ navi/
-│     ├─ home.nix                     # Shared HM profile (shell, git, CLI apps)
-│     └─ server-cli.nix               # Minimal HM profile for servers (no sudo)
+│     ├─ user-base.nix                # Base user config (shell, git, CLI apps)
+│     ├─ wayland-desktop.nix          # Wayland/Hyprland desktop environment
+│     ├─ scripts.nix                  # User scripts and utilities
+│     └─ desktop/                     # Desktop environment components
+│         ├─ waybar.nix               # Status bar configuration
+│         ├─ rofi.nix                 # Application launcher
+│         ├─ wallpaper.nix            # Wallpaper management
+│         └─ gammastep.nix            # Blue light filter
 └─ secrets/
    └─ server.yaml                     # (optional) Encrypted with sops; per-host keys
 
@@ -57,7 +63,7 @@ This doc is your **map**. It tells you **where things live**, **who owns what**,
 - **System (NixOS)** → kernel, bootloader, services, filesystems, networking, system users, global packages.  
   Files: `modules/common-system.nix` + `hosts/<name>/host.nix` (+ hardware file)
 - **User (Home-Manager)** → dotfiles, shells, editors, CLI apps, per-user env vars.  
-  Files: `home/navi/*.nix` (+ `hosts/<name>/home-overrides.nix` if needed)
+  Files: `home/navi/*.nix` (+ `hosts/<name>/user-config.nix` if needed)
 - **Flakes** → pins & exposes build targets.  
   File: `flake.nix`
 - **Secrets** → encrypted in `secrets/`, decrypted by HM on authorized host(s).
@@ -80,7 +86,7 @@ This doc is your **map**. It tells you **where things live**, **who owns what**,
 
 - **Host facts** via flake `specialArgs`: `host = { name; accel = "cpu"|"cuda"|"rocm"; }`.  
   Gate features with `lib.mkIf`.
-- **Separation of concerns**: system toggles → `hosts/<name>/host.nix`; user tweaks → `hosts/<name>/home-overrides.nix`.
+- **Separation of concerns**: system toggles → `hosts/<name>/host.nix`; user tweaks → `hosts/<name>/user-config.nix`.
 - **Small commits**: one logical change per commit; include command used (e.g., `nixos-rebuild switch --flake .#desktop`).
 - **Test first**: `nixos-rebuild test` before `switch`.
 - **Rollbacks**: keep boot generations limited; label with host.
@@ -96,7 +102,7 @@ This doc is your **map**. It tells you **where things live**, **who owns what**,
 - Apply: `sudo nixos-rebuild switch --flake .#<host>`
 
 **User package / alias (only `navi`)**
-- Edit: `home/navi/home.nix` → `home.packages` or `programs.zsh.initExtra`
+- Edit: `home/navi/user-base.nix` → `home.packages` or `programs.zsh.initExtra`
 - Integrated host: `sudo nixos-rebuild switch --flake .#<host>`
 - Standalone server:  
   `nix run github:nix-community/home-manager/release-25.05 -- switch --flake .#"navi@server"`
@@ -114,7 +120,7 @@ This doc is your **map**. It tells you **where things live**, **who owns what**,
 - Prefer by-uuid/by-label mounts
 
 **Per-user env vars**
-- Edit `home/navi/home.nix` → `home.sessionVariables`
+- Edit `home/navi/user-base.nix` → `home.sessionVariables`
 - For host-specific vars: `lib.mkIf (host.name == "desktop")`
 
 **System-wide env vars**
@@ -153,7 +159,7 @@ This doc is your **map**. It tells you **where things live**, **who owns what**,
 
    * `hardware-configuration.nix` (generated on that machine)
    * `host.nix` (start small)
-   * `home-overrides.nix` (optional)
+   * `user-config.nix` (optional)
 2. Add to `flake.nix`:
 
    ```nix
@@ -255,7 +261,7 @@ git push
 | Task                | Edit here                                                            |
 | ------------------- | -------------------------------------------------------------------- |
 | System-wide pkg     | `modules/common-system.nix` → `environment.systemPackages`           |
-| User pkg / alias    | `home/navi/home.nix` (or `hosts/<name>/home-overrides.nix`)          |
+| User pkg / alias    | `home/navi/user-base.nix` (or `hosts/<name>/user-config.nix`)       |
 | Service (all hosts) | `modules/common-system.nix`                                          |
 | Service (one host)  | `hosts/<name>/host.nix`                                              |
 | GPU-only feature    | Create module in `modules/` with `lib.mkIf (host.accel != "cpu")`   |
