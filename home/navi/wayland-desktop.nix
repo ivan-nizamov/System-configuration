@@ -116,6 +116,7 @@ in
       xwayland.enable = true;
 
       settings = {
+
         # Wallpaper is now managed by home-manager wallpaper service
         exec-once = [
           "hyprctl setcursor macOS 32"

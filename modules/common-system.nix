@@ -50,7 +50,11 @@
     wget
     bat
     gh
+    usbutils  # for lsusb
   ];
+
+  # Load udev rules from packages (grants device access to user without sudo)
+  services.udev.packages = [ pkgs.libsForQt5.xp-pen-deco-01-v2-driver ];
 
   # System-wide Git configuration managed by common-system
   # This writes /etc/gitconfig so all users inherit these defaults

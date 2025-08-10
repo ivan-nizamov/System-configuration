@@ -5,8 +5,25 @@
   # aliases or user‑level packages that apply only on the desktop.
   # This is a proper home-manager module, so you can use any home-manager options here.
   
-  # Desktop display configuration: 2560x1440@165Hz
-  wayland.windowManager.hyprland.settings.monitor = ",2560x1440@165,auto,1";
+
+  # Desktop-only cursor override (~15% larger than base 26 -> 30), then +10% -> 33
+  home.pointerCursor.size = lib.mkForce 33;
+  home.sessionVariables.XCURSOR_SIZE = lib.mkForce "33";
+  wayland.windowManager.hyprland.settings.env = lib.mkForce [
+    "XCURSOR_THEME,macOS"
+    "XCURSOR_SIZE,33"
+  ];
+  wayland.windowManager.hyprland.settings.exec-once = lib.mkForce [
+    "hyprctl setcursor macOS 33"
+    "waybar"
+    "gammastep -o"
+    "kitty"
+  ];
+
+  # Force highest available refresh rate on all monitors (selects 165Hz when available)
+  wayland.windowManager.hyprland.settings.monitor = [
+    ",highrr,auto,1"
+  ];
   
   # Example: desktop-specific packages (GPU tools, etc.)
   # home.packages = with pkgs; [

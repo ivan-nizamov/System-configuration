@@ -214,6 +214,10 @@
     fastfetch
     btop
     neo-cowsay
+
+    # Input devices / Tablets
+    libsForQt5.xp-pen-deco-01-v2-driver
+    opentabletdriver
     
     # File manager
     nautilus
@@ -244,6 +248,24 @@
     chromium         # chromium-unstable(nightly)
     warp-terminal    # warp-terminal-unsafe(nightly)
   ]);
+
+  # Autostart OpenTabletDriver daemon in the user session; UX can be launched manually
+  systemd.user.services.opentabletdriver-daemon = {
+    Unit = {
+      Description = "OpenTabletDriver Daemon";
+      PartOf = [ "graphical-session.target" ];
+      After = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "simple";
+      ExecStart = "${pkgs.opentabletdriver}/bin/otd-daemon";
+      Restart = "on-failure";
+      RestartSec = 2;
+    };
+    Install = {
+      WantedBy = [ "graphical-session.target" ];
+    };
+  };
 
   # Example secret decrypted via sops.  The age.keyFile path
   # references an Age private key stored in your XDG config dir.
