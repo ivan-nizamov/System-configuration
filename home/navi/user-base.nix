@@ -5,6 +5,7 @@
   imports = [ 
     ./wayland-desktop.nix
     ./programs/emacs.nix
+    ./scripts.nix
     # inputs.sops-nix.homeManagerModules.sops  # Uncomment if you need secrets
   ];
 
@@ -30,6 +31,11 @@
       alias nrs="sudo nixos-rebuild switch --flake /home/navi/System-configuration#laptop"
       alias nrt="sudo nixos-rebuild test --flake /home/navi/System-configuration#laptop"
       alias nrb="sudo nixos-rebuild boot --flake /home/navi/System-configuration#laptop"
+
+      # Initialize 'thefuck' so that the 'fuck' command works in zsh
+      if command -v thefuck >/dev/null 2>&1; then
+        eval "$(thefuck --alias)"
+      fi
     '';
   };
 
@@ -38,6 +44,150 @@
     enable = true;
     userName = "navi";
     userEmail = "ivan.nizamov@proton.com";
+  };
+
+  # Kitty terminal configuration with Maple Mono font and Gruvbox theme
+  programs.kitty = {
+    enable = true;
+    font = {
+      name = "Maple Mono NF CN";
+      size = 12;
+    };
+    settings = {
+      # Gruvbox Dark theme colors
+      background = "#282828";
+      foreground = "#ebdbb2";
+      
+      # Black colors
+      color0 = "#282828";
+      color8 = "#928374";
+      
+      # Red colors
+      color1 = "#cc241d";
+      color9 = "#fb4934";
+      
+      # Green colors
+      color2 = "#98971a";
+      color10 = "#b8bb26";
+      
+      # Yellow colors
+      color3 = "#d79921";
+      color11 = "#fabd2f";
+      
+      # Blue colors
+      color4 = "#458588";
+      color12 = "#83a598";
+      
+      # Purple colors
+      color5 = "#b16286";
+      color13 = "#d3869b";
+      
+      # Cyan colors
+      color6 = "#689d6a";
+      color14 = "#8ec07c";
+      
+      # White colors
+      color7 = "#a89984";
+      color15 = "#ebdbb2";
+      
+      # Additional Gruvbox colors
+      selection_background = "#ebdbb2";
+      selection_foreground = "#282828";
+      cursor = "#ebdbb2";
+      cursor_text_color = "#282828";
+      
+      # Tab styling
+      active_tab_background = "#458588";
+      active_tab_foreground = "#ebdbb2";
+      inactive_tab_background = "#3c3836";
+      inactive_tab_foreground = "#a89984";
+      
+      # Window styling
+      window_padding_width = 4;
+      background_opacity = "0.95";
+      
+      # Scrolling
+      scrollback_lines = 10000;
+      
+      # Bell
+      enable_audio_bell = false;
+    };
+  };
+
+  # Global Gruvbox Dark Theming
+  gtk = {
+    enable = true;
+    
+    theme = {
+      name = "Gruvbox-Dark-BL";
+      package = pkgs.gruvbox-gtk-theme;
+    };
+    
+    iconTheme = {
+      name = "Papirus-Dark";
+      package = pkgs.papirus-icon-theme;
+    };
+    
+    cursorTheme = {
+      name = "macOS";
+      package = pkgs.apple-cursor;
+      size = 26;
+    };
+    
+    font = {
+      name = "Maple Mono NF CN";
+      size = 11;
+    };
+
+    gtk3.extraConfig = {
+      gtk-application-prefer-dark-theme = 1;
+    };
+
+    gtk4.extraConfig = {
+      gtk-application-prefer-dark-theme = 1;
+    };
+  };
+
+  # Qt theming to match GTK
+  qt = {
+    enable = true;
+    platformTheme.name = "gtk3";
+    style.name = "gtk2";
+  };
+
+  # Ensure cursor theme is applied consistently for GTK, X11, and Wayland
+  home.pointerCursor = {
+    name = "macOS";
+    package = pkgs.apple-cursor;
+    size = 26;
+    gtk.enable = true;
+    x11.enable = true;
+  };
+
+  # Configure dconf settings for GNOME applications (including Nautilus)
+  dconf.settings = {
+    "org/gnome/desktop/interface" = {
+      gtk-theme = "Gruvbox-Dark-BL";
+      icon-theme = "Papirus-Dark";
+      cursor-theme = "macOS";
+      color-scheme = "prefer-dark";
+      font-name = "Maple Mono NF CN 11";
+    };
+    
+    "org/gnome/desktop/wm/preferences" = {
+      theme = "Gruvbox-Dark-BL";
+    };
+    
+    # Nautilus (Files) specific settings
+    "org/gnome/nautilus/preferences" = {
+      default-folder-viewer = "icon-view";
+      search-filter-time-type = "last_modified";
+      show-hidden-files = false;
+    };
+    
+    "org/gnome/nautilus/icon-view" = {
+      default-zoom-level = "standard";
+    };
   };
 
   # Additional command‑line tools installed into your user
@@ -50,6 +200,7 @@
     bat
     jq
     gh
+    thefuck
     
     # Media and audio
     mpv
@@ -60,7 +211,6 @@
     anki-bin
     
     # Development and terminal
-    kitty
     vscode
     sqlite
     graphviz
@@ -69,6 +219,9 @@
     fastfetch
     btop
     neo-cowsay
+    
+    # File manager
+    nautilus
     
     # Media production
     audacity
@@ -80,6 +233,16 @@
     
     # Fonts
     maple-mono.NF-CN
+    inter
+    
+    # Theme packages
+    gruvbox-gtk-theme
+    papirus-icon-theme
+    apple-cursor
+    
+    # Additional theming support
+    gnome-themes-extra
+    gtk-engine-murrine
   ] ++ (with pkgs-unstable; [
     # Unstable/nightly packages
     vlc              # vlc-unsafe(nightly)
