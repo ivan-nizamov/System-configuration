@@ -72,11 +72,11 @@
 ;; ---------------------------------------------------------------------------
 (use-package dashboard
   :ensure t
-  :defer t
   :init
-  ;; Always show dashboard on startup
-  (add-hook 'emacs-startup-hook 'dashboard-setup-startup-hook)
+  ;; Set up dashboard to show on startup
+  (setq initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
   :config
+  (dashboard-setup-startup-hook)
   (setq dashboard-startup-banner 'official)
   (setq dashboard-items '((recents  . 5)
                           (projects . 5)))
