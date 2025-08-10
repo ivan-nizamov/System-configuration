@@ -77,6 +77,9 @@
     
     # Network and file sharing
     qbittorrent
+    
+    # Fonts
+    maple-mono.NF-CN
   ] ++ (with pkgs-unstable; [
     # Unstable/nightly packages
     vlc              # vlc-unsafe(nightly)
