@@ -30,8 +30,8 @@ in
     kitty
     yazi
     firefox
-    emacs
-    pavucontrol
+    # emacs - now configured via programs.emacs in emacs.nix
+    # pavucontrol - moved to user-base.nix common packages
     nerd-fonts.jetbrains-mono  # For waybar and rofi icons
     mako  # Notification daemon for Wayland
   ];
