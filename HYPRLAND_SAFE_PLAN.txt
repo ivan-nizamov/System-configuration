@@ -1,0 +1,64 @@
+Hyprland Safe Enable Plan (keep GNOME available)
+
+Goal
+- Keep GNOME + GDM installed and usable while enabling Hyprland, so a failed Hyprland/greetd setup does not leave the system unbootable.
+- Use rollback-friendly steps: test, then boot, with previous generations preserved.
+
+Safe workflow to create a rollbackable generation
+1) Test build and evaluation only (does not set default or switch services now):
+   sudo nixos-rebuild test --flake /home/navi/System-configuration#laptop
+
+2) If that’s clean, stage for next boot (creates a new boot generation and makes it the default, but doesn’t restart services now):
+   sudo nixos-rebuild boot --flake /home/navi/System-configuration#laptop
+
+3) Reboot and try it. If anything goes wrong, at the systemd-boot menu select the previous generation (labels show nixos-laptop due to system.nixos.label).
+
+4) From userspace, you can roll back with:
+   sudo nixos-rebuild --rollback
+
+Configuration changes (hosts/laptop/host.nix)
+- Keep Hyprland enabled:
+  programs.hyprland.enable = true;
+  programs.xwayland.enable = true;
+
+- DO NOT use greetd for now (that would replace GDM and can black-screen if Hyprland breaks):
+  services.greetd.enable = lib.mkForce false;  # or remove the entire services.greetd block
+
+- Enable GDM + GNOME so GNOME remains available:
+  services.xserver.enable = true;  # xserver module also manages Wayland sessions via GDM
+  services.xserver.displayManager.gdm = {
+    enable = true;
+    wayland = true;
+  };
+  services.xserver.desktopManager.gnome.enable = true;
+
+- Optional (later, only after Hyprland is stable):
+  # services.displayManager.defaultSession = "hyprland";
+  # services.displayManager.autoLogin.enable = true;
+  # services.displayManager.autoLogin.user = "navi";
+
+Wayland portals (recommended for Hyprland)
+  xdg.portal.enable = true;
+  xdg.portal.extraPortals = with pkgs; [
+    xdg-desktop-portal-gtk
+    xdg-desktop-portal-hyprland
+  ];
+
+Environment variables
+- Keep existing Wayland/Electron hint:
+  environment.sessionVariables.NIXOS_OZONE_WL = "1";
+
+Why this prevents GNOME removal mid-apply
+- By keeping services.xserver.desktopManager.gnome.enable = true and GDM enabled, GNOME remains part of the system closure. You are adding Hyprland in parallel, not replacing the display manager. If Hyprland fails, you can log in to GNOME from GDM or boot the previous generation.
+
+Boot entry hygiene (optional per README)
+- You already label generations with system.nixos.label = "nixos-${host.name}" and limit entries via boot.loader.systemd-boot.configurationLimit.
+- During heavy experimentation, consider raising the limit if /boot has space, e.g.:
+  boot.loader.systemd-boot.configurationLimit = 5;
+
+Apply sequence (summary)
+1) Edit hosts/laptop/host.nix as above.
+2) sudo nixos-rebuild test --flake /home/navi/System-configuration#laptop
+3) sudo nixos-rebuild boot --flake /home/navi/System-configuration#laptop
+4) Reboot. In GDM, choose the “Hyprland” session from the gear/menu. If anything is off, pick GNOME or boot a previous generation.
+
