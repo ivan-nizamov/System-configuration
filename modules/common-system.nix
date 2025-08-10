@@ -52,6 +52,16 @@
     gh
   ];
 
+  # System-wide Git configuration managed by common-system
+  # This writes /etc/gitconfig so all users inherit these defaults
+  environment.etc."gitconfig".text = ''
+    [user]
+      name = navi
+      email = ivan.nizamov@proton.com
+    [init]
+      defaultBranch = main
+  '';
+
   # Configure the bootloader.  systemd‑boot works on UEFI
   # installations.  If you dual boot with another OS or need BIOS
   # support, you may switch to GRUB.

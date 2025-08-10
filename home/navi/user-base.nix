@@ -40,12 +40,6 @@
     '';
   };
 
-  # Git settings.  Replace with your real name and email.
-  programs.git = {
-    enable = true;
-    userName = "navi";
-    userEmail = "ivan.nizamov@proton.com";
-  };
 
   # Kitty terminal configuration with Maple Mono font and Gruvbox theme
   programs.kitty = {
