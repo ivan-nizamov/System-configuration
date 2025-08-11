@@ -280,7 +280,7 @@ git push
 
 ## Network Curfew System
 
-The network curfew system automatically disables and enables networking at configurable times using systemd timers and NetworkManager. This provides a clean, reversible way to restrict internet access during specified hours.
+The network curfew system automatically terminates user network applications at configurable times using systemd timers. This provides a user-based approach to restrict network app usage during specified hours (e.g., nighttime) without affecting system-wide networking.
 
 ### Configuration
 
@@ -289,20 +289,22 @@ The network curfew system automatically disables and enables networking at confi
 # In hosts/laptop/host.nix
 services.networkCurfew = {
   enable = true;
-  startTime = "20:30:00";  # Network OFF at 8:30 PM
-  endTime = "06:00:00";    # Network ON at 6:00 AM
+  startTime = "20:30:00";  # Terminate network apps at 8:30 PM
+  endTime = "06:00:00";    # Allow network apps at 6:00 AM
   persistent = true;       # Catches up missed executions after reboots
+  user = "navi";          # Username to apply curfew to (default: "navi")
 };
 ```
 
 ### Features
 
 - **📅 Configurable times**: Set custom start/end times per host
-- **🛠️ System services**: `net-curfew-off` and `net-curfew-on`
+- **👤 User-based**: Only affects specific user's applications, not system networking
+- **🛠️ App termination**: Terminates browsers, torrent clients, chat apps, etc.
 - **⏰ Systemd timers**: Daily scheduling with `OnCalendar=*-*-* HH:MM:SS`
 - **📝 Logging**: All actions logged to `/var/log/net-curfew.log`
 - **🔄 Persistent**: Catches up missed executions after reboots
-- **🌐 NetworkManager**: Uses `nmcli networking off/on` for clean toggling
+- **🔔 Notifications**: Desktop notifications when curfew starts/ends
 
 ### Manual Control
 
