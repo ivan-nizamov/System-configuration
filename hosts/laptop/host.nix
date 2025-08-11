@@ -55,6 +55,11 @@
   # System packages (add the rest of your list back here)
   environment.systemPackages = with pkgs; [
     git wget tree usbutils iproute2 nix-index gparted
+    # Screen recording/sharing utilities
+    wl-clipboard
+    grim
+    slurp
+    wf-recorder
     # Your themed dmenu wrappers from the current config:
     (pkgs.writeScriptBin "dmenu" ''
       #!${pkgs.bash}/bin/bash

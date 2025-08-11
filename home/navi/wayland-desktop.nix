@@ -29,7 +29,7 @@ in
     # kitty - now configured via programs.kitty in user-base.nix
     vscode
     yazi
-    firefox
+    vivaldi          # Vivaldi browser
     # emacs - now configured via programs.emacs in emacs.nix
     # pavucontrol - moved to user-base.nix common packages
     nerd-fonts.jetbrains-mono  # For waybar and rofi icons (keeping for icon support)
@@ -160,11 +160,11 @@ in
 
 
         bind = [
-          "${mod}, RETURN, exec, ${pkgs.kitty}/bin/kitty"
+          "${mod}, RETURN, exec, warp-terminal"
           "${mod}, C, exec, ${pkgs.vscode}/bin/code"
           "${mod}, F, exec, ${pkgs.nautilus}/bin/nautilus"
           "${mod}, T, exec, ${pkgs.rofi}/bin/rofi -show drun -theme ~/.config/rofi/theme"
-          "${mod}, B, exec, ${pkgs.firefox}/bin/firefox"
+          "${mod}, B, exec, ${pkgs.vivaldi}/bin/vivaldi"
           "${mod}, E, exec, emacs"
           "${mod} SHIFT, R, exec, bash -c 'hyprctl reload'"
           "${mod}, S, killactive,"
