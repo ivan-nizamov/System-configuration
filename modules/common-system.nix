@@ -1,6 +1,10 @@
 { config, pkgs, lib, host, ... }:
 
 {
+  # Import additional modules
+  imports = [
+    ./network-curfew.nix
+  ];
   # Use the host name defined in flake.nix.  This makes it easy to
   # replicate nearly identical systems while still distinguishing
   # between your laptop and desktop.

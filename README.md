@@ -243,7 +243,7 @@ git push
   * At boot: pick previous generation (label shows host + date)
   * From userspace: `sudo nixos-rebuild --rollback`
 * If boot entries vanish: ensure `/boot` mounted and loader configured
-* Network curfew: prefer NetworkManager toggles (`nmcli networking off/on`) for reversibility; if using nftables, keep rules per-host and documented
+* Network curfew: Centralized module system with configurable times - see Network Curfew section below
 
 ---
 
@@ -274,6 +274,52 @@ git push
 | Global theming      | `home/navi/user-base.nix` → `gtk`, `qt`, `dconf.settings`            |
 | Terminal config     | `home/navi/user-base.nix` → `programs.kitty`                         |
 | File manager        | Nautilus bound to `Super+F`, configured in `wayland-desktop.nix`     |
+| Network curfew      | `hosts/<name>/host.nix` → `services.networkCurfew`                   |
+
+---
+
+## Network Curfew System
+
+The network curfew system automatically disables and enables networking at configurable times using systemd timers and NetworkManager. This provides a clean, reversible way to restrict internet access during specified hours.
+
+### Configuration
+
+**Enable in host configuration:**
+```nix
+# In hosts/laptop/host.nix
+services.networkCurfew = {
+  enable = true;
+  startTime = "20:30:00";  # Network OFF at 8:30 PM
+  endTime = "06:00:00";    # Network ON at 6:00 AM
+  persistent = true;       # Catches up missed executions after reboots
+};
+```
+
+### Features
+
+- **📅 Configurable times**: Set custom start/end times per host
+- **🛠️ System services**: `net-curfew-off` and `net-curfew-on`
+- **⏰ Systemd timers**: Daily scheduling with `OnCalendar=*-*-* HH:MM:SS`
+- **📝 Logging**: All actions logged to `/var/log/net-curfew.log`
+- **🔄 Persistent**: Catches up missed executions after reboots
+- **🌐 NetworkManager**: Uses `nmcli networking off/on` for clean toggling
+
+### Manual Control
+
+```bash
+# Check timer status
+sudo systemctl list-timers | grep net-curfew
+
+# Manual toggle (immediate)
+sudo systemctl start net-curfew-off.service  # Disable now
+sudo systemctl start net-curfew-on.service   # Enable now
+
+# Check logs
+sudo tail -f /var/log/net-curfew.log
+
+# Emergency re-enable
+sudo nmcli networking on
+```
 
 ---
 

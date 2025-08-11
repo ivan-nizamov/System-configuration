@@ -247,6 +247,7 @@
     vlc              # vlc-unsafe(nightly)
     chromium         # chromium-unstable(nightly)
     warp-terminal    # warp-terminal-unsafe(nightly)
+    vivaldi          # Vivaldi browser
   ]);
 
   # Autostart OpenTabletDriver daemon in the user session; UX can be launched manually

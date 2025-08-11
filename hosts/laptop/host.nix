@@ -35,32 +35,12 @@
   # add nftables rules here instead of ad-hoc iptables in scripts.
   # networking.firewall.enable = true;
 
-  # Night curfew: safer variant using NetworkManager (no hardcoded NICs/iptables)
-  systemd.services.net-curfew-off = {
-    description = "Disable networking during curfew";
-    serviceConfig = { Type = "oneshot"; };
-    script = ''
-      ${pkgs.networkmanager}/bin/nmcli networking off || true
-      echo "$(${pkgs.coreutils}/bin/date): NM networking OFF" >> /var/log/net-curfew.log
-    '';
-  };
-  systemd.services.net-curfew-on = {
-    description = "Enable networking after curfew";
-    serviceConfig = { Type = "oneshot"; };
-    script = ''
-      ${pkgs.networkmanager}/bin/nmcli networking on || true
-      echo "$(${pkgs.coreutils}/bin/date): NM networking ON" >> /var/log/net-curfew.log
-    '';
-  };
-  systemd.timers.net-curfew-off = {
-    description = "Turn networking off at 20:30";
-    wantedBy = [ "timers.target" ];
-    timerConfig = { OnCalendar = "*-*-* 20:30:00"; Persistent = true; };
-  };
-  systemd.timers.net-curfew-on = {
-    description = "Turn networking on at 06:00";
-    wantedBy = [ "timers.target" ];
-    timerConfig = { OnCalendar = "*-*-* 06:00:00"; Persistent = true; };
+  # Network Curfew System - Enable and configure
+  services.networkCurfew = {
+    enable = true;
+    startTime = "20:30:00";  # Networking disabled at 20:30
+    endTime = "06:00:00";    # Networking enabled at 06:00
+    persistent = true;       # Catches up missed executions after reboots
   };
 
   # Your Wayland/Electron env & dmenu theme vars
