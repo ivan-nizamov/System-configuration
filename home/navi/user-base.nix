@@ -30,6 +30,8 @@
       nrs = "sudo nixos-rebuild switch --flake /home/navi/System-configuration#$(hostname)";
       nrt = "sudo nixos-rebuild test --flake /home/navi/System-configuration#$(hostname)";
       nrb = "sudo nixos-rebuild boot --flake /home/navi/System-configuration#$(hostname)";
+      xppen = "DISPLAY=:0 xhost +SI:localuser:root && sudo DISPLAY=:0 xp-pen-deco-01-v2-driver; DISPLAY=:0 xhost -SI:localuser:root";
+      tablet = "DISPLAY=:0 xhost +SI:localuser:root && sudo DISPLAY=:0 xp-pen-deco-01-v2-driver; DISPLAY=:0 xhost -SI:localuser:root";
     };
 
     # Extra Zsh init content (non-alias), e.g., initializing 'thefuck'
@@ -218,6 +220,7 @@
     # Input devices / Tablets
     libsForQt5.xp-pen-deco-01-v2-driver
     opentabletdriver
+    xorg.xhost  # For XP-Pen driver X11 authorization
     
     # File manager
     nautilus
