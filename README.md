@@ -209,9 +209,9 @@ This doc is your **map**. It tells you **where things live**, **who owns what**,
 
 **Daily (laptop → desktop)**
 
-1. Laptop: edit → `sudo nixos-rebuild test --flake .#laptop` → `sudo nixos-rebuild switch --flake .#laptop`
+1. Laptop: edit → `sudo nixos-rebuild test --flake .#$(hostname)` → `sudo nixos-rebuild switch --flake .#$(hostname)`
 2. `git add -A && git commit -m "Describe change" && git push`
-3. Desktop: `git pull && sudo nixos-rebuild switch --flake .#desktop`
+3. Desktop: `git pull && sudo nixos-rebuild switch --flake .#$(hostname)`
 
 **Server without sudo (standalone HM)**
 

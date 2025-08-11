@@ -27,9 +27,9 @@
       ll = "ls -alF";
       gs = "git status -sb";
       gc = "git commit";
-      nrs = "sudo nixos-rebuild switch --flake /home/navi/System-configuration#${host.name}";
-      nrt = "sudo nixos-rebuild test --flake /home/navi/System-configuration#${host.name}";
-      nrb = "sudo nixos-rebuild boot --flake /home/navi/System-configuration#${host.name}";
+      nrs = "sudo nixos-rebuild switch --flake /home/navi/System-configuration#$(hostname)";
+      nrt = "sudo nixos-rebuild test --flake /home/navi/System-configuration#$(hostname)";
+      nrb = "sudo nixos-rebuild boot --flake /home/navi/System-configuration#$(hostname)";
     };
 
     # Extra Zsh init content (non-alias), e.g., initializing 'thefuck'
