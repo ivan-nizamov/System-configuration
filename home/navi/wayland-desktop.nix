@@ -101,12 +101,6 @@ in
     XDG_CURRENT_DESKTOP = "Hyprland";
     XDG_SESSION_TYPE = "wayland";
     XDG_SESSION_DESKTOP = "Hyprland";
-    
-    # Global theming environment variables
-    GTK_THEME = "Gruvbox-Dark-BL";
-    XCURSOR_THEME = "macOS";
-    XCURSOR_SIZE = "32";
-    QT_QPA_PLATFORMTHEME = "gtk3";
   };
   
   # Hyprland Window Manager
@@ -119,7 +113,6 @@ in
 
         # Wallpaper is now managed by home-manager wallpaper service
         exec-once = [
-          "hyprctl setcursor macOS 32"
           "waybar"
           "gammastep -o"  # Apply red tint once at startup
           "kitty"  # Launch kitty terminal on startup
@@ -159,11 +152,6 @@ in
           };
         };
 
-        # Export cursor theme/size to Hyprland session
-        env = [
-          "XCURSOR_THEME,macOS"
-          "XCURSOR_SIZE,32"
-        ];
 
         gestures = {
           workspace_swipe = true;

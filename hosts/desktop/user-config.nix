@@ -19,11 +19,6 @@
     "gammastep -o"
     "kitty"
   ];
-
-  # Force highest available refresh rate on all monitors (selects 165Hz when available)
-  wayland.windowManager.hyprland.settings.monitor = [
-    ",highrr,auto,1"
-  ];
   
   # Example: desktop-specific packages (GPU tools, etc.)
   # home.packages = with pkgs; [
