@@ -31,6 +31,15 @@
   };
   services.xserver.videoDrivers = [ "nvidia" ];
 
+  # Enable PipeWire for audio and video
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+    wireplumber.enable = true; # WirePlumber is the session manager for PipeWire
+  };
+
   # Optional: NVIDIA container toolkit for CUDA-enabled containers (Docker/Podman)
   hardware.nvidia-container-toolkit.enable = true;
 
@@ -58,48 +67,14 @@
   # NetworkManager for connectivity
   networking.networkmanager.enable = true;
 
-  # XDG Desktop Portal configuration for screen sharing
-  xdg.portal = {
-    enable = true;
-    wlr.enable = false;  # We're using hyprland portal instead
-    extraPortals = with pkgs; [
-      xdg-desktop-portal-hyprland
-      xdg-desktop-portal-gtk  # For file dialogs
-    ];
-    config = {
-      common = {
-        default = [ "hyprland" "gtk" ];
-        "org.freedesktop.impl.portal.ScreenCast" = [ "hyprland" ];
-        "org.freedesktop.impl.portal.Screenshot" = [ "hyprland" ];
-      };
-    };
-  };
-
-  # Desktop-specific environment variables
-  environment.sessionVariables = {
-    NIXOS_OZONE_WL = "1";  # Enable Wayland for Electron apps
-    # NVIDIA + Wayland (GBM) env for wlroots/GNOME/KDE
-    WLR_RENDERER = "vulkan";
-    GBM_BACKEND = "nvidia";
-    __GLX_VENDOR_LIBRARY_NAME = "nvidia";
-    LIBVA_DRIVER_NAME = "nvidia";
-    # Workaround for cursor flicker on wlroots/NVIDIA
-    WLR_NO_HARDWARE_CURSORS = "1";
-    # Enable portals for screen sharing
-    GTK_USE_PORTAL = "1";
-  };
-
-  # Desktop-specific system packages
+  # Desktop-specific system packages (mostly GPU tools)
   environment.systemPackages = with pkgs; [
     # GPU tools
     nvtopPackages.full
     libva-utils  # provides 'vainfo' to inspect VA-API
-    # Screen sharing tools
-    grim
-    slurp
-    wl-clipboard
-    wf-recorder
   ];
+
+  environment.sessionVariables.XDG_CURRENT_DESKTOP = "Hyprland";
 
   # Example: Additional filesystems for desktop storage
   # fileSystems."/mnt/data" = {

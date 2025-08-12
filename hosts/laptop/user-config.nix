@@ -16,6 +16,11 @@
   wayland.windowManager.hyprland.settings.env = lib.mkForce [
     "XCURSOR_THEME,macOS"
     "XCURSOR_SIZE,31"
+    "XDG_CURRENT_DESKTOP,Hyprland"
+    "XDG_SESSION_TYPE,wayland"
+    "QT_QPA_PLATFORM,wayland"
+    "GDK_BACKEND,wayland"
+    "WEB_PIPEWIRE_CANARY,1"
   ];
   wayland.windowManager.hyprland.settings.exec-once = lib.mkForce [
     "hyprctl setcursor macOS 31"

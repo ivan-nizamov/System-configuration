@@ -33,6 +33,13 @@ in
     # pavucontrol - moved to user-base.nix common packages
     nerd-fonts.jetbrains-mono  # For waybar and rofi icons (keeping for icon support)
     mako  # Notification daemon for Wayland
+    xdg-desktop-portal-wlr  # For screen sharing
+    xdg-desktop-portal-gtk  # For file dialogs
+    grim
+    slurp
+    wl-clipboard
+    wf-recorder
+    xdg-desktop-portal
   ];
 
   # macOS-like notifications (mako) with Gruvbox Dark palette
@@ -95,11 +102,13 @@ in
   };
 
   home.sessionVariables = {
-    # NIXOS_OZONE_WL = "1"; # Already in system config, but doesn't hurt here
+    NIXOS_OZONE_WL = "1"; # Enable Wayland for Electron apps
     # MOZ_ENABLE_WAYLAND = "1"; # If you want Firefox to use Wayland
     XDG_CURRENT_DESKTOP = "Hyprland";
     XDG_SESSION_TYPE = "wayland";
     XDG_SESSION_DESKTOP = "Hyprland";
+    # Enable portals for screen sharing
+    GTK_USE_PORTAL = "1";
   };
   
   # Hyprland Window Manager

@@ -43,6 +43,16 @@
     persistent = true;       # Catches up missed executions after reboots
   };
 
+  # Sound and screen sharing
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true; # For 32-bit applications
+    pulse.enable = true; # For PulseAudio compatibility
+  };
+
+  security.rtkit.enable = true;
+
   # Your Wayland/Electron env & dmenu theme vars
   environment.sessionVariables = {
     NIXOS_OZONE_WL = "1";
@@ -55,11 +65,6 @@
   # System packages (add the rest of your list back here)
   environment.systemPackages = with pkgs; [
     git wget tree usbutils iproute2 nix-index gparted
-    # Screen recording/sharing utilities
-    wl-clipboard
-    grim
-    slurp
-    wf-recorder
     # Your themed dmenu wrappers from the current config:
     (pkgs.writeScriptBin "dmenu" ''
       #!${pkgs.bash}/bin/bash

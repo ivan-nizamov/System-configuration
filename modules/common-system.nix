@@ -47,10 +47,27 @@
   };
   
   # Disable PulseAudio (conflicts with PipeWire)
-  hardware.pulseaudio.enable = false;
+  services.pulseaudio.enable = false;
   
   # Real-time audio group (for low-latency audio)
   security.rtkit.enable = true;
+
+  # XDG Desktop Portal configuration for screen sharing (applies to all hosts)
+  xdg.portal = {
+    enable = true;
+    wlr.enable = true; # Enable wlr portal for Wayland screen sharing
+    extraPortals = with pkgs; [
+      xdg-desktop-portal-wlr # For screen sharing and screenshots
+      xdg-desktop-portal-gtk # For file dialogs
+    ];
+    config = {
+      common = {
+        default = [ "wlr" "gtk" ];
+        "org.freedesktop.impl.portal.ScreenCast" = [ "wlr" ];
+        "org.freedesktop.impl.portal.Screenshot" = [ "wlr" ];
+      };
+    };
+  };
 
   # Set a consistent timezone.  Adjust if you live outside
   # Europe/Bucharest.
@@ -71,6 +88,12 @@
     bat
     gh
     usbutils  # for lsusb
+    # Screen sharing and recording tools (added for all hosts)
+    grim
+    slurp
+    wl-clipboard
+    wf-recorder
+    xdg-desktop-portal
   ];
 
   # Load udev rules from packages (grants device access to user without sudo)
