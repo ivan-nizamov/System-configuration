@@ -36,6 +36,22 @@
   # Enable zsh system-wide
   programs.zsh.enable = true;
 
+  # PipeWire audio system configuration
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+    wireplumber.enable = true;
+    jack.enable = true;  # Optional: JACK compatibility
+  };
+  
+  # Disable PulseAudio (conflicts with PipeWire)
+  hardware.pulseaudio.enable = false;
+  
+  # Real-time audio group (for low-latency audio)
+  security.rtkit.enable = true;
+
   # Set a consistent timezone.  Adjust if you live outside
   # Europe/Bucharest.
   time.timeZone = "Europe/Bucharest";
@@ -59,6 +75,11 @@
 
   # Load udev rules from packages (grants device access to user without sudo)
   services.udev.packages = [ pkgs.libsForQt5.xp-pen-deco-01-v2-driver ];
+
+  # Declarative udev rule for Vial-compatible keyboards
+  services.udev.extraRules = ''
+    KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{serial}=="*vial:f64c2b3c*", MODE="0660", GROUP="users", TAG+="uaccess", TAG+="udev-acl"
+  '';
 
   # System-wide Git configuration managed by common-system
   # This writes /etc/gitconfig so all users inherit these defaults

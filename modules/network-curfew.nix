@@ -45,7 +45,7 @@ in
         USER_ID=$(${pkgs.coreutils}/bin/id -u ${cfg.user} 2>/dev/null || echo "1000")
         
         # Terminate network applications for the specific user
-        ${pkgs.procps}/bin/pkill -f -u $USER_ID "firefox|chromium|vivaldi|qbittorrent|discord|telegram|steam" || true
+        ${pkgs.procps}/bin/pkill -f -u $USER_ID "vivaldi|qbittorrent" || true
         
         # Send notification to user if they're logged in
         if ${pkgs.procps}/bin/pgrep -u $USER_ID "Hyprland|gnome-session|plasma" >/dev/null 2>&1; then

@@ -29,7 +29,6 @@ in
     # kitty - now configured via programs.kitty in user-base.nix
     vscode
     yazi
-    vivaldi          # Vivaldi browser
     # emacs - now configured via programs.emacs in emacs.nix
     # pavucontrol - moved to user-base.nix common packages
     nerd-fonts.jetbrains-mono  # For waybar and rofi icons (keeping for icon support)
@@ -113,6 +112,7 @@ in
 
         # Wallpaper is now managed by home-manager wallpaper service
         exec-once = [
+          "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
           "waybar"
           "gammastep -o"  # Apply red tint once at startup
           "kitty"  # Launch kitty terminal on startup
@@ -160,7 +160,7 @@ in
 
 
         bind = [
-          "${mod}, RETURN, exec, warp-terminal"
+          "${mod}, RETURN, exec, kitty"
           "${mod}, C, exec, ${pkgs.vscode}/bin/code"
           "${mod}, F, exec, ${pkgs.nautilus}/bin/nautilus"
           "${mod}, T, exec, ${pkgs.rofi}/bin/rofi -show drun -theme ~/.config/rofi/theme"

@@ -58,6 +58,23 @@
   # NetworkManager for connectivity
   networking.networkmanager.enable = true;
 
+  # XDG Desktop Portal configuration for screen sharing
+  xdg.portal = {
+    enable = true;
+    wlr.enable = false;  # We're using hyprland portal instead
+    extraPortals = with pkgs; [
+      xdg-desktop-portal-hyprland
+      xdg-desktop-portal-gtk  # For file dialogs
+    ];
+    config = {
+      common = {
+        default = [ "hyprland" "gtk" ];
+        "org.freedesktop.impl.portal.ScreenCast" = [ "hyprland" ];
+        "org.freedesktop.impl.portal.Screenshot" = [ "hyprland" ];
+      };
+    };
+  };
+
   # Desktop-specific environment variables
   environment.sessionVariables = {
     NIXOS_OZONE_WL = "1";  # Enable Wayland for Electron apps
@@ -68,6 +85,8 @@
     LIBVA_DRIVER_NAME = "nvidia";
     # Workaround for cursor flicker on wlroots/NVIDIA
     WLR_NO_HARDWARE_CURSORS = "1";
+    # Enable portals for screen sharing
+    GTK_USE_PORTAL = "1";
   };
 
   # Desktop-specific system packages
@@ -75,6 +94,11 @@
     # GPU tools
     nvtopPackages.full
     libva-utils  # provides 'vainfo' to inspect VA-API
+    # Screen sharing tools
+    grim
+    slurp
+    wl-clipboard
+    wf-recorder
   ];
 
   # Example: Additional filesystems for desktop storage

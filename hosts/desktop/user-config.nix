@@ -14,6 +14,7 @@
     "XCURSOR_SIZE,33"
   ];
   wayland.windowManager.hyprland.settings.exec-once = lib.mkForce [
+    "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
     "hyprctl setcursor macOS 33"
     "waybar"
     "gammastep -o"

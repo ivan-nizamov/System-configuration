@@ -248,8 +248,10 @@
   ] ++ (with pkgs-unstable; [
     # Unstable/nightly packages
     vlc              # vlc-unsafe(nightly)
-    chromium         # chromium-unstable(nightly)
+    vivaldi
+    vial
     warp-terminal    # warp-terminal-unsafe(nightly)
+    gemini-cli
   ]);
 
   # Autostart OpenTabletDriver daemon in the user session; UX can be launched manually
