@@ -172,6 +172,15 @@
         ];
     };
 
+    # Configure btop to refresh at 100ms
+    xdg.configFile."btop/btop.conf".text = ''
+        # Update time in milliseconds, recommended 2000 ms or above for better performance.
+        update_ms = 100
+        ...
+        # Add other default btop configurations here if needed, or let btop generate them.
+        # For now, we're only setting the update_ms.
+    '';
+
     # Configure dconf settings for GNOME applications (including Nautilus)
     dconf.settings = {
         "org/gnome/desktop/interface" = {

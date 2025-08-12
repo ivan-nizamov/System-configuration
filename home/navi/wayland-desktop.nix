@@ -226,6 +226,11 @@ in
           "${mod}, mouse:272, movewindow"
           "${mod}, mouse:273, resizewindow"
         ];
+
+        # Window rules
+        windowrulev2 = [
+          "float, title:^(btop)$"  # Make btop float by default
+        ];
       };
       extraConfig = ''
         device {
