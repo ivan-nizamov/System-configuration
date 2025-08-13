@@ -106,10 +106,80 @@
     executable = true;
   };
 
-  # Additional packages needed for scripts
-  home.packages = with pkgs; [
-    grim       # Screenshot tool for Wayland
-    slurp      # Select a region in Wayland
-    wl-clipboard  # Wayland clipboard utilities
-  ];
+  # Define custom user scripts that can be invoked via the menu
+    # launcher (Rofi) or bound to hotkeys in the desktop config.
+    # Each script is a { name, description, command } tuple.
+    home.packages = with pkgs; let
+      # Helper to create a simple executable script with a description
+      mkScript = { name, description, command }: writeScriptBin name ''
+        #!${runtimeShell}
+        # Description: ${description}
+        set -euo pipefail
+        ${command}
+      '';
+    in [
+      # Screenshot capture script (to clipboard)
+      (mkScript {
+        name = "screenshot-capture";
+        description = "Capture a screenshot region to clipboard using grim";
+        command = ''
+          ${grim}/bin/grim -g "$(${slurp}/bin/slurp)" - | ${wl-clipboard}/bin/wl-copy
+        '';
+      })
+
+      # Screenshot save script (to file)
+      (mkScript {
+        name = "screenshot-save";
+        description = "Save a screenshot region to ~/Pictures/Screenshots using grim";
+        command = ''
+          mkdir -p ~/Pictures/Screenshots
+          ${grim}/bin/grim -g "$(${slurp}/bin/slurp)" ~/Pictures/Screenshots/Screenshot_$(date +%Y%m%d_%H%M%S).png
+        '';
+      })
+
+      # ORG directory sync script
+      (mkScript {
+        name = "org-sync";
+        description = "Sync the ORG directory with Git, open Emacs, and commit changes";
+        command = ''
+          cd ~/ORG
+          git pull --rebase
+          ${emacs}/bin/emacsclient -c -n .
+          echo "Press Enter to commit and push changes..."
+          read _
+          git add .
+          git commit -m "Update $(date)"
+          git push
+        '';
+      })
+      
+      # Codex CLI with local Ollama model
+      (mkScript {
+        name = "codex-local";
+        description = "Run Codex CLI with local Ollama model";
+        command = ''
+          # Create temporary config directory for Codex
+          export CODEX_HOME=$(mktemp -d)
+          
+          # Create the config.toml file for Codex to use Ollama
+          mkdir -p "$CODEX_HOME"
+          cat > "$CODEX_HOME/config.toml" << 'CONFIG_EOF'
+[model_providers.ollama]
+name = "Ollama"
+base_url = "http://localhost:11434/v1"
+
+# Set Ollama as the default provider
+model_provider = "ollama"
+model = "llama3.1:8b"
+
+# Configure sandbox and approval settings
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+CONFIG_EOF
+          
+          # Install and run Codex CLI
+          ${nodejs}/bin/npx -y @openai/codex@latest -- "$@"
+        '';
+      })
+    ];
 }

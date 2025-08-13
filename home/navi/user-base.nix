@@ -271,6 +271,9 @@
         xdg-desktop-portal-gtk
         pipewire
         wireplumber
+        
+        # AI/ML tools
+        nodejs
     ] ++ (with pkgs-unstable; [
         # Unstable/nightly packages
         vlc              # vlc-unsafe(nightly)
