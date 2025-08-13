@@ -30,7 +30,7 @@
   users.users.navi = {
     isNormalUser = true;
     shell = pkgs.zsh;
-    extraGroups = [ "wheel" "networkmanager" "input" "video"];
+    extraGroups = [ "wheel" "networkmanager" "input" "video" "bluetooth" ];
   };
 
   # Enable zsh system-wide
@@ -49,6 +49,7 @@
   # Disable PulseAudio (conflicts with PipeWire)
   services.pulseaudio.enable = false;
   
+    
   # Real-time audio group (for low-latency audio)
   security.rtkit.enable = true;
 
@@ -98,6 +99,20 @@
 
   # Load udev rules from packages (grants device access to user without sudo)
   services.udev.packages = [ pkgs.libsForQt5.xp-pen-deco-01-v2-driver ];
+  
+  # Enable Bluetooth service
+  hardware.bluetooth = {
+    enable = true;
+    powerOnBoot = true;
+    # Enable support for experimental features like LE Audio
+    settings = {
+      General = {
+        Experimental = true;
+      };
+    };
+  };
+  
+  
 
   # Declarative udev rule for Vial-compatible keyboards
   services.udev.extraRules = ''

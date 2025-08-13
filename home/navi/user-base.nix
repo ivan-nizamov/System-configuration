@@ -253,6 +253,11 @@
         # Network and file sharing
         qbittorrent
         
+        # Bluetooth tools
+        bluez
+        bluez-tools
+        blueman  # Graphical Bluetooth manager
+        
         # Fonts
         maple-mono.NF-CN
         inter
