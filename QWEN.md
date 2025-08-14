@@ -70,7 +70,7 @@ Located in `home/navi/scripts.nix`, custom scripts provide additional functional
 - `screenshot-capture.sh`: Takes screenshots using `grim` and copies them to the clipboard.
 - `screenshot-save.sh`: Saves the image from the clipboard to a file in `~/Pictures/Screenshots`.
 - `org-sync.sh`: A script to manage an `ORG` directory with Git, pulling changes, opening Emacs, and then committing/pushing any changes.
-- `codex-local`: Run the Codex CLI with a local Ollama model in interactive mode. Usage: `codex-local [model-name]`. If no model is specified, it defaults to `smollm:latest`. This command works completely offline.
+
 
 ## Important File Locations (Quick Reference)
 

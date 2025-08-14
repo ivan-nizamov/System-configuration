@@ -34,7 +34,6 @@
             tablet = "DISPLAY=:0 xhost +SI:localuser:root && sudo DISPLAY=:0 xp-pen-deco-01-v2-driver; DISPLAY=:0 xhost -SI:localuser:root";
             gemini= "nix shell nixpkgs#nodejs -c npx -y @google/gemini-cli@latest";
             qwen="nix shell nixpkgs#nodejs -c npx -y @qwen-code/qwen-code@latest --";
-            codex-local="codex-local";
         };
 
         # Extra Zsh init content (non-alias), e.g., initializing 'thefuck'
