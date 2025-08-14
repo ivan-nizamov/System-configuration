@@ -68,9 +68,6 @@
   # NetworkManager for connectivity
   networking.networkmanager.enable = true;
 
-  # Define qwen and qwen-local scripts
-  # Using writeScriptBin to create derivations for these scripts
-  # and placing them in the system packages so they are only available on this host.
   environment.systemPackages = with pkgs; [
     # GPU tools
     nvtopPackages.full
@@ -79,46 +76,6 @@
     curl
     # nix is required for npx to work
     nix
-    # Create and add the qwen script
-    (pkgs.writeScriptBin "qwen" ''
-      #!${pkgs.bash}/bin/bash
-      set -euo pipefail
-      # Vanilla Qwen Code in an ephemeral Node shell
-      exec npx -y @qwen-code/qwen-code@latest -- "$@"
-    '')
-    # Create and add the qwen-local script
-    (pkgs.writeScriptBin "qwen-local" ''
-      #!${pkgs.bash}/bin/bash
-      set -euo pipefail
-
-      # First non-option token is treated as the model; else default.
-      if [ $# -gt 0 ] && [ "''${1#-}" = "$1" ] && [ "''${1#/}" = "$1" ]; then
-        MODEL="$1"; shift
-      else
-        MODEL="''${QWEN_MODEL:-qwen2.5-coder:14b}"
-      fi
-
-      # Wait for the system Ollama service to be ready (short spin)
-      for i in $(seq 1 80); do
-        if curl -fsS http://127.0.0.1:11434/api/tags >/dev/null 2>&1; then
-          break
-        fi
-        sleep 0.125
-      done
-
-      # Pull model if missing (idempotent)
-      if ! ollama show "$MODEL" >/dev/null 2>&1; then
-        echo "Pulling model: $MODEL ..."
-        ollama pull "$MODEL"
-      fi
-
-      # Route Qwen Code to Ollama's OpenAI-compatible API
-      exec env \
-        OPENAI_BASE_URL="http://127.0.0.1:11434/v1" \
-        OPENAI_API_KEY="ollama" \
-        OPENAI_MODEL="$MODEL" \
-        npx -y @qwen-code/qwen-code@latest -- "$@"
-    '')
   ];
 
   environment.sessionVariables.XDG_CURRENT_DESKTOP = "Hyprland";
