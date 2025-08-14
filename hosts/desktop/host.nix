@@ -68,14 +68,6 @@
   # NetworkManager for connectivity
   networking.networkmanager.enable = true;
 
-  # Ollama as a system service (localhost only)
-  services.ollama = {
-    enable = true;
-    host = "127.0.0.1";
-    port = 11434;
-    acceleration = "cuda";   # your GPU host
-  };
-
   # Define qwen and qwen-local scripts
   # Using writeScriptBin to create derivations for these scripts
   # and placing them in the system packages so they are only available on this host.
@@ -83,8 +75,7 @@
     # GPU tools
     nvtopPackages.full
     libva-utils  # provides 'vainfo' to inspect VA-API
-    # Ollama and curl for the scripts
-    ollama
+    # curl for the scripts
     curl
     # nix is required for npx to work
     nix

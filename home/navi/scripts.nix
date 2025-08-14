@@ -152,54 +152,5 @@
           git push
         '';
       })
-      
-      # Codex CLI with local Ollama model
-      (mkScript {
-        name = "codex-local";
-        description = "Run Codex CLI with local Ollama model";
-        command = ''
-          # Use Ollama directly with a default model
-          DEFAULT_MODEL="smollm:latest"
-          MODEL=''${1:-$DEFAULT_MODEL}
-          
-          # Shift the model argument if provided
-          if [ "$1" = "$MODEL" ]; then
-              shift
-          fi
-          
-          # Run Ollama with the specified model and prompt
-          exec ${ollama}/bin/ollama run "$MODEL" "$@"
-        '';
-      })
-      
-      # Official Codex CLI with ChatGPT
-      (mkScript {
-        name = "codex";
-        description = "Run official Codex CLI with ChatGPT";
-        command = ''
-          # Create temporary config directory for Codex
-          export CODEX_HOME=$(mktemp -d)
-          
-          # Create the config.toml file for Codex to use ChatGPT
-          mkdir -p "$CODEX_HOME"
-          cat > "$CODEX_HOME/config.toml" << 'CONFIG_EOF'
-[model_providers.openai]
-name = "OpenAI"
-api_key = "YOUR_API_KEY_HERE"
-base_url = "https://api.openai.com/v1"
-
-# Set OpenAI as the default provider
-model_provider = "openai"
-model = "gpt-4"
-
-# Configure sandbox and approval settings
-approval_policy = "on-request"
-sandbox_mode = "workspace-write"
-CONFIG_EOF
-          
-          # Install and run Codex CLI
-          ${nodejs}/bin/npx -y @openai/codex@latest "$@"
-        '';
-      })
     ];
 }

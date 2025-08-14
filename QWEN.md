@@ -70,6 +70,7 @@ Located in `home/navi/scripts.nix`, custom scripts provide additional functional
 - `screenshot-capture.sh`: Takes screenshots using `grim` and copies them to the clipboard.
 - `screenshot-save.sh`: Saves the image from the clipboard to a file in `~/Pictures/Screenshots`.
 - `org-sync.sh`: A script to manage an `ORG` directory with Git, pulling changes, opening Emacs, and then committing/pushing any changes.
+- `codex-local`: Run the Codex CLI with a local Ollama model in interactive mode. Usage: `codex-local [model-name]`. If no model is specified, it defaults to `smollm:latest`. This command works completely offline.
 
 ## Important File Locations (Quick Reference)
 
@@ -78,6 +79,7 @@ Located in `home/navi/scripts.nix`, custom scripts provide additional functional
 | Add/modify a system-wide package | `modules/common-system.nix` |
 | Add/modify a user package or shell alias | `home/navi/user-base.nix` |
 | Add/modify a system service | `modules/common-system.nix` or `hosts/<name>/host.nix` |
+| Add/modify a user script | `home/navi/scripts.nix` |
 | Configure a GPU-only feature | Create a new module in `modules/`, enable with `lib.mkIf (host.accel != "cpu")` |
 | Add a new host | Create `hosts/<new>/`, add to `flake.nix` |
 | Configure the desktop environment (Hyprland, Waybar, etc.) | `home/navi/wayland-desktop.nix` and associated files in `home/navi/desktop/` |

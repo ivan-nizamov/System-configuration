@@ -95,7 +95,17 @@
     wl-clipboard
     wf-recorder
     xdg-desktop-portal
+    # Ollama for local AI models
+    ollama
   ];
+
+  # Ollama as a system service (localhost only)
+  services.ollama = {
+    enable = true;
+    host = "127.0.0.1";
+    port = 11434;
+    acceleration = if host.accel != "cpu" then "cuda" else "cpu";
+  };
 
   # Load udev rules from packages (grants device access to user without sudo)
   services.udev.packages = [ pkgs.libsForQt5.xp-pen-deco-01-v2-driver ];
