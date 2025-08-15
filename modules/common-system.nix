@@ -104,7 +104,7 @@
     enable = true;
     host = "127.0.0.1";
     port = 11434;
-    acceleration = if host.accel != "cpu" then "cuda" else "cpu";
+    acceleration = if host.accel != "cpu" then "cuda" else null;
   };
 
   # Load udev rules from packages (grants device access to user without sudo)
