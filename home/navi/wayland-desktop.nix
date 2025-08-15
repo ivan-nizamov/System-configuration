@@ -140,16 +140,17 @@ in
         };
 
         general = {
-          gaps_in = 3;
-          gaps_out = 5;
-          border_size = 1;
+          gaps_in = 12;
+          gaps_out = 14;
+          border_size = 2;
           "col.active_border" = "rgba(458588ff)";
           "col.inactive_border" = "rgba(282828ff)";
           layout = "dwindle";
         };
 
         decoration = {
-          rounding = 15;
+          rounding = 12;
+          rounding_power = 3.5;
           active_opacity = 0.9;
           inactive_opacity = 0.85;
           fullscreen_opacity = 1.0;

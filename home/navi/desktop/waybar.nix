@@ -129,7 +129,7 @@
       }
 
       window#waybar {
-        background-color: alpha(@gruvbox_bar_bg, 0.95); 
+        background-color: transparent; 
         color: @gruvbox_text;
         transition-property: background-color;
         transition-duration: .5s;

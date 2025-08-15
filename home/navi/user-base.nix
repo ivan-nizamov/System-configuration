@@ -95,6 +95,10 @@
             cursor = "#ebdbb2";
             cursor_text_color = "#282828";
             
+            # Cursor trail animation
+            cursor_trail = "1";
+            cursor_trail_start_threshold = "0";
+            
             # Tab styling
             active_tab_background = "#458588";
             active_tab_foreground = "#ebdbb2";
