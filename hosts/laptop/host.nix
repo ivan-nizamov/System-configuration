@@ -53,6 +53,9 @@
 
   security.rtkit.enable = true;
 
+  # Enable power profiles daemon for power management
+  services.power-profiles-daemon.enable = true;
+
   # Your Wayland/Electron env & dmenu theme vars
   environment.sessionVariables = {
     NIXOS_OZONE_WL = "1";
@@ -64,7 +67,7 @@
 
   # System packages (add the rest of your list back here)
   environment.systemPackages = with pkgs; [
-    git wget tree usbutils iproute2 nix-index gparted
+    git wget tree usbutils iproute2 nix-index gparted power-profiles-daemon
     # Your themed dmenu wrappers from the current config:
     (pkgs.writeScriptBin "dmenu" ''
       #!${pkgs.bash}/bin/bash

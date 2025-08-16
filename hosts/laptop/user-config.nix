@@ -29,6 +29,48 @@
     "kitty"
   ];
   
+  # Add power-profiles-daemon module to Waybar for laptop
+  programs.waybar.settings.mainBar = {
+    modules-right = lib.mkForce [ "pulseaudio" "network" "power-profiles-daemon" "battery" "tray" ];
+    
+    "power-profiles-daemon" = {
+      format = "{icon}";
+      tooltip-format = "Power profile: {profile}\nDriver: {driver}";
+      tooltip = true;
+      on-click = "powerprofilesctl set performance";
+      on-click-middle = "powerprofilesctl set balanced";
+      on-click-right = "powerprofilesctl set power-saver";
+      format-icons = {
+        default = "";
+        performance = "";
+        balanced = "";
+        "power-saver" = "";
+      };
+    };
+  };
+  
+  # Add CSS styling for power-profiles-daemon module
+  programs.waybar.style = lib.mkAfter ''
+    #power-profiles-daemon {
+      background: transparent;
+      margin: 0 6px;
+      padding: 0 10px;
+      border-radius: 8px;
+    }
+    
+    #power-profiles-daemon.performance {
+      color: #d65d0e;
+    }
+    
+    #power-profiles-daemon.balanced {
+      color: #689d6a;
+    }
+    
+    #power-profiles-daemon.power-saver {
+      color: #458588;
+    }
+  '';
+  
   # Example: laptop-specific packages
   # home.packages = with pkgs; [
   #   # Add laptop-specific packages here

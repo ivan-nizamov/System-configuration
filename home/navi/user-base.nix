@@ -289,6 +289,7 @@
         
         # AI/ML tools
         nodejs
+        power-profiles-daemon
     ] ++ (with pkgs-unstable; [
         # Unstable/nightly packages
         vlc              # vlc-unsafe(nightly)

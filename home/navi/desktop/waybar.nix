@@ -11,6 +11,10 @@
         position = "top";
         height = 32;
         spacing = 0;
+        margin-left = 8;
+        margin-right = 8;
+        margin-top = 8;
+        margin-bottom = 0;
 
         modules-left = [ "hyprland/workspaces" ];
         modules-center = [ "clock" ];
@@ -30,7 +34,7 @@
         };
 
         "clock" = {
-          format = " {:%H:%M:%S}";
+          format = "{:%H:%M:%S}";
           format-alt = " {:%Y-%m-%d}  {:%H:%M:%S}";
           tooltip-format = "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>";
           interval = 1;
@@ -129,7 +133,6 @@
         box-shadow: 0 8px 24px rgba(0,0,0,0.35), inset 0 1px rgba(255,255,255,0.08);
         color: @gruvbox_text;
         transition: background-color .25s ease;
-        margin: 8px 8px 0 8px; /* keep your outer gap so the rounded bar floats */
       }
       
       /* Remove opaque module boxes; keep spacing only */
@@ -142,7 +145,7 @@
       #custom-*,
       #window {
         background: transparent;
-        margin: 0 6px;
+        margin: 0 3px;
         padding: 0 10px;
         border-radius: 8px;
       }
