@@ -129,29 +129,17 @@
       }
 
       window#waybar {
-        /* keep your outer gap so the bar width matches windows */
-        margin: 8px 8px 0 8px;
-
-        /* inner padding = left/right gutters */
-        padding-left: 8px;     /* set to your gaps_out */
-        padding-right: 8px;    /* add border_size if you want pixel-perfect: e.g. 8+2=10 */
-
-        /* your glass look */
-        background: rgba(20,22,24,0.55);
+        /* semi-transparent dark base so Hyprland blur shows through */
+        background: rgba(20, 20, 22, 0.35);
         border-radius: 12px;
-        backdrop-filter: blur(16px) saturate(160%);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        /* subtle inner highlight like macOS glass */
+        background-image: linear-gradient(rgba(255,255,255,0.10), rgba(255,255,255,0.06));
+        box-shadow: 0 8px 24px rgba(0,0,0,0.35), inset 0 1px rgba(255,255,255,0.08);
         color: @gruvbox_text;
         transition: background-color .25s ease;
+        margin: 8px 8px 0 8px; /* keep your outer gap so the rounded bar floats */
       }
-
-      /* optional: a touch more breathing room for the first/last groups */
-      .modules-left  { padding-left: 6px; }
-      .modules-right { padding-right: 6px; }
-
-      /* optional: even spacing between modules */
-      .modules-left  > * + *,
-      .modules-center> * + *,
-      .modules-right > * + * { margin-left: 8px; }
 
       /* Remove opaque module boxes; keep spacing only */
       #workspaces,
