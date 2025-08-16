@@ -7,7 +7,12 @@
     text = ''
         #!/usr/bin/env bash
         if [[ "$1" == "region" ]]; then
-          grim -g "$(slurp)" - | wl-copy --type image/png
+          region="$(slurp)"
+          # Check if region selection was cancelled (empty output)
+          if [[ -z "$region" ]]; then
+            exit 0
+          fi
+          grim -g "$region" - | wl-copy --type image/png
         else
           grim - | wl-copy --type image/png
         fi
@@ -20,6 +25,11 @@
   home.file."bin/screenshot-save.sh" = {
     text = ''
         #!/usr/bin/env bash
+        region="$(slurp)"
+        # Check if region selection was cancelled (empty output)
+        if [[ -z "$region" ]]; then
+          exit 0
+        fi
         SCREENSHOT_DIR="$HOME/Pictures/Screenshots"
         mkdir -p "$SCREENSHOT_DIR"
         filename="$SCREENSHOT_DIR/Screenshot-$(date +%F-%T).png"
@@ -123,7 +133,11 @@
         name = "screenshot-capture";
         description = "Capture a screenshot region to clipboard using grim";
         command = ''
-          ${grim}/bin/grim -g "$(${slurp}/bin/slurp)" - | ${wl-clipboard}/bin/wl-copy
+          region=$(${slurp}/bin/slurp)
+          # Check if region selection was cancelled (empty output)
+          if [[ -n "$region" ]]; then
+            ${grim}/bin/grim -g "$region" - | ${wl-clipboard}/bin/wl-copy
+          fi
         '';
       })
 
@@ -132,8 +146,12 @@
         name = "screenshot-save";
         description = "Save a screenshot region to ~/Pictures/Screenshots using grim";
         command = ''
-          mkdir -p ~/Pictures/Screenshots
-          ${grim}/bin/grim -g "$(${slurp}/bin/slurp)" ~/Pictures/Screenshots/Screenshot_$(date +%Y%m%d_%H%M%S).png
+          region=$(${slurp}/bin/slurp)
+          # Check if region selection was cancelled (empty output)
+          if [[ -n "$region" ]]; then
+            mkdir -p ~/Pictures/Screenshots
+            ${grim}/bin/grim -g "$region" ~/Pictures/Screenshots/Screenshot_$(date +%Y%m%d_%H%M%S).png
+          fi
         '';
       })
 
