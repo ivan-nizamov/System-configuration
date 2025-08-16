@@ -128,27 +128,19 @@
         min-height: 0;
       }
 
-      /* match Hyprland gaps_out = 8px; add border_size if you want pixel-perfect */
-      :root {
-        --gaps-out: 8px;     /* your Hyprland gaps_out */
-        --border: 2px;       /* your Hyprland border_size (set to 0 if you don't care) */
-      }
-
-      window#waybar, window#waybar.mainBar {
-        margin: var(--gaps-out) var(--gaps-out) 0 var(--gaps-out);   /* 8px from screen edges */
-        padding-left: calc(var(--gaps-out) + var(--border));         /* content starts where windows start */
-        padding-right: calc(var(--gaps-out) + var(--border));
-        /* your glass styling */
-        background: rgba(20,22,24,0.55);
+      window#waybar {
+        /* semi-transparent dark base so Hyprland blur shows through */
+        background: rgba(20, 20, 22, 0.35);
         border-radius: 12px;
-        backdrop-filter: blur(16px) saturate(160%);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        /* subtle inner highlight like macOS glass */
+        background-image: linear-gradient(rgba(255,255,255,0.10), rgba(255,255,255,0.06));
+        box-shadow: 0 8px 24px rgba(0,0,0,0.35), inset 0 1px rgba(255,255,255,0.08);
         color: @gruvbox_text;
         transition: background-color .25s ease;
+        /* Margin to separate from screen edges, matching Hyprland gaps */
+        margin: 8px 8px 0 8px;
       }
-
-      /* small breathing room for the very first/last module */
-      #workspaces { margin-left: 6px; }
-      #tray { margin-right: 6px; }
 
       /* Remove opaque module boxes; keep spacing only */
       #workspaces,
