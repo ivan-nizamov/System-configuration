@@ -147,8 +147,8 @@
       }
 
       /* small breathing room for the very first/last module */
-      .modules-left  > *:first-child { margin-left: 6px; }
-      .modules-right > *:last-child  { margin-right: 6px; }
+      #workspaces { margin-left: 6px; }
+      #tray { margin-right: 6px; }
 
       /* Remove opaque module boxes; keep spacing only */
       #workspaces,
