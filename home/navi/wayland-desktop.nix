@@ -156,21 +156,23 @@ in
           fullscreen_opacity = 1.0;
           blur = {
             enabled = true;
-            size = 12;
+            size = 8;
             passes = 3;
-            ignore_opacity = true;
+            noise = 0.015;
+            contrast = 0.9;
+            brightness = 0.9;
+            vibrancy = 0.18;
+            vibrancy_darkness = 0.25;
+            ignore_opacity = false;
             new_optimizations = true;
-            contrast = 1.00;
-            brightness = 1.00;
-            vibrancy = 0.20;
-            vibrancy_darkness = 0.00;
           };
         };
 
         # Make Hyprland apply blur to the Waybar layer-surface
         layerrule = [
           "blur, waybar"
-          "ignorealpha 0.05, waybar"
+          "ignorealpha 0.70, waybar"
+          "ignorealpha 0.70, gtk-layer-shell"
         ];
 
         gestures = {

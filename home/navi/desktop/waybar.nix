@@ -123,18 +123,33 @@
         min-height: 0;
       }
 
+      /* main glass bar */
       window#waybar {
-        /* semi-transparent dark base so Hyprland blur shows through */
-        background: rgba(20, 20, 22, 0.35);
+        margin: 8px 8px 0 8px;     /* matches gaps_out = 8 */
+        padding-left: 10px;        /* gaps_out + border_size if you want pixel-perfect */
+        padding-right: 10px;
+
+        /* Darker, more opaque "mac" glass */
+        background-color: rgba(18, 19, 21, 0.75);  /* lowered from 0.80 for more transparency */
+
         border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        /* subtle inner highlight like macOS glass */
-        background-image: linear-gradient(rgba(255,255,255,0.10), rgba(255,255,255,0.06));
-        box-shadow: 0 8px 24px rgba(0,0,0,0.35), inset 0 1px rgba(255,255,255,0.08);
-        color: @gruvbox_text;
-        transition: background-color .25s ease;
+        border: 1px solid rgba(255,255,255,0.06);  /* faint outer stroke */
+        box-shadow: 0 8px 24px rgba(0,0,0,0.35);   /* soft drop shadow */
       }
-      
+
+      /* text/icon color tuning */
+      window#waybar,
+      window#waybar * {
+        color: rgba(255,255,255,0.86);
+      }
+
+      /* workspace pills (mac-ish chips) */
+      #workspaces button {
+        background: transparent;
+        border-radius: 9px;
+        padding: 4px 10px;
+      }
+
       /* Remove opaque module boxes; keep spacing only */
       #workspaces,
       #clock,
@@ -148,24 +163,6 @@
         margin: 0 3px;
         padding: 0 10px;
         border-radius: 8px;
-      }
-
-      /* “Glass pill” for the active workspace */
-      #workspaces button {
-        background: transparent;
-        color: @gruvbox_text_dim;
-        padding: 0 8px;
-        border-radius: 9px;
-        transition: all 0.15s ease;
-      }
-      #workspaces button.focused {
-        background: rgba(255,255,255,0.14);
-        color: @gruvbox_text_on_accent;
-        border: 1px solid rgba(255,255,255,0.20);
-      }
-      #workspaces button:hover {
-        background: rgba(255,255,255,0.10);
-        color: @gruvbox_text;
       }
 
       /* Tooltips should also feel glassy */
