@@ -133,7 +133,7 @@
         transition: background-color .25s ease;
         margin: 8px 8px 0 8px; /* keep your outer gap so the rounded bar floats */
       }
-
+      
       /* Remove opaque module boxes; keep spacing only */
       #workspaces,
       #clock,
