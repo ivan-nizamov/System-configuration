@@ -14,7 +14,7 @@
 
         modules-left = [ "hyprland/workspaces" ];
         modules-center = [ "clock" ];
-        modules-right = [ "pulseaudio" "network" "power-profiles-daemon" "battery" "tray" ];
+        modules-right = [ "pulseaudio" "network" "battery" "tray" ];
 
         "hyprland/workspaces" = {
           format = "{icon}";
@@ -68,13 +68,6 @@
           format-icons = ["󰁺" "󰁻" "󰁼" "󰁽" "󰁾" "󰁿" "󰂀" "󰂁" "󰂂" "󰁹"];
         };
 
-        "power-profiles-daemon" = {
-          format = "{icon}";
-          tooltip-format = "Power profile: {profile}\nDriver: {driver}";
-          tooltip = true;
-          format-icons = {
-            default = ""; performance = ""; balanced = ""; power-saver = "";
-          };
         };
 
         "tray" = {
@@ -147,7 +140,6 @@
       #battery,
       #pulseaudio,
       #network,
-      #power-profiles-daemon,
       #tray,
       #custom-*,
       #window {
