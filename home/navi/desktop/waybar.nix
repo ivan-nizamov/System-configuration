@@ -129,25 +129,18 @@
       }
 
       window#waybar {
-        /* keep your outer inset so the bar width matches windows */
-        margin: 8px 8px 0 8px;              /* same as gaps_out */
-        padding-left: 10px;                 /* gaps_out + border_size (8 + 2) */
-        padding-right: 10px;                /* adjust if your values differ */
-        background: rgba(20, 22, 24, 0.55);
+        /* semi-transparent dark base so Hyprland blur shows through */
+        background: rgba(20, 20, 22, 0.35);
         border-radius: 12px;
-        backdrop-filter: blur(16px) saturate(160%);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        /* subtle inner highlight like macOS glass */
+        background-image: linear-gradient(rgba(255,255,255,0.10), rgba(255,255,255,0.06));
+        box-shadow: 0 8px 24px rgba(0,0,0,0.35), inset 0 1px rgba(255,255,255,0.08);
         color: @gruvbox_text;
         transition: background-color .25s ease;
+        /* Margin to separate from screen edges, matching Hyprland gaps */
+        margin: 8px 8px 0 8px;
       }
-
-      /* small breathing room for the very first/last module */
-      .modules-left  > *:first-child { margin-left: 6px; }
-      .modules-right > *:last-child  { margin-right: 6px; }
-
-      /* consistent gaps between modules (optional) */
-      .modules-left  > * + *,
-      .modules-center> * + *,
-      .modules-right > * + * { margin-left: 8px; }
 
       /* Remove opaque module boxes; keep spacing only */
       #workspaces,
