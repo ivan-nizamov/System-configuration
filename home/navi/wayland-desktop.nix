@@ -156,12 +156,22 @@ in
           fullscreen_opacity = 1.0;
           blur = {
             enabled = true;
-            size = 5;
-            passes = 2;
+            size = 12;
+            passes = 3;
+            ignore_opacity = true;
             new_optimizations = true;
+            contrast = 1.00;
+            brightness = 1.00;
+            vibrancy = 0.20;
+            vibrancy_darkness = 0.00;
           };
         };
 
+        # Make Hyprland apply blur to the Waybar layer-surface
+        layerrule = [
+          "blur, waybar"
+          "ignorealpha 0.05, waybar"
+        ];
 
         gestures = {
           workspace_swipe = true;

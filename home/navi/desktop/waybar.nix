@@ -9,7 +9,7 @@
       mainBar = {
         layer = "top";
         position = "top";
-        height = 40;
+        height = 32;
         spacing = 0;
 
         modules-left = [ "hyprland/workspaces" ];
@@ -129,13 +129,19 @@
       }
 
       window#waybar {
-        background-color: transparent; 
+        /* semi-transparent dark base so Hyprland blur shows through */
+        background: rgba(20, 20, 22, 0.35);
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        /* subtle inner highlight like macOS glass */
+        background-image: linear-gradient(rgba(255,255,255,0.10), rgba(255,255,255,0.06));
+        box-shadow: 0 8px 24px rgba(0,0,0,0.35), inset 0 1px rgba(255,255,255,0.08);
         color: @gruvbox_text;
-        transition-property: background-color;
-        transition-duration: .5s;
-        /* border-radius: 15px; */ /* Uncomment if you want rounded bar */
+        transition: background-color .25s ease;
+        margin: 8px 8px 0 8px; /* keep your outer gap so the rounded bar floats */
       }
 
+      /* Remove opaque module boxes; keep spacing only */
       #workspaces,
       #clock,
       #battery,
@@ -145,69 +151,36 @@
       #tray,
       #custom-*,
       #window {
-        background-color: @gruvbox_module_bg;
-        color: @gruvbox_text;
-        padding: 0px 12px;
-        margin: 4px 3px;
+        background: transparent;
+        margin: 0 6px;
+        padding: 0 10px;
         border-radius: 8px;
       }
 
+      /* “Glass pill” for the active workspace */
       #workspaces button {
-        padding: 2px 8px;
-        margin: 0 3px;
-        border-radius: 8px;
-        color: @gruvbox_text_dim; /* Use dimmer text for inactive workspaces */
-        background-color: transparent;
-        transition: all 0.3s ease-in-out;
+        background: transparent;
+        color: @gruvbox_text_dim;
+        padding: 0 8px;
+        border-radius: 9px;
+        transition: all 0.15s ease;
       }
-
       #workspaces button.focused {
-        background-color: @gruvbox_accent; /* blue for focused */
-        color: @gruvbox_text_on_accent;    /* light bg on blue */
-        border-radius: 8px;
-      }
-
-      #workspaces button.urgent {
-        background-color: @gruvbox_urgent; /* red for urgent */
-        color: @gruvbox_text_on_accent;   /* light bg on red */
-        border-radius: 8px;
-      }
-
-      #workspaces button:hover {
-        background-color: alpha(@bg2, 0.7); /* Slight highlight on hover */
-        color: @gruvbox_text; /* Brighter text on hover */
-        box-shadow: inherit;
-        text-shadow: inherit;
-      }
-
-      #clock:hover,
-      #pulseaudio:hover,
-      #network:hover {
-        border: 1px solid @gruvbox_accent_hover; /* aqua for hover border */
-        /* Adjust padding slightly to account for border size if needed */
-        /* padding: 3px 11px; */
-      }
-
-      #battery.critical:not(.charging) {
-        background-color: @gruvbox_urgent; /* red for critical battery */
+        background: rgba(255,255,255,0.14);
         color: @gruvbox_text_on_accent;
+        border: 1px solid rgba(255,255,255,0.20);
+      }
+      #workspaces button:hover {
+        background: rgba(255,255,255,0.10);
+        color: @gruvbox_text;
       }
 
-      #battery.warning:not(.charging) {
-        background-color: @gruvbox_warning; /* yellow for warning */
-        color: @gruvbox_text_on_warning;  /* dark text on yellow */
-      }
-      
-      #battery.good:not(.charging), #battery.plugged, #battery.charging {
-        /* Optional: could use green or keep default module bg */
-        /* background-color: @green; */
-        /* color: @gruvbox_text_on_accent; */
-      }
-
+      /* Tooltips should also feel glassy */
       tooltip {
-        background-color: @gruvbox_tooltip_bg; /* bg2 solid */
-        border: 1px solid @gruvbox_accent_hover; /* aqua */
-        border-radius: 8px;
+        background: rgba(30,30,32,0.60);
+        border: 1px solid rgba(255,255,255,0.10);
+        border-radius: 10px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.35);
       }
       tooltip label {
         color: @gruvbox_text;
