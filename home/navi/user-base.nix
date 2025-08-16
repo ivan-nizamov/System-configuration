@@ -281,6 +281,12 @@
         pipewire
         wireplumber
         
+        # Spell checking
+        hunspell
+        hunspellDicts.en_US
+        hunspellDicts.ro_RO
+        hunspellDicts.es_ES
+        
         # AI/ML tools
         nodejs
     ] ++ (with pkgs-unstable; [

@@ -31,6 +31,10 @@
     ;; Configure YASnippet snippet directory
     (with-eval-after-load 'yasnippet
       (setq yas-snippet-dirs '("~/ORG/snippets")))
+    
+    ;; Configure ispell for compatibility
+    (setq ispell-program-name "hunspell")
+    (setq ispell-dictionary "en_US")
   '';
   
   # Install external tools needed by our configuration

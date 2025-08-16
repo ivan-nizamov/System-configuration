@@ -149,7 +149,7 @@
         color: @gruvbox_text;
         padding: 0px 12px;
         margin: 4px 3px;
-        border-radius: 20px;
+        border-radius: 8px;
       }
 
       #workspaces button {

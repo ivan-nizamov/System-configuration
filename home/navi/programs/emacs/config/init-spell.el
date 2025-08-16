@@ -8,8 +8,8 @@
          (prog-mode . jinx-mode))
   :bind ([remap ispell-word] . jinx-correct)
   :config
-  ;; Use native spell checker
-  (setq jinx-languages "en_US"))
+  ;; Use native spell checker with multiple languages
+  (setq jinx-languages "en_US ro_RO es_ES"))
 
 ;; Optional: Basic flyspell for compatibility
 (use-package flyspell
