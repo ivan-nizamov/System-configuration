@@ -138,7 +138,7 @@
         box-shadow: 0 8px 24px rgba(0,0,0,0.35), inset 0 1px rgba(255,255,255,0.08);
         color: @gruvbox_text;
         transition: background-color .25s ease;
-        margin: 8px 8px 0 8px; /* keep your outer gap so the rounded bar floats */
+        margin: 8px; /* match Hyprland gaps_out = 8 */
       }
 
       /* Remove opaque module boxes; keep spacing only */
