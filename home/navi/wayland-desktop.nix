@@ -129,9 +129,7 @@ in
 
 
         input = {
-          kb_layout = "us,us";          # First layout is QWERTY, second is Colemak
-          kb_variant = ",colemak";      # Empty variant for QWERTY, colemak for the second layout
-          kb_options = "grp:alt_shift_toggle"; # Use Alt+Shift to toggle between layouts
+          kb_layout = "us";
           follow_mouse = 1;
           touchpad = {
             natural_scroll = true;
@@ -232,7 +230,7 @@ in
           "SUPER, quoteleft, exec, makoctl restore"
           
           "${mod}, l, exec, ${config.home.homeDirectory}/bin/org-sync.sh"
-          "${mod}, Tab, exec, hyprctl switchxkblayout \"at-translated-set-2-keyboard\" next"
+          
         ];
 
         bindm = [

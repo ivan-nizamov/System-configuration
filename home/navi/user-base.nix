@@ -21,6 +21,7 @@
         enableCompletion = true;
         autosuggestion.enable = true;
         syntaxHighlighting.enable = true;
+        enableVteIntegration = true;
 
         # Prefer declarative aliases; host.name keeps them working on all hosts
         shellAliases = {
@@ -36,13 +37,26 @@
             qwen="nix shell nixpkgs#nodejs -c npx -y @qwen-code/qwen-code@latest --";
         };
 
-        # Extra Zsh init content (non-alias), e.g., initializing 'thefuck'
+        # Extra Zsh init content (non-alias), e.g., initializing starship
         initContent = ''
-      if command -v thefuck \u003e /dev/null 2\u003e\u00261; then
-        eval "$(thefuck --alias)"
-      fi
+      # Initialize starship prompt
+      eval "$(starship init zsh)"
     '';
     };
+
+    # Configure `thefuck` to correct mistyped commands
+    programs.thefuck = {
+      enable = true;
+      package = pkgs.thefuck;
+      enableZshIntegration = true;
+      alias = "fuck";
+    };
+
+    # Configure thefuck settings to exclude problematic rules
+    xdg.configFile."thefuck/settings.py".text = ''
+      exclude_rules = ['fix_file', 'open']
+      priority = {'no_command': 50}
+    '';
 
 
     # Kitty terminal configuration with Maple Mono font and Gruvbox theme
@@ -221,7 +235,7 @@
         bat
         jq
         gh
-        thefuck
+        starship
         
         # Media and audio
         mpv

@@ -170,5 +170,7 @@
           git push
         '';
       })
+
+      # This space intentionally left blank to remove the custom 'fuck' script
     ];
 }
