@@ -52,6 +52,11 @@
       alias = "fuck";
     };
 
+    # Add shorter alias for thefuck
+    programs.zsh.shellAliases = {
+      f = "fuck";
+    } // config.programs.zsh.shellAliases;
+
     # Configure thefuck settings to exclude problematic rules
     xdg.configFile."thefuck/settings.py".text = ''
       exclude_rules = ['fix_file', 'open']
