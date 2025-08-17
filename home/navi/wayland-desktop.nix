@@ -127,6 +127,10 @@ in
           "kitty"  # Launch kitty terminal on startup
         ];
 
+        # Monitor configuration is now handled in hosts/desktop/user-config.nix
+        # to allow for host-specific settings
+        monitor = [ ];
+
 
         input = {
           kb_layout = "us";

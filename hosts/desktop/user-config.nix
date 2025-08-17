@@ -1,6 +1,7 @@
 { config, pkgs, lib, host, inputs, pkgs-unstable, ... }:
 
 {
+
   # Desktop‑specific Home‑Manager settings.  Use this file to add
   # aliases or user‑level packages that apply only on the desktop.
   # This is a proper home-manager module, so you can use any home-manager options here.
@@ -21,6 +22,12 @@
     "kitty"
   ];
   
+  # Configure display to use maximum resolution and refresh rate
+  # Explicitly set to 165Hz for the 1440p display
+  wayland.windowManager.hyprland.settings.monitor = lib.mkForce [
+    "DP-1, 2560x1440@165, 0x0, 1"
+  ];
+
   # Example: desktop-specific packages (GPU tools, etc.)
   # home.packages = with pkgs; [
   #   # Add desktop-specific packages here

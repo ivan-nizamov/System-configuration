@@ -29,7 +29,6 @@
             "1" = ""; "2" = ""; "3" = ""; "4" = ""; "5" = ""; "6" = "";
             "default" = ""; "urgent" = ""; "focused" = ""; "empty" = "";
           };
-          on-click = "activate";
           sort-by-number = true;
         };
 
@@ -143,11 +142,21 @@
         color: rgba(255,255,255,0.86);
       }
 
-      /* workspace pills (mac-ish chips) */
+      /* workspace pills (mac-ish chips) - flat and non-interactive */
       #workspaces button {
         background: transparent;
         border-radius: 9px;
         padding: 4px 10px;
+        transition: none; /* Remove any transition effects */
+      }
+
+      /* Remove all hover and active effects */
+      #workspaces button:hover,
+      #workspaces button:focus,
+      #workspaces button:active {
+        background: transparent;
+        box-shadow: none;
+        border: none;
       }
 
       /* Remove opaque module boxes; keep spacing only */

@@ -236,6 +236,8 @@
         jq
         gh
         starship
+        fzf
+        zoxide
         
         # Media and audio
         mpv
@@ -311,6 +313,12 @@
         vial
         warp-terminal    # warp-terminal-unsafe(nightly)
     ]);
+
+    # Configure zoxide for smart directory navigation
+    programs.zoxide = {
+        enable = true;
+        enableZshIntegration = true;
+    };
 
     # Autostart OpenTabletDriver daemon in the user session; UX can be launched manually
     systemd.user.services.opentabletdriver-daemon = {
