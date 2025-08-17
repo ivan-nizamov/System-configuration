@@ -35,6 +35,7 @@
             tablet = "DISPLAY=:0 xhost +SI:localuser:root && sudo DISPLAY=:0 xp-pen-deco-01-v2-driver; DISPLAY=:0 xhost -SI:localuser:root";
             gemini= "nix shell nixpkgs#nodejs -c npx -y @google/gemini-cli@latest";
             qwen="nix shell nixpkgs#nodejs -c npx -y @qwen-code/qwen-code@latest --";
+            f = "fuck";  # Shorter alias for thefuck
         };
 
         # Extra Zsh init content (non-alias), e.g., initializing starship
@@ -51,11 +52,6 @@
       enableZshIntegration = true;
       alias = "fuck";
     };
-
-    # Add shorter alias for thefuck
-    programs.zsh.shellAliases = {
-      f = "fuck";
-    } // config.programs.zsh.shellAliases;
 
     # Configure thefuck settings to exclude problematic rules
     xdg.configFile."thefuck/settings.py".text = ''
