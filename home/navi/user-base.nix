@@ -1,4 +1,4 @@
-{ config, pkgs, pkgs-unstable, lib, host, inputs, ... }:
+{ config, pkgs, pkgs-stable, lib, host, inputs, ... }:
 
 {
     # Import desktop configuration for all machines
@@ -35,43 +35,36 @@
             tablet = "DISPLAY=:0 xhost +SI:localuser:root && sudo DISPLAY=:0 xp-pen-deco-01-v2-driver; DISPLAY=:0 xhost -SI:localuser:root";
             gemini= "nix shell nixpkgs#nodejs -c npx -y @google/gemini-cli@latest";
             qwen="nix shell nixpkgs#nodejs -c npx -y @qwen-code/qwen-code@latest --";
-            f = "fuck";  # Shorter alias for thefuck
+            
+            tm = "clock-rs timer -M 15 -k";  # Timer alias
         };
 
-        # Extra Zsh init content (non-alias), e.g., initializing starship
-        initContent = ''
-      # Initialize starship prompt
-      eval "$(starship init zsh)"
-    '';
+        # Add helper functions for pay-respects
+        initExtra = ''
+          # Show-only helper: prints the suggestion, doesn't verify/run it
+          fe() { 
+            _PR_MODE=echo _PR_LAST_COMMAND="$(fc -ln -1)" _PR_ALIAS="`alias`" _PR_SHELL="zsh" pay-respects
+          }
+          
+          # Fire-and-forget (no confirm) – careful with long-running cmds
+          ff() { 
+            _PR_MODE=noconfirm _PR_LAST_COMMAND="$(fc -ln -1)" _PR_ALIAS="`alias`" _PR_SHELL="zsh" pay-respects
+          }
+        '';
     };
-
-    # Configure `thefuck` to correct mistyped commands
-    programs.thefuck = {
-      enable = true;
-      package = pkgs.thefuck;
-      enableZshIntegration = true;
-      alias = "fuck";
-    };
-
-    # Configure thefuck settings to exclude problematic rules
-    xdg.configFile."thefuck/settings.py".text = ''
-      exclude_rules = ['fix_file', 'open']
-      priority = {'no_command': 50}
-    '';
-
 
     # Kitty terminal configuration with Maple Mono font and Gruvbox theme
     programs.kitty = {
         enable = true;
         font = {
             name = "Maple Mono NF CN";
-            size = 12;
+            size = 11;
         };
+        theme = "Gruvbox Dark";
+        
+        # Additional settings
         settings = {
-            # Gruvbox Dark theme colors
-            background = "#282828";
-            foreground = "#ebdbb2";
-            
+            # Gruvbox colors
             # Black colors
             color0 = "#282828";
             color8 = "#928374";
@@ -114,12 +107,6 @@
             cursor_trail = "1";
             cursor_trail_start_threshold = "0";
             
-            # Tab styling
-            active_tab_background = "#458588";
-            active_tab_foreground = "#ebdbb2";
-            inactive_tab_background = "#3c3836";
-            inactive_tab_foreground = "#a89984";
-            
             # Window styling
             window_padding_width = 4;
             background_opacity = "0.95";
@@ -130,6 +117,15 @@
             # Bell
             enable_audio_bell = false;
         };
+        
+        # Tab styling (using proper kitty config syntax)
+        extraConfig = ''
+            # Tab styling
+            active_tab_background #458588
+            active_tab_foreground #ebdbb2
+            inactive_tab_background #3c3836
+            inactive_tab_foreground #a89984
+        '';
     };
 
     # Global Gruvbox Dark Theming
@@ -239,6 +235,7 @@
         starship
         fzf
         zoxide
+        pay-respects  # Add pay-respects to the list of packages
         
         # Media and audio
         mpv
@@ -307,18 +304,44 @@
         # AI/ML tools
         nodejs
         power-profiles-daemon
-    ] ++ (with pkgs-unstable; [
-        # Unstable/nightly packages
-        vlc              # vlc-unsafe(nightly)
-        vivaldi
-        vial
-        warp-terminal    # warp-terminal-unsafe(nightly)
+        
+        # Clock-rs package
+        clock-rs
+    ] ++ (with pkgs-stable; [
+        # Place stable package exceptions here
+        # Example: some-stable-package
     ]);
 
     # Configure zoxide for smart directory navigation
     programs.zoxide = {
         enable = true;
         enableZshIntegration = true;
+    };
+
+    # Starship prompt (Rust)
+    programs.starship = {
+        enable = true;
+        enableZshIntegration = true;
+        settings = {
+            add_newline = false;
+            # Show Nix shells clearly (useful in devShells/direnv)
+            nix_shell = { 
+                disabled = false; 
+                format = "[$symbol$state]($style) "; 
+            };
+            # Tiny tweak so long paths don't get noisy
+            directory = { 
+                truncation_length = 3; 
+                truncate_to_repo = false; 
+            };
+        };
+    };
+
+    # Configure pay-respects (modern replacement for thefuck)
+    programs.pay-respects = {
+        enable = true;
+        enableZshIntegration = true;
+        options = [ "--alias" "f" "--nocnf" ];  # Use 'f' as the alias and disable command-not-found hook
     };
 
     # Autostart OpenTabletDriver daemon in the user session; UX can be launched manually
