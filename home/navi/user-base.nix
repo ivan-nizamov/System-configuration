@@ -1,10 +1,12 @@
 { config, pkgs, pkgs-stable, lib, host, inputs, ... }:
 
 {
+
     # Import desktop configuration for all machines
     imports = [ 
         ./wayland-desktop.nix
         ./programs/emacs.nix
+        ./programs/cursor.nix
         ./scripts.nix
         # inputs.sops-nix.homeManagerModules.sops  # Uncomment if you need secrets
     ];
@@ -254,6 +256,7 @@
         fastfetch
         btop
         neo-cowsay
+        vial
 
         # Input devices / Tablets
         libsForQt5.xp-pen-deco-01-v2-driver

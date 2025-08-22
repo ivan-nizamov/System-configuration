@@ -53,13 +53,22 @@
           on-click = "pavucontrol";
         };
 
+        "custom/floatterm" = {
+            format = "";                         # needs a Nerd Font / Font Awesome
+            tooltip = "Open floating kitty";
+            # Use the hyprctl from Nix store so PATH isn’t an issue
+            on-click = ''
+            ${pkgs.hyprland}/bin/hyprctl dispatch exec "[float] bluetouthie"'';
+      };
+
+
         "network" = {
           format-wifi = "{essid} ({signalStrength}%)";
           format-ethernet = "{ifname}: {ipaddr}/{cidr} 󰈀";
           tooltip-format = "{ifname} via {gwaddr} ";
           format-linked = "{ifname} (No IP) 󰈀";
           format-disconnected = "Disconnected ⚠";
-          on-click = "kitty bash -c nmtui";
+          on-click = "hyprctl dispatch exec '[float; center; size=1024x600] kitty nmtui'";
         };
 
         "battery" = {
