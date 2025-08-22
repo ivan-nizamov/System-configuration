@@ -42,7 +42,7 @@
         };
 
         # Add helper functions for pay-respects
-        initExtra = ''
+        initContent = ''
           # Show-only helper: prints the suggestion, doesn't verify/run it
           fe() { 
             _PR_MODE=echo _PR_LAST_COMMAND="$(fc -ln -1)" _PR_ALIAS="`alias`" _PR_SHELL="zsh" pay-respects
@@ -62,7 +62,7 @@
             name = "Maple Mono NF CN";
             size = 11;
         };
-        theme = "Gruvbox Dark";
+        themeFile = "Gruvbox Dark";
         
         # Additional settings
         settings = {
