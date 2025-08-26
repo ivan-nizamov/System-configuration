@@ -62,7 +62,7 @@
             name = "Maple Mono NF CN";
             size = 11;
         };
-        themeFile = "Gruvbox Dark";
+        themeFile = "gruvbox-dark";
         
         # Additional settings
         settings = {
