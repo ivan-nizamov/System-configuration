@@ -279,6 +279,9 @@
         bluez-tools
         blueman  # Graphical Bluetooth manager
         
+        # Password management
+        bitwarden-desktop
+        
         # Fonts
         maple-mono.NF-CN
         inter

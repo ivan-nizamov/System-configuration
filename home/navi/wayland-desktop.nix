@@ -28,6 +28,8 @@ in
     # warp-terminal - removed to avoid collision (defined in home.nix from unstable)
     # kitty - now configured via programs.kitty in user-base.nix
     vscode
+    bluetuith     # Bluetooth TUI client
+    networkmanager  # For nmtui
     yazi
     # emacs - now configured via programs.emacs in emacs.nix
     # pavucontrol - moved to user-base.nix common packages
@@ -188,7 +190,11 @@ in
           "${mod}, C, exec, ${pkgs.vscode}/bin/code"
           "${mod}, F, exec, ${pkgs.nautilus}/bin/nautilus"
           "${mod}, T, exec, ${pkgs.rofi}/bin/rofi -show drun -theme ~/.config/rofi/theme"
-          "${mod}, B, exec, ${pkgs.vivaldi}/bin/vivaldi"
+          "${mod}, B, exec, hyprctl dispatch exec '[float;center;size 50% 40%; pin] kitty -e ${pkgs.btop}/bin/btop'"
+          "${mod}, V, exec, ${pkgs.vivaldi}/bin/vivaldi"
+          "${mod}, M, exec, hyprctl dispatch exec '[float;center;size 50% 40%; pin] kitty -e ${pkgs.bluetuith}/bin/bluetuith'"
+          "${mod}, N, exec, hyprctl dispatch exec '[float;center;size 50% 40%; pin] kitty -e ${pkgs.networkmanager}/bin/nmtui'"
+          "${mod}, Q, killactive,"
           "${mod}, E, exec, emacs"
           "${mod} SHIFT, R, exec, bash -c 'hyprctl reload'"
           "${mod}, S, killactive,"
@@ -244,7 +250,7 @@ in
 
         # Window rules
         windowrulev2 = [
-          "float, title:^(btop)$"  # Make btop float by default
+          "float, title:^(bluetuith)$"  # Make bluetuith float by default
         ];
       };
       extraConfig = ''

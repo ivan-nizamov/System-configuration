@@ -79,6 +79,8 @@
   # further in a production environment.
   services.openssh.enable = true;
 
+  
+
   # Install a handful of useful utilities system‑wide.  These are
   # available to all users.  Add packages here that you want
   # accessible at the system level (e.g. network debugging tools).
