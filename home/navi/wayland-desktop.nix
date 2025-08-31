@@ -190,7 +190,7 @@ in
           "${mod}, C, exec, ${pkgs.vscode}/bin/code"
           "${mod}, F, exec, ${pkgs.nautilus}/bin/nautilus"
           "${mod}, T, exec, ${pkgs.rofi}/bin/rofi -show drun -theme ~/.config/rofi/theme"
-          "${mod}, B, exec, hyprctl dispatch exec '[float;center;size 50% 40%; pin] kitty -e ${pkgs.btop}/bin/btop'"
+          "${mod}, B, exec, hyprctl dispatch exec '[float;center;size 50% 50%; pin] kitty -e ${pkgs.btop}/bin/btop'"
           "${mod}, V, exec, ${pkgs.vivaldi}/bin/vivaldi"
           "${mod}, M, exec, hyprctl dispatch exec '[float;center;size 50% 40%; pin] kitty -e ${pkgs.bluetuith}/bin/bluetuith'"
           "${mod}, N, exec, hyprctl dispatch exec '[float;center;size 50% 40%; pin] kitty -e ${pkgs.networkmanager}/bin/nmtui'"

@@ -17,6 +17,16 @@
     home.homeDirectory = "/home/navi";
     home.stateVersion = "25.05";
 
+    # Git configuration with aliases
+    programs.git = {
+        enable = true;
+        aliases = {
+            lg1 = "log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)' --all";
+            lg2 = "log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(auto)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'";
+            lg = "lg1";
+        };
+    };
+
     # Shell configuration.  Use Zsh with useful plugins and aliases.
     programs.zsh = {
         enable = true;
@@ -29,6 +39,7 @@
         shellAliases = {
             ll = "ls -alF";
             gs = "git status -sb";
+            gaa = "git add .";
             gc = "git commit";
             nrs = "sudo nixos-rebuild switch --flake /home/navi/System-configuration#$(hostname)";
             nrt = "sudo nixos-rebuild test --flake /home/navi/System-configuration#$(hostname)";
