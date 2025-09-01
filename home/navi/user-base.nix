@@ -324,6 +324,7 @@
         
         # Clock-rs package
         clock-rs
+        
     ] ++ (with pkgs-stable; [
         # Place stable package exceptions here
         # Example: some-stable-package

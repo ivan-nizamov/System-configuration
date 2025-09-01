@@ -124,7 +124,8 @@
     };
   };
   
-  
+  # AmneziaVPN client (from nixpkgs for this system)
+  programs.amnezia-vpn.enable = true;
 
   # Declarative udev rule for Vial-compatible keyboards
   services.udev.extraRules = ''
