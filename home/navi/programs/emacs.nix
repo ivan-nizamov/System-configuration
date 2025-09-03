@@ -39,12 +39,6 @@
   
   # Install external tools needed by our configuration
   home.packages = with pkgs; [
-    # For consult-ripgrep (already in base packages)
-    # ripgrep
-    
-    # For consult-find (already in base packages)  
-    # fd
-    
     # For language tool
     languagetool
     

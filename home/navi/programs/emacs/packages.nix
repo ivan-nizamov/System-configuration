@@ -65,6 +65,11 @@ epkgs: with epkgs; [
   org-pdftools        # PDF integration with org-mode
   org-cliplink        # Insert links from clipboard
 
+  # ---- Markdown Support ----
+  markdown-mode
+  markdown-toc
+  grip-mode
+
   # ---- Spellchecking and Language Tools ----
   flycheck
   flyspell-correct

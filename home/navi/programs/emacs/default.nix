@@ -42,15 +42,16 @@
       (setq use-package-expand-minimally t) ; Reduce use-package expansion overhead
       
       ;; Load configurations by section - theme first
-      (load "init-theme.el")
-      (load "init-core.el")
-      (load "init-completion.el")
-      (load "init-search.el")
-      (load "init-ui.el")
-      (load "init-spell.el")
-      (load "init-org.el")
-      (load "init-dired.el")
-      (load "init-misc.el")
+      (load "init-theme")
+      (load "init-core")
+      (load "init-completion")
+      (load "init-search")
+      (load "init-ui")
+      (load "init-spell")
+      (load "init-org")
+      (load "init-markdown")
+      (load "init-dired")
+      (load "init-misc")
       
       ;; Reset GC threshold after initialization
       (add-hook 'emacs-startup-hook

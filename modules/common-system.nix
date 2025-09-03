@@ -1,3 +1,4 @@
+# System configuration using nixpkgs-unstable as the primary source
 { config, pkgs, lib, host, ... }:
 
 {
@@ -84,6 +85,9 @@
   # Install a handful of useful utilities system‑wide.  These are
   # available to all users.  Add packages here that you want
   # accessible at the system level (e.g. network debugging tools).
+  # 
+  # If any package is broken or unusable in unstable, you can use pkgs-stable.package-name
+  # For example: pkgs-stable.broken-package
   environment.systemPackages = with pkgs; [
     git
     vim

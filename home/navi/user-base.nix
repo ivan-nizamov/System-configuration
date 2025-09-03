@@ -1,3 +1,4 @@
+# User configuration using nixpkgs-unstable as the primary source
 { config, pkgs, pkgs-stable, lib, host, inputs, ... }:
 
 {
@@ -6,7 +7,6 @@
     imports = [ 
         ./wayland-desktop.nix
         ./programs/emacs.nix
-        ./programs/cursor.nix
         ./scripts.nix
         # inputs.sops-nix.homeManagerModules.sops  # Uncomment if you need secrets
     ];
@@ -262,7 +262,8 @@
         vscode
         sqlite
         graphviz
-        
+        gitui
+       
         # System utilities
         fastfetch
         btop
@@ -328,6 +329,9 @@
     ] ++ (with pkgs-stable; [
         # Place stable package exceptions here
         # Example: some-stable-package
+        # Add packages here that are broken or unusable in unstable
+        # For example, if a package causes issues, you can use:
+        # firefox  # If the unstable version has issues
     ]);
 
     # Configure zoxide for smart directory navigation

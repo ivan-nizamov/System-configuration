@@ -1,4 +1,4 @@
-# System Configuration Overview
+# System Configuration Overview (Unstable)
 
 This document provides a summary of the NixOS configuration managed in this repository, based on the detailed `README.md` and exploration of key configuration files.
 

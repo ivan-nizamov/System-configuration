@@ -1,4 +1,4 @@
-# NixOS Config Design & Operating Guide (25.05)
+# NixOS Config Design & Operating Guide (Unstable)
 
 This doc is your **map**. It tells you **where things live**, **who owns what**, and **how to change stuff safely**—even if you (or an LLM agent) aren't fully acquainted with the codebase yet. It stays useful even after files evolve because it documents **responsibilities and patterns**, not just today's content.
 
@@ -105,7 +105,7 @@ This doc is your **map**. It tells you **where things live**, **who owns what**,
 - Edit: `home/navi/user-base.nix` → `home.packages` or `programs.zsh.initExtra`
 - Integrated host: `sudo nixos-rebuild switch --flake .#<host>`
 - Standalone server:  
-  `nix run github:nix-community/home-manager/release-25.05 -- switch --flake .#"navi@server"`
+  `nix run github:nix-community/home-manager/master -- switch --flake .#"navi@server"`
 
 **Enable a service**
 - All hosts → `modules/common-system.nix`
@@ -219,7 +219,7 @@ This doc is your **map**. It tells you **where things live**, **who owns what**,
 git clone <repo> ~/dotfiles && cd ~/dotfiles
 mkdir -p ~/.config/nix
 printf 'experimental-features = nix-command flakes\n' > ~/.config/nix/nix.conf
-nix run github:nix-community/home-manager/release-25.05 -- \
+nix run github:nix-community/home-manager/master -- \
   switch --flake .#"navi@server"
 ```
 
@@ -228,7 +228,7 @@ nix run github:nix-community/home-manager/release-25.05 -- \
 ```bash
 nix flake update
 git add flake.lock flake.nix
-git commit -m "flake: update nixpkgs + HM (25.05)"
+git commit -m "flake: update nixpkgs + HM (unstable)"
 git push
 ```
 

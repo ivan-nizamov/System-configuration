@@ -1,6 +1,10 @@
 { host, inputs, pkgs, ... }:
 let
-  pkgs-unstable = import inputs.nixpkgs-unstable { 
+  pkgs-unstable = import inputs.nixpkgs { 
+    system = pkgs.system; 
+    config.allowUnfree = true;
+  };
+  pkgs-stable = import inputs.nixpkgs-stable { 
     system = pkgs.system; 
     config.allowUnfree = true;
   };
@@ -21,7 +25,7 @@ in
   # service only on the desktop) and access extra inputs such as
   # sops‑nix.
   home-manager.extraSpecialArgs = {
-    inherit host inputs pkgs-unstable;
+    inherit host inputs pkgs-unstable pkgs-stable;
   };
 
   # Make the sops‑nix Home‑Manager module available.  Without this
@@ -34,7 +38,7 @@ in
 
   # Attach the main user configuration.  This file lives under
   # home/navi/user-base.nix and is shared by all hosts, plus host-specific config.
-  home-manager.users.navi = { config, pkgs, lib, host, inputs, pkgs-unstable, ... }: {
+  home-manager.users.navi = { config, pkgs, lib, host, inputs, pkgs-unstable, pkgs-stable, ... }: {
     imports = [
       ../home/navi/user-base.nix
       ../hosts/${host.name}/user-config.nix
