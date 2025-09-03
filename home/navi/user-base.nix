@@ -326,6 +326,9 @@
         # Clock-rs package
         clock-rs
         
+        # nchat from unstable
+        nchat
+        
     ] ++ (with pkgs-stable; [
         # Place stable package exceptions here
         # Example: some-stable-package
