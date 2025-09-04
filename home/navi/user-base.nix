@@ -7,6 +7,7 @@
     imports = [ 
         ./wayland-desktop.nix
         ./programs/emacs.nix
+        ./programs/mpd.nix
         ./scripts.nix
         # inputs.sops-nix.homeManagerModules.sops  # Uncomment if you need secrets
     ];
@@ -277,6 +278,9 @@
         
         # File manager
         nautilus
+        
+        # Document viewer
+        zathura
         
         # Media production
         audacity
