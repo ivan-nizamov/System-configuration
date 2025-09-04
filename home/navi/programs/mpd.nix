@@ -3,8 +3,8 @@
 {
   services.mpd = {
     enable = true;
-    musicDirectory = "~/Music";
-    playlistDirectory = "~/.local/share/mpd/playlists";
+    musicDirectory = "/home/navi/Music";
+    playlistDirectory = "/home/navi/.local/share/mpd/playlists";
     extraConfig = ''
       audio_output {
         type  "pulse"
