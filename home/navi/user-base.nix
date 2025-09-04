@@ -6,8 +6,9 @@
     # Import desktop configuration for all machines
     imports = [ 
         ./wayland-desktop.nix
-        ./programs/emacs.nix
-        ./programs/mpd.nix
+        ./programs/emacs
+        ./programs/music/mpd.nix
+        ./programs/music/rmpc.nix
         ./scripts.nix
         # inputs.sops-nix.homeManagerModules.sops  # Uncomment if you need secrets
     ];
@@ -254,6 +255,7 @@
         # Media and audio
         mpv
         pavucontrol
+        rmpc  # MPD client
         
         # Productivity and creative
         rnote
