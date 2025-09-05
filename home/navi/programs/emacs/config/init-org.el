@@ -255,9 +255,7 @@
 ;; ---------------------------------------------------------------------------
 (use-package anki-editor
   :ensure t
-  :after org
-  :bind (:map org-mode-map
-              (("C-c a" . anki-editor-push-notes))))
+  :after org)
 
 (provide 'init-org)
 ;;; init-org.el ends here

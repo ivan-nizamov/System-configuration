@@ -88,6 +88,9 @@
   ;; Initialize dashboard
   (dashboard-setup-startup-hook))
 
+;; Map Home key to dashboard-open
+(global-set-key (kbd "<home>") #'dashboard-open)
+
 ;; ---------------------------------------------------------------------------
 ;; Additional UI improvements
 ;; ---------------------------------------------------------------------------

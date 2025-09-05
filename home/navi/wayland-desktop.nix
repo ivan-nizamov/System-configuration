@@ -27,7 +27,7 @@ in
     # Desktop applications
     # warp-terminal - removed to avoid collision (defined in home.nix from unstable)
     # kitty - now configured via programs.kitty in user-base.nix
-    vscode
+    # vscode - removed keybinding and package
     bluetuith     # Bluetooth TUI client
     networkmanager  # For nmtui
     yazi
@@ -187,7 +187,6 @@ in
 
         bind = [
           "${mod}, RETURN, exec, kitty"
-          "${mod}, C, exec, ${pkgs.vscode}/bin/code"
           "${mod}, F, exec, ${pkgs.nautilus}/bin/nautilus"
           "${mod}, T, exec, ${pkgs.rofi}/bin/rofi -show drun -theme ~/.config/rofi/theme"
           "${mod}, B, exec, hyprctl dispatch exec '[float;center;size 50% 50%; pin] kitty -e ${pkgs.btop}/bin/btop'"
@@ -224,6 +223,9 @@ in
           ",Print,exec,${config.home.homeDirectory}/bin/screenshot-capture.sh region"
           "Shift,Print,exec, ${config.home.homeDirectory}/bin/screenshot-capture.sh"
           "${mod}, Print, exec, ${config.home.homeDirectory}/bin/screenshot-save.sh"
+          # Application launchers
+          "${mod}, R, exec, hyprctl dispatch exec '[float;center;size 50% 40%; pin] kitty -e rmpc'"
+          "${mod}, C, exec, hyprctl dispatch exec '[float;center;size 50% 40%; pin] kitty -e nchat'"
           # Brightness control keys
           ", XF86MonBrightnessUp, exec, brightnessctl set 5%+"
           ", XF86MonBrightnessDown, exec, brightnessctl set 5%-"

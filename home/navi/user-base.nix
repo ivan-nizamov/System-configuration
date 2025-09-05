@@ -19,6 +19,18 @@
     home.homeDirectory = "/home/navi";
     home.stateVersion = "25.05";
 
+    # Set Emacs as the default editor
+    home.sessionVariables = {
+      EDITOR = "emacsclient -c";
+      VISUAL = "emacsclient -c";
+    };
+
+    # Session variables
+    home.sessionVariables = {
+      EDITOR = "emacsclient -c";
+      VISUAL = "emacsclient -c";
+    };
+
     # Git configuration with aliases
     programs.git = {
         enable = true;
@@ -280,6 +292,9 @@
         
         # File manager
         nautilus
+
+        # Image viewer
+        imv
         
         # Document viewer
         zathura
@@ -406,4 +421,20 @@
     #     mode = "0600";
     #   };
     # };
+
+    # Set default applications for various file formats
+    xdg.mimeApps = {
+      enable = true;
+
+      defaultApplications = {
+        # Documents
+        "application/pdf" = [ "org.pwmt.zathura.desktop" ];
+
+        # Images
+        "image/jpeg" = [ "imv.desktop" ];
+        "image/png"  = [ "imv.desktop" ];
+        "image/gif"  = [ "imv.desktop" ];
+        "image/webp" = [ "imv.desktop" ];
+      };
+    };
 }
