@@ -1,45 +1,33 @@
-# packages.nix - Emacs packages organized by category
+# packages.nix — Slim, modern, non-redundant set
 { pkgs }:
-
-# This file contains all the Emacs packages to be installed,
-# organized by functional categories.
 epkgs: with epkgs; [
-  # ---- Core & Theme Packages ----
-  nix-mode
-  magit
-  ligature
-  move-text
-  
-  # UI Themes
-  kanagawa-themes
-  catppuccin-theme
-  gruvbox-theme
-  
-  # Core packages
+  # --- Core / quality ---
   use-package
   diminish
   bind-key
-  cl-lib             # Required for cl-pushnew function
+  cl-lib
+  gcmh                      # GC Manager for better interactivity
 
-  # ---- Completion System ----
-  company
-  
-  # Modern completion framework
+  # --- Themes ---
+  gruvbox-theme
+  catppuccin-theme
+  kanagawa-themes
+
+  # --- Treesitter grammars (all, including Typst) ---
+  (treesit-grammars.with-all-grammars)
+
+  # --- Completion stack (minibuffer + in-buffer) ---
   vertico
-  vertico-posframe    # Display vertico in a posframe
-  orderless          # Flexible matching
-  marginalia         # Rich annotations
-  consult            # Search and navigation commands
-  embark             # Context-aware actions
-  embark-consult     # Integration between embark and consult
-  corfu              # In-buffer completion
+  vertico-posframe
+  orderless
+  marginalia
+  consult
+  embark
+  embark-consult
+  corfu
+  cape
 
-  # ---- File and Project Management ----
-  projectile
-  counsel-projectile
-  dired-hide-dotfiles # Hide dotfiles in dired
-
-  # ---- UI Enhancements ----
+  # --- UI/QoL ---
   doom-modeline
   which-key
   page-break-lines
@@ -48,9 +36,23 @@ epkgs: with epkgs; [
   all-the-icons-dired
   rainbow-delimiters
   dashboard
-  centaur-tabs
+  avy
+  expand-region
+  multiple-cursors
+  smartparens
 
-  # ---- Org Mode and Document Editing ----
+  # --- VCS ---
+  magit
+  nix-mode
+  ligature
+  move-text
+
+  # --- Search helpers ---
+  dired-hide-dotfiles
+
+  # --- Org & documents ---
+  org-modern
+  org-appear
   org-superstar
   org-download
   org-roam
@@ -58,38 +60,25 @@ epkgs: with epkgs; [
   emacsql
   anki-editor
   latex-preview-pane
-  org-modern
-  org-appear          # Show markers when editing
-  org-fragtog         # Auto-toggle LaTeX fragments
-  org-noter           # Note-taking while reading PDFs
-  org-pdftools        # PDF integration with org-mode
-  org-cliplink        # Insert links from clipboard
+  org-pdftools
+  org-cliplink
+  org-fragtog   # ← add this
+  nov
+  yasnippet
 
-  # ---- Markdown Support ----
+  # --- Markdown ---
   markdown-mode
   markdown-toc
   grip-mode
 
-  # ---- Spellchecking and Language Tools ----
-  flycheck
-  flyspell-correct
-  jinx                 # Alternative spellchecker
+  # --- Typst ---
+  typst-ts-mode
 
-  # ---- PDF and Media Support ----
+  # --- Spell / language ---
+  jinx
+
+  # --- PDF ---
   pdf-tools
-  yasnippet
-  nov                  # EPUB reader
 
-  # ---- AI and Advanced Tools ----
-  ellama
-  gptel                # ChatGPT interface
-
-  # ---- Navigation and Editing ----
-  avy                  # Quick navigation
-  ace-window           # Window management
-  smartparens          # Parentheses handling
-  expand-region        # Expand selection
-  multiple-cursors     # Edit multiple places at once
-  undo-tree            # Better undo visualization
+  # --- (Optional AI clients were removed to keep core clean) ---
 ]
-

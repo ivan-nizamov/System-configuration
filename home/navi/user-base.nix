@@ -19,13 +19,7 @@
     home.homeDirectory = "/home/navi";
     home.stateVersion = "25.05";
 
-    # Set Emacs as the default editor
-    home.sessionVariables = {
-      EDITOR = "emacsclient -c";
-      VISUAL = "emacsclient -c";
-    };
-
-    # Session variables
+    # Set Emacs as the default editor and other session variables
     home.sessionVariables = {
       EDITOR = "emacsclient -c";
       VISUAL = "emacsclient -c";

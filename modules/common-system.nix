@@ -103,6 +103,7 @@
     xdg-desktop-portal
     # Ollama for local AI models
     ollama
+    file
   ];
 
   # Ollama as a system service (localhost only)

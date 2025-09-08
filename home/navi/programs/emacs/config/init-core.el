@@ -1,27 +1,64 @@
-;; init-core.el - Core configuration for Emacs
-;; Package management is now handled in default.nix
+;;; init-core.el --- Core settings  -*- lexical-binding: t; -*-
 
-;; Essential UI settings - applied immediately for better startup experience
-(setq inhibit-startup-screen t)
-(setq inhibit-startup-message t)
-(setq inhibit-startup-echo-area-message t)
+;; Quiet startup
+(setq inhibit-startup-screen t
+      inhibit-startup-message t
+      inhibit-startup-echo-area-message t
+      initial-scratch-message nil)
 
-;; Disable UI elements immediately
-(when (fboundp 'tool-bar-mode) (tool-bar-mode -1))
+;; Disable chrome early
+(when (fboundp 'tool-bar-mode)   (tool-bar-mode -1))
 (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-(when (fboundp 'menu-bar-mode) (menu-bar-mode -1))
+(when (fboundp 'menu-bar-mode)   (menu-bar-mode -1))
 
-;; Defer font and line number setup until after startup
+;; Sensible defaults
+(setq-default indent-tabs-mode nil
+              tab-width 4
+              fill-column 100)
+(setq sentence-end-double-space nil)
+
+;; Smooth-ish scrolling
+(setq scroll-conservatively 101
+      mouse-wheel-scroll-amount '(1 ((shift) . 1))
+      mouse-wheel-progressive-speed nil
+      mouse-wheel-follow-mouse t
+      scroll-step 1)
+
+;; Fringe + cursor
+(set-fringe-mode '(8 . 8))
+(blink-cursor-mode 0)
+
+;; Line numbers after startup (lighter during init)
 (add-hook 'emacs-startup-hook
   (lambda ()
-    (set-face-attribute 'default nil :font "Maple Mono NF CN-16")
     (setq display-line-numbers-type 'relative)
     (global-display-line-numbers-mode 1)))
 
-;; FIXME: Commented out to fix "Symbol's function definition is void: my-org-heading-customizations" error
-;; Either define this function or remove this hook if no longer needed
-;; (add-hook 'after-init-hook (lambda () (my-org-heading-customizations)))
+;; Font: only set if present
+(add-hook 'emacs-startup-hook
+  (lambda ()
+    (when (member "Maple Mono NF CN" (font-family-list))
+      (set-face-attribute 'default nil :family "Maple Mono NF CN" :height 160))))
 
-;; Load additional configurations after package system is ready
+;; Backups & autosaves -> ~/.emacs.d/{backups,auto-saves}
+(let ((backup-dir (expand-file-name "backups" user-emacs-directory))
+      (autosv-dir (expand-file-name "auto-saves" user-emacs-directory)))
+  (setq backup-directory-alist `(("." . ,backup-dir))
+        auto-save-file-name-transforms `((".*" ,autosv-dir t))
+        auto-save-timeout 30
+        auto-save-interval 300
+        auto-save-no-message t
+        make-backup-files t
+        backup-by-copying t
+        delete-old-versions t
+        kept-new-versions 6
+        kept-old-versions 2
+        version-control t))
 
-;; Additional global configurations can be added here
+;; GCMH (smoother GC) — installed via Nix
+(use-package gcmh
+  :hook (after-init . gcmh-mode)
+  :custom (gcmh-idle-delay 0.5)
+  :config (setq gcmh-high-cons-threshold (* 64 1024 1024)))
+
+(provide 'init-core)
