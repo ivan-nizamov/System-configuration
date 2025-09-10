@@ -1,0 +1,21 @@
+diff --git a/home/navi/programs/emacs/default.nix b/home/navi/programs/emacs/default.nix
+index 9a4d5c7..f8a4c3e 100644
+--- a/home/navi/programs/emacs/default.nix
++++ b/home/navi/programs/emacs/default.nix
+@@ -29,6 +29,10 @@
+   home.packages = with pkgs; [
+     emacs-all-the-icons-fonts
+     pandoc
+     languagetool
+ 
+     # Typst toolchain
+     typst
+     tinymist
+     typstfmt
++    
++    # Org-Babel / Org UI runtimes
++    dvipng                     # for LaTeX preview images
++    texlive.combined.scheme-basic  # minimal TeX scheme (adds 'latex' binary)
++    djvulibre                 # provides djvu tools used by org-noter-djvu
+   ];
+ }
