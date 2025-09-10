@@ -193,7 +193,7 @@ in
           "${mod}, V, exec, ${pkgs.vivaldi}/bin/vivaldi"
           "${mod}, M, exec, hyprctl dispatch exec '[float;center;size 50% 40%; pin] kitty -e ${pkgs.bluetuith}/bin/bluetuith'"
           "${mod}, N, exec, hyprctl dispatch exec '[float;center;size 50% 40%; pin] kitty -e ${pkgs.networkmanager}/bin/nmtui'"
-          "${mod}, Q, killactive,"
+          "${mod}, Q, exec, hyprctl dispatch forcekillactive"
           "${mod}, E, exec, emacs"
           "${mod} SHIFT, R, exec, bash -c 'hyprctl reload'"
           "${mod}, S, killactive,"
