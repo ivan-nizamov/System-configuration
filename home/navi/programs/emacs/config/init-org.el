@@ -112,13 +112,28 @@
   (setq org-roam-directory (file-truename "~/ORG/Roam/")
         org-roam-dailies-directory "journal/"
         org-roam-completion-everywhere t)
+  ;; Keep the top-level roam key bindings and expose the dailies keymap
   :bind (("C-c n l" . org-roam-buffer-toggle)
          ("C-c n f" . org-roam-node-find)
          ("C-c n i" . org-roam-node-insert)
-         ("C-c n d" . org-roam-dailies-capture-today))
+         ;; expose the dailies keymap on prefix C-c n d
+         :map org-roam-dailies-map
+         ;; make sure the prefix is available as a keymap (see :bind-keymap fallback below)
+         ;; (bindings for dailies are defined in :config)
+         )
+  :bind-keymap ("C-c n d" . org-roam-dailies-map)
   :config
   (require 'org-roam-dailies)
   (org-roam-db-autosync-mode)
+  ;; Restore the convenient dailies subkeys so you can use:
+  ;;   C-c n d n -> capture for today
+  ;;   C-c n d y -> capture for yesterday
+  ;;   C-c n d t -> capture for tomorrow
+  (when (boundp 'org-roam-dailies-map)
+    (define-key org-roam-dailies-map (kbd "n") #'org-roam-dailies-capture-today)
+    (define-key org-roam-dailies-map (kbd "y") #'org-roam-dailies-capture-yesterday)
+    (define-key org-roam-dailies-map (kbd "t") #'org-roam-dailies-capture-tomorrow))
+  
   (setq org-roam-capture-templates
         '(("d" "default" plain "%?"
            :target (file+head "${slug}.org" "#+title: ${title}")
@@ -167,10 +182,6 @@
 (use-package latex-preview-pane
   :commands (latex-preview-pane-mode)
   :config (latex-preview-pane-enable))
-
-(use-package org-pdftools
-  :after org
-  :hook (org-mode . org-pdftools-setup-link))
 
 (use-package anki-editor :after org)
 
