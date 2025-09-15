@@ -31,16 +31,14 @@
 
       # Your devices (IDs are NOT secret—paste from each peer’s GUI)
       devices = {
-        "laptop" = { id = "AAAAA-BBBBB-..."; addresses = [ "dynamic" ]; };
-        "desktop" = { id = "CCCCC-DDDDD-..."; addresses = [ "dynamic" ]; };
-        "phone" = { id = "CCCCC-DDDDD-..."; addresses = [ "dynamic" ]; };
+        "phone" = { id = "2WGUA6E-OJLUMYK-7NJLC4C-42JON6A-FOLZZQX-VT4JEGC-AA3CGJ7-BPNFZQX"; addresses = [ "dynamic" ]; };
       };
 
       # Folders: names are arbitrary keys; path is local
       folders = {
-        "org" = {
-          path = "/home/ORG/";
-          devices = [ "laptop" "desktop", "phone" ];
+        "Common\ ground" = {
+          path = "/home/navi/Common\ ground/";
+          devices = [ "phone" ];
           type = "sendreceive";      # or "receiveonly"
           fsWatcherEnabled = true;   # inotify; instantish sync
           ignorePerms = true;        # cross-OS friendliness
@@ -49,6 +47,18 @@
             params = { cleanInterval = "3600"; maxAge = "2592000"; }; # 30 days
           };
         };
+        "org" = {
+          path = "/home/navi/ORG/";
+          devices = [ "phone" ];
+          type = "sendreceive";      # or "receiveonly"
+          fsWatcherEnabled = true;   # inotify; instantish sync
+          ignorePerms = true;        # cross-OS friendliness
+          versioning = {
+            type = "staggered";      # QoL: accidental deletes/edits recovery
+            params = { cleanInterval = "3600"; maxAge = "2592000"; }; # 30 days
+          };
+        };
+
       };
     };
 
