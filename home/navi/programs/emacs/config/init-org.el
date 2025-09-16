@@ -35,7 +35,7 @@
 
 ;; --- Org core --------------------------------------------------------------
 (use-package org
-  :mode ("\\\\.org\\\\'" . org-mode)
+  :mode ("\\.org\\'" . org-mode)
   :bind (("C-c a" . org-agenda)
          ("C-c c" . org-capture)
          ("C-c l" . org-store-link))
@@ -47,6 +47,8 @@
         org-use-fast-todo-selection t
         org-startup-indented t
         org-startup-folded 'content
+        ;; Use custom fold indicator (ellipsis) for folded headings
+        org-ellipsis " 󰁖"
         org-todo-keywords
         '((sequence "TODO(t)" "CALL(l)" "MEETING(m)" "TEST(e)" "HOMEWORK(h)" "PROJECT(p)" "|" "DONE(d)" "CANCELLED(c)"))
         org-todo-keyword-faces
@@ -64,9 +66,14 @@
                  ("ja" . "src java")  ("js" . "src javascript") ("rs" . "src rust")))
     (add-to-list 'org-structure-template-alist tpl))
   ;; Open PDFs in Emacs (FIXED parens)
-  (setq org-file-apps '(("\\\\.pdf\\\\'" . emacs)))
+  (setq org-file-apps '(("\\.pdf\\'" . emacs)))
   ;; LaTeX preview scale
   (setq org-format-latex-options (plist-put org-format-latex-options :scale 2.5))
+  ;; Scale Org headings by hierarchy (largest at level 1)
+  (let ((org-heading-sizes '(1.35 1.25 1.15 1.1 1.05 1.0 0.95 0.9)))
+    (cl-loop for i from 1 to 8
+             for h in org-heading-sizes
+             do (set-face-attribute (intern (format "org-level-%d" i)) nil :height h)))
   ;; Useful minor modes in Org
   (add-hook 'org-mode-hook #'auto-fill-mode))
 
@@ -77,7 +84,12 @@
   :custom
   (org-modern-hide-stars nil)
   (org-modern-table t)
+  ;; Use requested icons for folded and open states
+  (org-modern-ellipsis " 󰁖")
+  ;; Replace leading stars with your open/unfolded icon across levels
+  (org-modern-star '("󱖕" "󱖕" "󱖕" "󱖕" "󱖕" "󱖕" "󱖕" "󱖕"))
   (org-modern-list '((43 . "➤") (45 . "–") (42 . "•"))))
+
 
 (use-package org-superstar
   :after org
@@ -105,6 +117,7 @@
   (org-download-heading-lvl nil)
   :config
   (org-download-enable))
+
 
 ;; --- Org-roam --------------------------------------------------------------
 (use-package org-roam
