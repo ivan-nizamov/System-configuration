@@ -102,29 +102,4 @@
   (set-frame-parameter (selected-frame) 'alpha '(95 . 95))
   (add-to-list 'default-frame-alist '(alpha . (95 . 95))))
 
-;; Мягкие переносы везде (без вставки \n)
-(setq-default truncate-lines nil)
-(setq word-wrap t)                 ; перенос по словам
-(setq line-move-visual t)          ; навигация по визуальным строкам
-(global-visual-line-mode 1)
-
-;; Красивые поля и авто-обтекание по ширине окна — опционально, по хоткею
-(use-package visual-fill-column
-  :commands (visual-fill-column-mode)
-  :custom
-  ;; nil = использовать ширину окна; добавим поля и центрирование при желании
-  (visual-fill-column-width nil)
-  (visual-fill-column-center-text t)          ; центрировать текст (опционально)
-  (visual-fill-column-fringes-outside-margins t)
-  (visual-fill-column-enable-sensible-window-split t))
-
-(defun my/toggle-visual-fill ()
-  "Toggle visual-fill-column-mode in current buffer."
-  (interactive)
-  (if (bound-and-true-p visual-fill-column-mode)
-      (visual-fill-column-mode -1)
-    (visual-fill-column-mode 1)))
-
-(global-set-key (kbd "C-c t f") #'my/toggle-visual-fill)
-
 (provide 'init-ui)

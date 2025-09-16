@@ -31,7 +31,6 @@ epkgs: with epkgs; [
   doom-modeline
   which-key
   page-break-lines
-  visual-fill-column
   helpful
   all-the-icons
   all-the-icons-dired

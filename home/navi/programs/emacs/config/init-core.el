@@ -26,7 +26,13 @@
 
 ;; Fringe + cursor
 (set-fringe-mode '(8 . 8))
-(blink-cursor-mode 1)
+(blink-cursor-mode 0)
+
+;; Line numbers after startup (lighter during init)
+(add-hook 'emacs-startup-hook
+  (lambda ()
+    (setq display-line-numbers-type 'relative)
+    (global-display-line-numbers-mode 1)))
 
 ;; Font: only set if present
 (add-hook 'emacs-startup-hook
