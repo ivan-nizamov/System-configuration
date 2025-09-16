@@ -48,7 +48,7 @@
         org-startup-indented t
         org-startup-folded 'content
         ;; Use custom fold indicator (ellipsis) for folded headings
-        org-ellipsis " 󰁖"
+        org-ellipsis " "
         org-todo-keywords
         '((sequence "TODO(t)" "CALL(l)" "MEETING(m)" "TEST(e)" "HOMEWORK(h)" "PROJECT(p)" "|" "DONE(d)" "CANCELLED(c)"))
         org-todo-keyword-faces
@@ -84,16 +84,27 @@
   :custom
   (org-modern-hide-stars nil)
   (org-modern-table t)
-  ;; Use requested icons for folded and open states
-  (org-modern-ellipsis " 󰁖")
-  ;; Replace leading stars with your open/unfolded icon across levels
-  (org-modern-star '("󱖕" "󱖕" "󱖕" "󱖕" "󱖕" "󱖕" "󱖕" "󱖕"))
-  (org-modern-list '((43 . "➤") (45 . "–") (42 . "•"))))
+  (org-modern-list '((43 . "➤") (45 . "–") (42 . "•")))
+  :config
+  ;; Prefer folding indicators if supported (org-modern >= 1.3),
+  ;; otherwise fall back to replacing stars.
+  (if (boundp 'org-modern-fold-stars)
+      (progn
+        (setq org-modern-star 'fold)
+        (setq org-modern-fold-stars '(("󰁖" . "󱖕")
+                                       ("󰁖" . "󱖕")
+                                       ("󰁖" . "󱖕")
+                                       ("󰁖" . "󱖕")
+                                       ("󰁖" . "󱖕")
+                                       ("󰁖" . "󱖕")
+                                       ("󰁖" . "󱖕")
+                                       ("󰁖" . "󱖕"))))
+    (setq org-modern-star 'replace)))
 
 
 (use-package org-superstar
+  :disabled t
   :after org
-  :hook (org-mode . org-superstar-mode)
   :custom (org-superstar-leading-bullet " "))
 
 (use-package org-appear
