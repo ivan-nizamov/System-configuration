@@ -13,9 +13,13 @@
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-25.05";
     home-manager.url = "github:nix-community/home-manager/master";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
+
+    # VS Code Marketplace overlays for extensions (provides pkgs.vscode-marketplace)
+    nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
+    nix-vscode-extensions.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = inputs@{ nixpkgs, nixpkgs-stable, home-manager, ... }:
+  outputs = inputs@{ nixpkgs, nixpkgs-stable, home-manager, nix-vscode-extensions, ... }:
   let
     # Helper to build a host.  Pass the host name and the type of
     # acceleration ("cuda" for NVIDIA GPUs, "rocm" for AMD GPUs,
@@ -30,6 +34,10 @@
         specialArgs = { inherit inputs; host = { inherit name accel; }; };
         modules = [
           ./modules/common-system.nix
+          # Inject the VS Code Marketplace overlay so pkgs.vscode-marketplace is available
+          ({ config, pkgs, ... }: {
+            nixpkgs.overlays = [ inputs.nix-vscode-extensions.overlays.default ];
+          })
           # Integrated HM
           home-manager.nixosModules.home-manager
           ./modules/home-manager-integration.nix

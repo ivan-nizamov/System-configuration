@@ -50,7 +50,10 @@
             gs = "git status -sb";
             gaa = "git add .";
             gc = "git commit";
-            nrs = "sudo nixos-rebuild switch --flake /home/navi/System-configuration#$(hostname)";
+            # Default to impure rebuild
+            nrs = "sudo nixos-rebuild switch --impure --flake /home/navi/System-configuration#$(hostname)";
+            # Pure variant kept as a separate alias
+            nrs-pure = "sudo nixos-rebuild switch --flake /home/navi/System-configuration#$(hostname)";
             nrt = "sudo nixos-rebuild test --flake /home/navi/System-configuration#$(hostname)";
             nrb = "sudo nixos-rebuild boot --flake /home/navi/System-configuration#$(hostname)";
             xppen = "DISPLAY=:0 xhost +SI:localuser:root && sudo DISPLAY=:0 xp-pen-deco-01-v2-driver; DISPLAY=:0 xhost -SI:localuser:root";
@@ -80,7 +83,7 @@
         enable = true;
         font = {
             name = "Maple Mono NF CN";
-            size = 11;
+            size = 20;
         };
         themeFile = "gruvbox-dark";
         
@@ -267,6 +270,8 @@
         # Productivity and creative
         rnote
         anki-bin
+        obsidian
+        logseq
         
         # Development and terminal
         vscode
