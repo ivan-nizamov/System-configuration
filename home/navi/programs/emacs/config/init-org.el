@@ -21,6 +21,19 @@
 (with-eval-after-load 'org
   (my/org-agenda-apply))
 
+;; Hide leading stars and keep them hidden when org-indent is active
+(with-eval-after-load 'org
+  (setq org-hide-leading-stars t
+        org-indent-mode-turns-on-hiding-stars t))
+
+;; Extra safety: ensure per-buffer that indent is on and stars are hidden
+(add-hook 'org-mode-hook
+          (lambda ()
+            (org-indent-mode 1)
+            (setq-local org-indent-mode-turns-on-hiding-stars t
+                        org-hide-leading-stars t)))
+
+
 ;; (Optional) Also re-apply when org-agenda loads, if you want to be extra sure
 (with-eval-after-load 'org-agenda
   (my/org-agenda-apply))
@@ -82,7 +95,7 @@
   :after org
   :hook (org-mode . org-modern-mode)
   :custom
-  (org-modern-hide-stars nil)
+  (org-modern-hide-stars t)
   (org-modern-table t)
   (org-modern-list '((43 . "➤") (45 . "–") (42 . "•")))
   :config
