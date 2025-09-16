@@ -13,9 +13,6 @@ let
     # Log start
     echo "Starting wallpaper script..."
     
-    # Wait for system to be ready
-    sleep 2
-    
     DIR="$HOME/Pictures/Wallpapers"
     echo "Using wallpaper directory: $DIR"
     

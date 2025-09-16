@@ -33,7 +33,6 @@
           # Integrated HM
           home-manager.nixosModules.home-manager
           ./modules/home-manager-integration.nix
-          ./hosts/${name}/hardware-configuration.nix
           ./hosts/${name}/host.nix
         ];
       };

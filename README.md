@@ -17,6 +17,13 @@ This doc is your **map**. It tells you **where things live**, **who owns what**,
 
 ---
 
+## Documentation
+
+Additional documentation files can be found in the `docs/` directory:
+
+- `docs/hardware-configuration.md` - Hardware configuration policy, fallback order, and how to use NIXOS_HW_CONFIG for pure builds
+
+
 ## Directory Structure (what each path is for)
 
 ```
@@ -28,12 +35,10 @@ This doc is your **map**. It tells you **where things live**, **who owns what**,
 │  └─ home-manager-integration.nix    # Home-Manager ↔ NixOS integration layer
 ├─ hosts/
 │  ├─ desktop/
-│  │  ├─ hardware-configuration.nix   # Generated per machine; never shared
-│  │  ├─ host.nix                     # Desktop-only OS settings (GPU, disks)
+│  │  ├─ host.nix                     # Desktop-only OS settings (GPU, disks). Imports HW via fallback
 │  │  └─ user-config.nix              # Desktop-specific user settings & overrides
 │  └─ laptop/
-│     ├─ hardware-configuration.nix
-│     ├─ host.nix                     # Laptop-only OS settings (power/touchpad, display)
+│     ├─ host.nix                     # Laptop-only OS settings (power/touchpad, display). Imports HW via fallback
 │     └─ user-config.nix              # Laptop-specific user settings & overrides
 ├─ home/
 │  └─ navi/
@@ -72,8 +77,9 @@ This doc is your **map**. It tells you **where things live**, **who owns what**,
 
 ## Fundamental Rules: DO NOT 🚫
 
+- **DO NOT** commit host hardware files unless needed for CI/pure builds. Prefer /etc via `--impure`.
 - **DO NOT** edit `hosts/<name>/hardware-configuration.nix` by hand unless you know why. Regenerate with `nixos-generate-config --show-hardware-config`.
-- **DO NOT** bump `system.stateVersion` after first install. Keep it fixed (e.g., `"25.05"`).
+- **DO NOT** bump `system.stateVersion` after first install. Keep it fixed (e.g., "25.05").
 - **DO NOT** mix **integrated HM** and **standalone HM** for the **same user on the same host**.
 - **DO NOT** keep plaintext secrets in Git. Use `sops` + Age recipients.
 - **DO NOT** hardcode device names (e.g., `enp3s0`) in shared modules. Use by-uuid/by-label, or gate in per-host files.
@@ -157,15 +163,26 @@ This doc is your **map**. It tells you **where things live**, **who owns what**,
 
 1. Create `hosts/<new>/`:
 
-   * `hardware-configuration.nix` (generated on that machine)
    * `host.nix` (start small)
    * `user-config.nix` (optional)
-2. Add to `flake.nix`:
+   * Optional (for pure/CI): copy `hardware-configuration.nix` under `hosts/<new>/` OR plan to set `NIXOS_HW_CONFIG`
+2. On the target machine, generate `/etc/nixos/hardware-configuration.nix`:
+
+   ```bash
+   sudo nixos-generate-config --show-hardware-config > /etc/nixos/hardware-configuration.nix
+   ```
+3. Add to `flake.nix`:
 
    ```nix
    nixosConfigurations.<new> = mkHost { name = "<new>"; accel = "cpu"; };
    ```
-3. Switch: `sudo nixos-rebuild switch --flake .#<new>`
+3. Switch (impure, reads `/etc`): `sudo nixos-rebuild switch --flake .#<new> --impure`
+
+   Pure/CI example:
+   ```bash
+   export NIXOS_HW_CONFIG=hosts/<new>/hardware-configuration.nix
+   nix build .#nixosConfigurations.<new>.config.system.build.toplevel
+   ```
 
 **Standalone HM for any box**
 
