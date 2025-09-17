@@ -186,20 +186,25 @@ in
 
 
         bind = [
+          # Application launcher keys
           "${mod}, RETURN, exec, kitty"
           "${mod}, F, exec, ${pkgs.nautilus}/bin/nautilus"
           "${mod}, T, exec, ${pkgs.rofi}/bin/rofi -show drun -theme ~/.config/rofi/theme"
-          "${mod}, B, exec, hyprctl dispatch exec '[float;center;size 50% 50%; pin] kitty -e ${pkgs.btop}/bin/btop'"
+          "${mod}, B, exec, hyprctl dispatch exec '[float;center;size 50% 50%; pin] kitty --override font_size=16 -e ${pkgs.btop}/bin/btop'"
+          "${mod}, M, exec, hyprctl dispatch exec '[float;center;size 80% 50%; pin] kitty -e ${pkgs.bluetuith}/bin/bluetuith'"
+          "${mod}, N, exec, hyprctl dispatch exec '[float;center;size 35% 60%; pin] kitty --override font_size=16 -e ${pkgs.networkmanager}/bin/nmtui'"
+          "${mod}, R, exec, hyprctl dispatch exec '[float;center;size 50% 40%; pin] kitty --override font_size=12 -e ${pkgs.rmpc}/bin/rmpc'"
+          "${mod}, C, exec, hyprctl dispatch exec '[float;center;size 65% 50%; pin] kitty --override font_size=16 -e ${pkgs.nchat}/bin/nchat'"
           "${mod}, V, exec, ${pkgs.vivaldi}/bin/vivaldi"
-          "${mod}, M, exec, hyprctl dispatch exec '[float;center;size 50% 40%; pin] kitty -e ${pkgs.bluetuith}/bin/bluetuith'"
-          "${mod}, N, exec, hyprctl dispatch exec '[float;center;size 50% 40%; pin] kitty -e ${pkgs.networkmanager}/bin/nmtui'"
-          "${mod}, Q, exec, hyprctl dispatch forcekillactive"
-          "${mod}, E, exec, emacs"
-          "${mod} SHIFT, R, exec, bash -c 'hyprctl reload'"
+          "${mod}, E, exec, ${pkgs.emacs}/bin/emacs"
+          "${mod}, l, exec, ${config.home.homeDirectory}/bin/org-sync.sh"
+
+          # Window management keys
           "${mod}, S, killactive,"
-          "${mod} SHIFT, M, exit,"
+          "${mod}, Q, exec, hyprctl dispatch forcekillactive"
           "${mod} SHIFT, F, togglefloating,"
-          "${mod}, Space, fullscreen, 1"
+          "${mod} SHIFT, M, exit,"
+          "${mod}, Space, fullscreen, 0"
           "${mod}, Left, movefocus, l"
           "${mod}, Right, movefocus, r"
           "${mod}, Up, movefocus, u"
@@ -220,52 +225,36 @@ in
           "${mod} Shift, 4, movetoworkspace, 4"
           "${mod} Shift, 5, movetoworkspace, 5"
           "${mod} Shift, 6, movetoworkspace, 6"
+
+          # Screenshot utility keys
           ",Print,exec,${config.home.homeDirectory}/bin/screenshot-capture.sh region"
           "Shift,Print,exec, ${config.home.homeDirectory}/bin/screenshot-capture.sh"
           "${mod}, Print, exec, ${config.home.homeDirectory}/bin/screenshot-save.sh"
-          # Application launchers
-          "${mod}, R, exec, hyprctl dispatch exec '[float;center;size 50% 40%; pin] kitty -e rmpc'"
-          "${mod}, C, exec, hyprctl dispatch exec '[float;center;size 50% 40%; pin] kitty -e nchat'"
+          
           # Brightness control keys
           ", XF86MonBrightnessUp, exec, brightnessctl set 5%+"
           ", XF86MonBrightnessDown, exec, brightnessctl set 5%-"
+
           # Volume control keys
           ", XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"
           ", XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
           ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+
           # Mic toggle
           ", XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
 
-          # MOVED: Mako keybindings now live here, where they belong.
-          "SUPER, semicolon, exec, makoctl dismiss"
-          "SUPER SHIFT, semicolon, exec, makoctl dismiss -a"
-          "SUPER, quoteleft, exec, makoctl restore"
-          
-          "${mod}, l, exec, ${config.home.homeDirectory}/bin/org-sync.sh"
-          
+          # Mako notification keys
+          "${mod}, semicolon, exec, makoctl dismiss"
+          "${mod} SHIFT, semicolon, exec, makoctl dismiss -a"
+          "${mod}, quoteleft, exec, makoctl restore"
         ];
 
         bindm = [
+          # Mouse bindings
           "${mod}, mouse:272, movewindow"
           "${mod}, mouse:273, resizewindow"
         ];
 
-        # Window rules
-        windowrulev2 = [
-          "float, title:^(bluetuith)$"  # Make bluetuith float by default
-        ];
       };
-      extraConfig = ''
-        device {
-          name=razer-razer-abyssus-lite-1
-          natural_scroll=1
-          sensitivity=-3.4
-        }
-        device {
-          name=razer-razer-abyssus-lite
-          natural_scroll=1
-          sensitivity=-3.4
-        }
-      '';
   };
 }
