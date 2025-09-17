@@ -1,15 +1,6 @@
-#+title: Emacs Literate Config (Minimal)
-#+property: header-args:emacs-lisp :tangle ~/.emacs.d/config.el :results none :noweb yes
-#+startup: content
-
-* Early init
-#+begin_src emacs-lisp
 (setq gc-cons-threshold 100000000
       read-process-output-max (* 3 1024 1024))
-#+end_src
 
-* Packages
-#+begin_src emacs-lisp
 (require 'package)
 (setq package-archives
       '(("gnu"   . "https://elpa.gnu.org/packages/")
@@ -20,11 +11,7 @@
   (package-install 'use-package))
 (eval-when-compile (require 'use-package))
 (setq use-package-always-ensure t)
-#+end_src
 
-* UI
-** Font
-#+begin_src emacs-lisp
 ;; Основные настройки шрифта
 (defconst my/font-family "Maple Mono NF CN")
 (defconst my/font-size   15)  ;; pt
@@ -46,49 +33,36 @@
 
 ;; …и для фреймов, созданных демоном/позже:
 (add-hook 'after-make-frame-functions #'my/apply-font)
-#+end_src
-** Theme
-#+begin_src emacs-lisp
-  (use-package gruvbox-theme
-    :init
-    ;; avoid mixed faces if another theme was active
-    (mapc #'disable-theme custom-enabled-themes)
-    ;; load without confirmation
-    (load-theme 'gruvbox-dark-hard t))
-#+end_src
-** Stock UI deletion
-#+begin_src emacs-lisp
-  (menu-bar-mode -1)
-  (tool-bar-mode -1)
-  (scroll-bar-mode -1)
-  (setq inhibit-startup-screen t
-      inhibit-startup-message t
-      inhibit-startup-echo-area-message t
-      initial-scratch-message nil
-      global-display-line-numbers-mode nil)
-  (column-number-mode 1)
-#+end_src
-* Completion basics
-#+begin_src emacs-lisp
+
+(use-package gruvbox-theme
+  :init
+  ;; avoid mixed faces if another theme was active
+  (mapc #'disable-theme custom-enabled-themes)
+  ;; load without confirmation
+  (load-theme 'gruvbox-dark-hard t))
+
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+(setq inhibit-startup-screen t
+    inhibit-startup-message t
+    inhibit-startup-echo-area-message t
+    initial-scratch-message nil
+    global-display-line-numbers-mode nil)
+(column-number-mode 1)
+
 (use-package vertico :init (vertico-mode 1))
 (use-package orderless
   :custom (completion-styles '(orderless basic))
           (completion-category-defaults nil)
           (completion-category-overrides '((file (styles partial-completion)))))
 (use-package marginalia :init (marginalia-mode 1))
-#+end_src
 
-* Org basics
-#+begin_src emacs-lisp
-  (use-package org
-    :config
-    (setq org-hide-leading-stars t
-          org-ellipsis " ▾"))
-  
-#+end_src
+(use-package org
+  :config
+  (setq org-hide-leading-stars t
+        org-ellipsis " ▾"))
 
-* Emacs literary config setup
-#+begin_src emacs-lisp
 ;; Hot-reload literate config (absolute paths, no surprises)
 (defvar my/lit-org-file
   (expand-file-name "~/System-configuration/home/navi/programs/emacs/config/emacsV2/config.org"))
@@ -111,6 +85,3 @@
     (user-error "Tangle failed; %s not found" my/tangled-el)))
 
 (global-set-key (kbd "C-c r") #'my/reload-config)
-
-#+end_src
-
