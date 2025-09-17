@@ -1,0 +1,51 @@
+#+title: Emacs Literate Config (Minimal)
+#+property: header-args:emacs-lisp :tangle yes :results none :noweb yes
+#+startup: content
+
+* Early init
+#+begin_src emacs-lisp
+(setq gc-cons-threshold 100000000
+      read-process-output-max (* 3 1024 1024))
+#+end_src
+
+* Packages
+#+begin_src emacs-lisp
+(require 'package)
+(setq package-archives
+      '(("gnu"   . "https://elpa.gnu.org/packages/")
+        ("melpa" . "https://melpa.org/packages/")))
+(package-initialize)
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+(eval-when-compile (require 'use-package))
+(setq use-package-always-ensure t)
+#+end_src
+
+* UI
+#+begin_src emacs-lisp
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+(setq inhibit-startup-message t)
+(global-display-line-numbers-mode 1)
+(column-number-mode 1)
+#+end_src
+
+* Completion basics
+#+begin_src emacs-lisp
+(use-package vertico :init (vertico-mode 1))
+(use-package orderless
+  :custom (completion-styles '(orderless basic))
+          (completion-category-defaults nil)
+          (completion-category-overrides '((file (styles partial-completion)))))
+(use-package marginalia :init (marginalia-mode 1))
+#+end_src
+
+* Org basics
+#+begin_src emacs-lisp
+(use-package org
+  :config
+  (setq org-hide-leading-stars t
+        org-ellipsis " ▾"))
+#+end_src
