@@ -1,52 +1,8 @@
 #+title: Emacs Literate Config (Minimal)
 #+property: header-args:emacs-lisp :tangle ~/.emacs.d/config.el :results none :noweb yes
-#+startup: content
-
-* Early init
-#+begin_src emacs-lisp
-(setq gc-cons-threshold 100000000
-      read-process-output-max (* 3 1024 1024))
-#+end_src
-
-* Packages
-#+begin_src emacs-lisp
-(require 'package)
-(setq package-archives
-      '(("gnu"   . "https://elpa.gnu.org/packages/")
-        ("melpa" . "https://melpa.org/packages/")))
-(package-initialize)
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
-(eval-when-compile (require 'use-package))
-(setq use-package-always-ensure t)
-#+end_src
+#+startup: overview
 
 * UI
-** Font
-#+begin_src emacs-lisp
-;; Основные настройки шрифта
-(defconst my/font-family "Maple Mono NF CN")
-(defconst my/font-size   15)  ;; pt
-
-(defun my/apply-font (&optional frame)
-  "Применить шрифт к FRAME (или к текущему фрейму)."
-  (let* ((f (or frame (selected-frame)))
-         (font-str (format "%s-%d" my/font-family my/font-size)))
-    (when (member my/font-family (font-family-list))
-      ;; set-face-attribute для текущего/указанного фрейма
-      (with-selected-frame f
-        (set-face-attribute 'default f :font font-str)
-        (set-face-attribute 'fixed-pitch f :font font-str))
-      ;; чтобы новые фреймы сразу были с этим шрифтом
-      (add-to-list 'default-frame-alist `(font . ,font-str)))))
-
-;; Применяем сейчас…
-(my/apply-font)
-
-;; …и для фреймов, созданных демоном/позже:
-(add-hook 'after-make-frame-functions #'my/apply-font)
-#+end_src
 ** Theme
 #+begin_src emacs-lisp
   (use-package gruvbox-theme
@@ -68,7 +24,41 @@
       global-display-line-numbers-mode nil)
   (column-number-mode 1)
 #+end_src
-* Completion basics
+** Font
+#+begin_src emacs-lisp
+  (defun my/set-font () 
+    "Set the default font."
+    (set-face-attribute 'default nil
+                        :family "Maple Mono NF CN"
+                        :height 180  ; 18pt = 180 in Emacs units
+                        :weight 'regular))
+  
+  ;; Set font if running in GUI
+  (if (display-graphic-p)
+      (my/set-font)
+    (add-hook 'after-make-frame-functions
+              (lambda (frame)
+                (select-frame frame)
+                (when (display-graphic-p frame)
+                  (my/set-font)))))
+#+end_src
+** Dashboard
+#+begin_src emacs-lisp
+  ;; Dashboard (from Nix, so :ensure nil is fine too)
+(use-package dashboard
+  :demand t
+  :init
+  (setq dashboard-startup-banner 'official
+        dashboard-center-content t
+        dashboard-set-heading-icons t
+        dashboard-set-file-icons t
+        dashboard-items '((recents . 8) (projects . 5) (bookmarks . 5)))
+  :config
+  (dashboard-setup-startup-hook)
+  ;; Open it once Emacs is ready (buffer definitely exists by then)
+  (add-hook 'emacs-startup-hook #'dashboard-open))
+#+end_src
+* Completion 
 #+begin_src emacs-lisp
 (use-package vertico :init (vertico-mode 1))
 (use-package orderless
@@ -78,7 +68,7 @@
 (use-package marginalia :init (marginalia-mode 1))
 #+end_src
 
-* Org basics
+* Org/Roam
 #+begin_src emacs-lisp
   (use-package org
     :config
@@ -87,7 +77,29 @@
   
 #+end_src
 
-* Emacs literary config setup
+* System
+** Init
+#+begin_src emacs-lisp
+(setq gc-cons-threshold 100000000
+      read-process-output-max (* 3 1024 1024))
+#+end_src
+
+** Packages
+#+begin_src emacs-lisp
+    (require 'package)
+    (setq package-archives
+          '(("gnu"   . "https://elpa.gnu.org/packages/")
+            ("melpa" . "https://melpa.org/packages/")
+  	  ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
+    (package-initialize)
+    (unless (package-installed-p 'use-package)
+      (package-refresh-contents)
+      (package-install 'use-package))
+    (eval-when-compile (require 'use-package))
+    (setq use-package-always-ensure t)
+#+end_src
+
+** Emacs literary config
 #+begin_src emacs-lisp
 ;; Hot-reload literate config (absolute paths, no surprises)
 (defvar my/lit-org-file
@@ -112,5 +124,5 @@
 
 (global-set-key (kbd "C-c r") #'my/reload-config)
 
-#+end_src
+#+end_src 
 
