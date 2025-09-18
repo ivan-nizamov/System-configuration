@@ -42,6 +42,7 @@
                 (when (display-graphic-p frame)
                   (my/set-font)))))
 #+end_src
+** TODO Stars
 ** Dashboard
 #+begin_src emacs-lisp
   ;; Dashboard (from Nix, so :ensure nil is fine too)
@@ -68,13 +69,47 @@
 (use-package marginalia :init (marginalia-mode 1))
 #+end_src
 
-* Org/Roam
+* Organization
+** Org mode
 #+begin_src emacs-lisp
   (use-package org
     :config
     (setq org-hide-leading-stars t
           org-ellipsis " ▾"))
   
+#+end_src
+
+** Org Roam
+#+begin_src emacs-lisp
+  (use-package org-roam
+  :init
+  (setq org-roam-directory (file-truename "~/ORG/Roam/")
+        org-roam-dailies-directory "journal/"
+        org-roam-completion-everywhere t)
+  ;; Keep the top-level roam key bindings and expose the dailies keymap
+  :bind (("C-c n l" . org-roam-buffer-toggle)
+         ("C-c n f" . org-roam-node-find)
+         ("C-c n i" . org-roam-node-insert)
+         ;; expose the dailies keymap on prefix C-c n d
+         :map org-roam-dailies-map
+         ;; make sure the prefix is available as a keymap (see :bind-keymap fallback below)
+         ;; (bindings for dailies are defined in :config)
+         )
+  :bind-keymap ("C-c n d" . org-roam-dailies-map)
+  :config
+  (require 'org-roam-dailies)
+  (org-roam-db-autosync-mode))
+#+end_src
+*** Org Roam UI
+#+begin_src emacs-lisp
+  (use-package org-roam-ui
+  :if (locate-library "org-roam-ui")   ;; guard if not in packages.nix
+  :after org-roam
+  :custom
+  (org-roam-ui-sync-theme t)
+  (org-roam-ui-follow t)
+  (org-roam-ui-update-on-save t)
+  (org-roam-ui-open-on-start t))
 #+end_src
 
 * System

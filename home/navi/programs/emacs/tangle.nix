@@ -44,13 +44,10 @@ in
 {
   home.packages = [ pkgs.emacs ];
 
-  # Генерируем init.el
-  home.file.".emacs.d/init.el".text = initEl;
+  # NOTE: we no longer create ~/.emacs.d/init.el via home.file (that caused /nix/store immutability).
+  # Instead we tangle config.org (below) and *write* init.el into $HOME during activation.
 
-  # Гарантируем существование директории
-  home.file.".emacs.d/.keep".text = "";
-
-  # На каждом `home-manager switch` тэнглим config.el в ~/.emacs.d/
+  # Тэнглим literate-org в ~/.emacs.d/config.el при каждом `home-manager switch`
   home.activation.tangleEmacsConfig =
     lib.hm.dag.entryAfter [ "writeBoundary" ] ''
       if [ -f "${litOrg}" ]; then
@@ -63,5 +60,16 @@ in
       else
         echo "WARN: Literate Org not found at ${litOrg}; skipping tangle." >&2
       fi
+    '';
+
+  # Записываем init.el *в домашнюю папку* после тэнглинга, чтобы Emacs мог модифицировать/устанавливать пакеты
+  home.activation.writeInit =
+    lib.hm.dag.entryAfter [ "tangleEmacsConfig" ] ''
+      mkdir -p "${config.home.homeDirectory}/.emacs.d"
+      # Записываем init.el (содержимое вставляется из переменной initEl)
+      cat > "${config.home.homeDirectory}/.emacs.d/init.el" <<'INIT'
+${initEl}
+INIT
+      echo "Wrote ~/.emacs.d/init.el"
     '';
 }
