@@ -5,14 +5,18 @@ let
   # Choose a high‑quality, upstream Emacs for Wayland: PGTK variant.
   emacsPkg = pkgs.emacs-pgtk;
 
-  # Build init.el from config.org inside an isolated Nix build.
+  # Read the content of config.org to make the derivation dependent on its content
+  configOrgContent = builtins.readFile ./config.org;
+
+  # Build init.el from config.org content (content-addressed)
   tangled-init-el = pkgs.runCommand "tangled-init.el" {
     # Only Emacs is needed to tangle. Keep TeX out of the build closure.
     buildInputs = [ emacsPkg ];
-    src = ./config.org;
   } ''
-    # Make the source available under a predictable name
-    cp "$src" ./config.org
+    # Write the config.org content to a file
+    cat > config.org <<'EOF_CONFIG_ORG'
+${configOrgContent}
+EOF_CONFIG_ORG
 
     # Tangle with explicit Org and ob-tangle loading and error handling
     ${emacsPkg}/bin/emacs --batch \
@@ -26,13 +30,13 @@ let
                    (princ (format \"Tangling error: %s\" (error-message-string err)))
                    (kill-emacs 1)))"
 
-    # Publish the result as the derivation output (a single file path)
+    # Publish the result as the derivation output
     mv init.el "$out"
   '';
 
 in
 {
-  # Keep TeX-related packages in the user environment only (not in the tangle build)
+  # Keep TeX-related packages in the user environment only
   home.packages = with pkgs; [
     texliveMedium
     emacsPackages.gcmh
@@ -44,6 +48,6 @@ in
     package = emacsPkg;
   };
 
-  # Link the tangled init.el into XDG config so every rebuild includes the tangle step
+  # Link the tangled init.el into XDG config
   xdg.configFile."emacs/init.el".source = tangled-init-el;
 }
