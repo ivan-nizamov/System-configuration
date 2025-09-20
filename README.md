@@ -21,7 +21,7 @@ This doc is your **map**. It tells you **where things live**, **who owns what**,
 
 Additional documentation files can be found in the `docs/` directory:
 
-- `docs/hardware-configuration.md` - Hardware configuration policy, fallback order, and how to use NIXOS_HW_CONFIG for pure builds
+- `docs/hardware-configuration.md` - Hardware configuration policy: hosts import only from `/etc/nixos/hardware-configuration.nix` and require `--impure` rebuilds
 
 
 ## Directory Structure (what each path is for)
@@ -35,10 +35,10 @@ Additional documentation files can be found in the `docs/` directory:
 │  └─ home-manager-integration.nix    # Home-Manager ↔ NixOS integration layer
 ├─ hosts/
 │  ├─ desktop/
-│  │  ├─ host.nix                     # Desktop-only OS settings (GPU, disks). Imports HW via fallback
+│  │  ├─ host.nix                     # Desktop-only OS settings (GPU, disks). Imports HW from /etc only
 │  │  └─ user-config.nix              # Desktop-specific user settings & overrides
 │  └─ laptop/
-│     ├─ host.nix                     # Laptop-only OS settings (power/touchpad, display). Imports HW via fallback
+│     ├─ host.nix                     # Laptop-only OS settings (power/touchpad, display). Imports HW from /etc only
 │     └─ user-config.nix              # Laptop-specific user settings & overrides
 ├─ home/
 │  └─ navi/
@@ -77,7 +77,7 @@ Additional documentation files can be found in the `docs/` directory:
 
 ## Fundamental Rules: DO NOT 🚫
 
-- **DO NOT** commit host hardware files unless needed for CI/pure builds. Prefer /etc via `--impure`.
+- **DO NOT** commit host hardware files. Hosts read hardware exclusively from `/etc/nixos/hardware-configuration.nix` and require `--impure` during rebuilds.
 - **DO NOT** edit `hosts/<name>/hardware-configuration.nix` by hand unless you know why. Regenerate with `nixos-generate-config --show-hardware-config`.
 - **DO NOT** bump `system.stateVersion` after first install. Keep it fixed (e.g., "25.05").
 - **DO NOT** mix **integrated HM** and **standalone HM** for the **same user on the same host**.
@@ -104,8 +104,8 @@ Additional documentation files can be found in the `docs/` directory:
 
 **System-wide package (global)**
 - Edit: `modules/common-system.nix` → `environment.systemPackages`
-- Test: `sudo nixos-rebuild test --flake .#<host>`
-- Apply: `sudo nixos-rebuild switch --flake .#<host>`
+- Test: `sudo nixos-rebuild test --flake .#<host> --impure`
+- Apply: `sudo nixos-rebuild switch --flake .#<host> --impure`
 
 **User package / alias (only `navi`)**
 - Edit: `home/navi/user-base.nix` → `home.packages` or `programs.zsh.initExtra`
@@ -165,7 +165,6 @@ Additional documentation files can be found in the `docs/` directory:
 
    * `host.nix` (start small)
    * `user-config.nix` (optional)
-   * Optional (for pure/CI): copy `hardware-configuration.nix` under `hosts/<new>/` OR plan to set `NIXOS_HW_CONFIG`
 2. On the target machine, generate `/etc/nixos/hardware-configuration.nix`:
 
    ```bash
@@ -176,13 +175,7 @@ Additional documentation files can be found in the `docs/` directory:
    ```nix
    nixosConfigurations.<new> = mkHost { name = "<new>"; accel = "cpu"; };
    ```
-3. Switch (impure, reads `/etc`): `sudo nixos-rebuild switch --flake .#<new> --impure`
-
-   Pure/CI example:
-   ```bash
-   export NIXOS_HW_CONFIG=hosts/<new>/hardware-configuration.nix
-   nix build .#nixosConfigurations.<new>.config.system.build.toplevel
-   ```
+4. Switch (impure, reads `/etc`): `sudo nixos-rebuild switch --flake .#<new> --impure`
 
 **Standalone HM for any box**
 

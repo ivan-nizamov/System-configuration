@@ -2,38 +2,33 @@
 
 ## Table of Contents
 - [Overview](#overview)
-- [Fallback Order](#fallback-order)
-- [Pure vs Impure evaluation](#pure-vs-impure-evaluation)
+- [Hardware Configuration Policy](#hardware-configuration-policy)
 - [Generating Hardware Configuration](#generating-hardware-configuration)
 - [Updating Hardware Configuration](#updating-hardware-configuration)
 - [Rebuilding the System](#rebuilding-the-system)
 
 ## Overview
 
-Hardware configuration is generated per-machine by `nixos-generate-config` and SHOULD NOT be committed to this repository by default.
+Hardware configuration is generated per-machine by `nixos-generate-config` and SHOULD NOT be committed to this repository.
 
-Each host module will import hardware configuration using the following fallback order.
+Each host module imports hardware configuration exclusively from `/etc/nixos/hardware-configuration.nix` and requires impure evaluation.
 
-## Fallback Order
+## Hardware Configuration Policy
 
-1. NIXOS_HW_CONFIG environment variable (if set and the file exists)
-2. /etc/nixos/hardware-configuration.nix (if present; requires impure evaluation to read)
-3. A repo-local hosts/<name>/hardware-configuration.nix (if present)
+**All hosts import their hardware configuration only from `/etc/nixos/hardware-configuration.nix`.**
 
-This allows:
-- local machines to use their generated /etc/nixos/hardware-configuration.nix
-- CI and pure builds to work by pointing to a repo file via NIXOS_HW_CONFIG or by committing a copy under hosts/<name>/ (not recommended for daily use)
+This approach:
+- Aligns with NixOS defaults and conventions
+- Keeps machine-specific hardware details out of the repository
+- Simplifies host configuration management
+- Avoids accidental divergence between machines
 
-## Pure vs Impure evaluation
+**Important**: All NixOS builds for this configuration require the `--impure` flag to read from `/etc/nixos/hardware-configuration.nix`.
 
-- Impure (local machine, recommended): allows reading from /etc
-  - Example: `sudo nixos-rebuild switch --flake .#desktop --impure`
-- Pure (CI or strict builds): cannot read /etc. You must set NIXOS_HW_CONFIG to a path inside the repo or keep a repo copy.
-  - Example:
-    ```bash
-    export NIXOS_HW_CONFIG=hosts/desktop/hardware-configuration.nix
-    nix build .#nixosConfigurations.desktop.config.system.build.toplevel
-    ```
+**CI/Pure Builds**: This configuration is not designed for pure evaluation. If you need pure builds (e.g., for CI), consider:
+- Using a separate configuration approach
+- Creating machine-specific hardware modules outside this repository
+- Using containerized or VM-based builds that don't require host hardware detection
 
 ## Generating Hardware Configuration
 
@@ -61,11 +56,12 @@ sudo nixos-generate-config --show-hardware-config > /etc/nixos/hardware-configur
 After updating hardware configuration:
 
 ```bash
-# Rebuild using impure evaluation (reads /etc)
+# All rebuilds require --impure to read /etc/nixos/hardware-configuration.nix
 sudo nixos-rebuild switch --flake .#<host> --impure
 
-# Pure evaluation example (CI or without /etc)
-# Provide a repo path via NIXOS_HW_CONFIG
-export NIXOS_HW_CONFIG=hosts/<host>/hardware-configuration.nix
-nix build .#nixosConfigurations.<host>.config.system.build.toplevel
+# Test changes before switching
+sudo nixos-rebuild test --flake .#<host> --impure
+
+# Boot into new configuration without making it default
+sudo nixos-rebuild boot --flake .#<host> --impure
 ```
