@@ -1,15 +1,7 @@
 { config, pkgs, lib, host, ... }:
 
-let
-  # Fallback order: env var -> /etc -> repo-local
-  hwFromEnv = let p = builtins.getEnv "NIXOS_HW_CONFIG"; in
-    if p != "" then (let pp = builtins.toPath p; in lib.optional (builtins.pathExists pp) pp) else [];
-  hwFromEtc = lib.optional (builtins.pathExists /etc/nixos/hardware-configuration.nix) /etc/nixos/hardware-configuration.nix;
-  hwFromRepo = lib.optional (builtins.pathExists ./hardware-configuration.nix) ./hardware-configuration.nix;
-  hwImports = hwFromEnv ++ hwFromEtc ++ hwFromRepo;
-in
 {
-  imports = hwImports;
+  imports = lib.optional (builtins.pathExists /etc/nixos/hardware-configuration.nix) /etc/nixos/hardware-configuration.nix;
 
   # Laptop‑specific NixOS configuration.  Enable power management,
   # touchpad support or other hardware tweaks here.  Examples are
