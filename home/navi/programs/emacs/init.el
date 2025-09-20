@@ -1,83 +1,154 @@
-(use-package all-the-icons)
-(use-package nerd-icons)
+;; Local Variables:
+;; byte-compile-warnings: (not undefined-functions)
+;; End:
 
-(use-package gruvbox-theme
-  :init
-  ;; avoid mixed faces if another theme was active
-  (mapc #'disable-theme custom-enabled-themes)
-  ;; load without confirmation
-  (load-theme 'gruvbox-dark-hard t))
+(require 'package)
+(setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
+                         ("melpa" . "https://melpa.org/packages/")
+                         ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
+(package-initialize)
 
-(menu-bar-mode -1)
+;; Bootstrap use-package
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+(require 'use-package)
+(setq use-package-always-ensure t)
+
+(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+(load custom-file 'noerror)
+
+;; Set keybinding for reloading config
+ (defun my/reload-config ()
+   "Tangle the literate config to a temp file and load it for testing.
+ This does NOT replace the Nix-managed init.el."
+   (interactive)
+   (let* ((org-config-file (expand-file-name "~/System-configuration/home/navi/programs/emacs/config.org"))
+          (temp-load-file (expand-file-name  "~/System-configuration/home/navi/programs/emacs/init.el")))
+     ;; 1. Tangle the org file to our temporary elisp file
+     (message "Tangling %s..." org-config-file)
+     (require 'org)
+     (org-babel-tangle-file org-config-file temp-load-file)
+
+     ;; 2. Load the newly created temporary file
+     (message "Loading %s..." temp-load-file)
+     (load-file temp-load-file)
+     (message "Configuration reloaded from %s. (This is a temporary load)" temp-load-file)))
+
+(global-set-key (kbd "C-c r") #'my/reload-config)
+
+;; Set default font
+(set-face-attribute 'default nil
+  :family "Maple Mono NF CN"
+  :height 180
+  :weight 'regular)
+
+(use-package ligature
+:config
+;; Enable ligatures in all modes
+(ligature-set-ligatures t '(">>" ">>>" "<<" "<<" "{{" "}}" "{{--" "}}" "/*" "*/" "||" "|||" "&&" "&&&" "::" ":::" "??" "???" "++" "+++" "##" "###" "!!" "!!!" "//" "///" "==" "===" "!=" "!==" "<=" ">=" "=<<" "=>>" "->" "<-" "<->" "=>" "<=>" "<!--" "-->" "<#--" "<!---->" "~~" "~>" "<~" "<~>" "~~>" "<~~" "::=" "=:=" ":>" ":<" "<:" ">:" "<*" "<*>" "*>" "<|" "<|>" "|>" "<+" "<+>" "+>" "</" "</>" "/>" "###" "####" "...." "::" ":::" "++" "+++" "??" "???" "!!" "!!!" "||" "|||" "&&" "&&&" "--" "---" "==" "===" "!=" "!==" "<=" ">=" "=<<" "=>>" "->" "<-" "<->" "=>" "<=>" "<!--" "-->" "<#--" "<!---->" "~~" "~>" "<~" "<~>" "~~>" "<~~" "::=" "=:=" ":>" ":<" "<:" ">:" "<*" "<*>" "*>" "<|" "<|>" "|>" "<+" "<+>" "+>" "</" "</>" "/>"))
+(global-ligature-mode t))
+
+;; Disable startup message
+(setq inhibit-startup-message t)
+
+;; Enable line numbers
+(global-display-line-numbers-mode -1)
+
+;; Highlight current line
+(global-hl-line-mode -1)
+
+;; Show column number
+(setq column-number-mode t)
+
+;; Disable toolbar and scrollbar
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
-(setq inhibit-startup-screen t
-    inhibit-startup-message t
-    inhibit-startup-echo-area-message t
-    initial-scratch-message nil
-)
-(global-display-line-numbers-mode -1)
-(column-number-mode 1)
+(menu-bar-mode -1)
 
-(defun my/set-font () 
-  "Set the default font."
-  (set-face-attribute 'default nil
-                      :family "Maple Mono NF CN"
-                      :height 150  ; 18pt = 180 in Emacs units
-                      :weight 'regular))
+;; Disable cursor blinlink
+(setq blink-cursor-mode nil)
 
-;; Set font if running in GUI
-(if (display-graphic-p)
-    (my/set-font)
-  (add-hook 'after-make-frame-functions
-            (lambda (frame)
-              (select-frame frame)
-              (when (display-graphic-p frame)
-                (my/set-font)))))
+(use-package gruvbox-theme
+:init
+;; avoid mixed faces if another theme was active
+(mapc #'disable-theme custom-enabled-themes)
+;; load without confirmation
+(load-theme 'gruvbox-dark-hard t))
 
-;; Dashboard (from Nix, so :ensure nil is fine too)
-;; use-package with package.el:
 (use-package dashboard
-  :ensure t
   :config
-  (setq
-   dashboard-center-content t
-   dashboard-vertically-center-content t
-   )
+  (setq dashboard-center-content t
+        dashboard-vertically-center-content t)
   (dashboard-setup-startup-hook))
 
-(use-package doom-modeline
-:ensure t
-:init (doom-modeline-mode 1))
+;; Enable Vertico.
+(use-package vertico
+  ;; :custom
+  ;; (vertico-scroll-margin 0) ;; Different scroll margin
+  ;; (vertico-count 20) ;; Show more candidates
+  ;; (vertico-resize t) ;; Grow and shrink the Vertico minibuffer
+  ;; (vertico-cycle t) ;; Enable cycling for `vertico-next/previous'
+  :init
+  (vertico-mode))
 
-;; Vertico posframe (GUI only)
-(use-package vertico-posframe
-  :after vertico
-  :if (display-graphic-p)
-  :hook (vertico-mode . vertico-posframe-mode)
+;; Persist history over Emacs restarts. Vertico sorts by history position.
+(use-package savehist
+  :init
+  (savehist-mode))
+
+;; Emacs minibuffer configurations.
+(use-package emacs
   :custom
-  (vertico-posframe-poshandler #'posframe-poshandler-frame-center)
-  (vertico-posframe-parameters '((left-fringe . 4) (right-fringe . 4) (internal-border-width . 1))))
+  ;; Enable context menu. `vertico-multiform-mode' adds a menu in the minibuffer
+  ;; to switch display modes.
+  (context-menu-mode t)
+  ;; Support opening new minibuffers from inside existing minibuffers.
+  (enable-recursive-minibuffers t)
+  ;; Hide commands in M-x which do not work in the current mode.  Vertico
+  ;; commands are hidden in normal buffers. This setting is useful beyond
+  ;; Vertico.
+  (read-extended-command-predicate #'command-completion-default-include-p)
+  ;; Do not allow the cursor in the minibuffer prompt
+  (minibuffer-prompt-properties
+   '(read-only t cursor-intangible t face minibuffer-prompt)))
+
+(use-package vertico-posframe)
+(vertico-posframe-mode 1)
+
+(setq-default cursor-type 'bar)
+
+;; Set default directory for org files
+(setq org-directory "~/ORG/")
+(setq org-agenda-files (directory-files-recursively "~/ORG/Roam/" "\.org$"))
+
+;; Enable org-babel languages
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((emacs-lisp . t)
+   (python . t)))
+
+;; Set keybinding for org-capture
+(global-set-key (kbd "C-c l") 'org-store-link)
+(global-set-key (kbd "C-c a") 'org-agenda)
 
 (use-package org-modern)
-
 (with-eval-after-load 'org (global-org-modern-mode))
-
+(add-hook 'org-mode-hook #'org-indent-mode)
 (setq
-  org-auto-align-tags nil
-  org-tags-column 0
-  org-catch-invisible-edits 'show-and-error
-  org-special-ctrl-a/e t
-  org-insert-heading-respect-content t
-  org-hide-emphasis-markers t 
-  org-indent-indentation-per-level 2
- 
-  org-modern-fold-stars '(("󰜵" . "󱥧"))
-  org-modern-star 'fold
-  org-ellipsis "…"
-)
+ org-auto-align-tags nil
+ org-tags-column 0
+ org-catch-invisible-edits 'show-and-error
+ org-special-ctrl-a/e t
+ org-insert-heading-respect-content t
+ org-hide-emphasis-markers t
 
-(global-org-modern-mode)
+ org-startup-indented t
+ org-indent-mode-turns-on-hiding-stars t
+ org-modern-fold-stars '(("󰜵" . "󱥧"))
+ org-modern-star 'fold
+ org-ellipsis "…"
+ )
 
 ;; Set variable font sizes for Org headings
 (set-face-attribute 'org-level-1 nil :height 1.5)
@@ -89,57 +160,42 @@
 (set-face-attribute 'org-level-7 nil :height 0.8)
 (set-face-attribute 'org-level-8 nil :height 0.7)
 
-(use-package org
-:mode ("\\.org\\'" . org-mode)
-:bind (("C-c a" . org-agenda)
-       ("C-c c" . org-capture)
-       ("C-c l" . org-store-link))
-:config
 (setq
  org-startup-with-inline-images t
  org-use-fast-todo-selection t
  org-todo-keywords
-    '((sequence "TODO(t)" "CALL(l)" "MEETING(m)" "TEST(e)" "HOMEWORK(h)" "PROJECT(p)" "|" "DONE(d)" "CANCELLED(c)"))
-      org-todo-keyword-faces
-    '(("TODO" . (:background "#458588" :foreground "#fbf1c7" :weight bold))
-      ("CALL" . (:background "#689d6a" :foreground "#fbf1c7" :weight bold))
-      ("MEETING" . (:background "#d65d0e" :foreground "#fbf1c7" :weight bold))
-      ("TEST" . (:background "#cc241d" :foreground "#fbf1c7" :weight bold))
-      ("HOMEWORK" . (:background "#b16286" :foreground "#fbf1c7" :weight bold))
-      ("PROJECT" . (:background "#d79921" :foreground "#fbf1c7" :weight bold))
-      ("DONE" . (:background "#98971a" :foreground "#282828" :weight bold))
-      ("CANCELLED" . (:background "#3c3836" :foreground "#928374" :weight bold :strike-through t))))
-)
-
-(setq org-agenda-files (directory-files-recursively "~/ORG/Roam/" "\\.org$"))
+ '((sequence "TODO( t )" "CALL(l)" "MEETING(m)" "TEST(e)" "HOMEWORK(h)" "PROJECT(p)" "|" "DONE(d)" "CANCELLED(c)"))
+ org-todo-keyword-faces
+ '(("TODO" . (:background "#458588" :foreground "#fbf1c7" :weight bold))
+   ("CALL" . (:background "#689d6a" :foreground "#fbf1c7" :weight bold))
+   ("MEETING" . (:background "#d65d0e" :foreground "#fbf1c7" :weight bold))
+   ("TEST" . (:background "#cc241d" :foreground "#fbf1c7" :weight bold))
+   ("HOMEWORK" . (:background "#b16286" :foreground "#fbf1c7" :weight bold))
+   ("PROJECT" . (:background "#d79921" :foreground "#fbf1c7" :weight bold))
+   ("DONE" . (:background "#98971a" :foreground "#282828" :weight bold))
+   ("CANCELLED" . (:background "#3c3836" :foreground "#928374" :weight bold :strike-through t))))
 
 (use-package org-roam
 :init
 (setq org-roam-directory (file-truename "~/ORG/Roam/")
       org-roam-dailies-directory "journal/"
-      org-roam-completion-everywhere t)
-;; Keep the top-level roam key bindings and expose the dailies keymap
+      org-roam-completion-everywhere t
+)
+
 :bind (("C-c n l" . org-roam-buffer-toggle)
        ("C-c n f" . org-roam-node-find)
        ("C-c n i" . org-roam-node-insert)
-       ;; expose the dailies keymap on prefix C-c n d
        :map org-roam-dailies-map
-       ;; make sure the prefix is available as a keymap (see :bind-keymap fallback below)
-       ;; (bindings for dailies are defined in :config)
        )
 :bind-keymap ("C-c n d" . org-roam-dailies-map)
 :config
 (require 'org-roam-dailies)
-(org-roam-db-autosync-mode))
-
-(setq org-roam-capture-templates
-    (list '("d" "default" plain "%?"
-            :target (file+head "${slug}.org" "#+title: ${title}")
-            :unnarrowed t)))
-
 (setq org-roam-dailies-capture-templates
-    (list '("d" "default" entry "* %<%H:%M>: %?"
-            :if-new (file+head "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>"))))
+      '(("d" "default" entry
+         "* %?\nTaken: %(format-time-string \"<%Y-%m-%d %H:%M>\")"
+         :if-new (file+head "%<%Y-%m-%d>.org"
+                            "#+title: %<%Y-%m-%d>\n"))))
+(org-roam-db-autosync-mode))
 
 (use-package org-roam-ui
 :if (locate-library "org-roam-ui")   ;; guard if not in packages.nix
@@ -150,53 +206,12 @@
 (org-roam-ui-update-on-save t)
 (org-roam-ui-open-on-start t))
 
-(use-package vertico :init (vertico-mode 1))
-(use-package orderless
-  :custom (completion-styles '(orderless basic))
-          (completion-category-defaults nil)
-          (completion-category-overrides '((file (styles partial-completion)))))
-(use-package marginalia :init (marginalia-mode 1))
+(use-package tree-sitter
+  ;; The :config block ensures this code runs AFTER the package is loaded
+  :config
+  (global-tree-sitter-mode)
+  ;; Optional: Add a hook to turn on the minor mode for specific major modes
+  (add-hook 'prog-mode-hook #'tree-sitter-hl-mode))
 
-(setq gc-cons-threshold 100000000
-      read-process-output-max (* 3 1024 1024))
-
-;; GCMH (smoother GC) — installed via Nix
-(use-package gcmh
-  :hook (after-init . gcmh-mode)
-  :custom (gcmh-idle-delay 0.5)
-  :config (setq gcmh-high-cons-threshold (* 64 1024 1024)))
-
-(require 'package)
-(setq package-archives
-      '(("gnu"   . "https://elpa.gnu.org/packages/")
-        ("melpa" . "https://melpa.org/packages/")
-	  ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
-(package-initialize)
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
-(eval-when-compile (require 'use-package))
-(setq use-package-always-ensure t)
-
-;; Hot-reload literate config (absolute paths, no surprises)
-(defvar my/lit-org-file
-  (expand-file-name "~/System-configuration/home/navi/programs/emacs/config.org"))
-
-(defvar my/tangled-el (expand-file-name "~/.emacs.d/config.el"))
-
-(defun my/reload-config ()
-  "Tangle `my/lit-org-file` into ~/.emacs.d/config.el and load it."
-  (interactive)
-  (require 'org) (require 'ob-tangle)
-  (let ((org-confirm-babel-evaluate nil))
-    ;; ensure dir exists
-    (unless (file-directory-p (file-name-directory my/tangled-el))
-      (make-directory (file-name-directory my/tangled-el) t))
-    ;; tangle only emacs-lisp blocks into the exact file we want
-    (org-babel-tangle-file my/lit-org-file my/tangled-el "emacs-lisp"))
-  (if (file-exists-p my/tangled-el)
-      (progn (load my/tangled-el nil 'nomessage)
-             (message "Reloaded %s" my/tangled-el))
-    (user-error "Tangle failed; %s not found" my/tangled-el)))
-
-(global-set-key (kbd "C-c r") #'my/reload-config)
+;; The tree-sitter-langs package provides the language grammars
+(use-package tree-sitter-langs)

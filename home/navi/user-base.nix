@@ -9,7 +9,7 @@
         ./programs/emacs/tangle.nix
         ./programs/music/mpd.nix
         ./programs/music/rmpc.nix
-        ./programs/vscode
+        ./programs/vscode/default.nix
         ./scripts.nix
         # inputs.sops-nix.homeManagerModules.sops  # Uncomment if you need secrets
     ];

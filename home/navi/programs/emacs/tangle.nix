@@ -1,34 +1,49 @@
 # ./tangle.nix
-{ config, pkgs, ... }:
+{ pkgs , ...}:
 
 let
-  # This is a Nix "derivation" that builds your init.el from config.org.
-  # It runs inside the isolated Nix build environment.
-  tangled-init-el = pkgs.runCommand "tangled-emacs-init.el" {
-    # 1. List the tools needed for the build command. We need Emacs.
-    buildInputs = [ pkgs.emacs ];
+  # Choose a high‑quality, upstream Emacs for Wayland: PGTK variant.
+  emacsPkg = pkgs.emacs-pgtk;
 
-    # 2. Give it the source file. Nix will copy this file into the build environment.
+  # Build init.el from config.org inside an isolated Nix build.
+  tangled-init-el = pkgs.runCommand "tangled-init.el" {
+    # Only Emacs is needed to tangle. Keep TeX out of the build closure.
+    buildInputs = [ emacsPkg ];
     src = ./config.org;
   } ''
-    # 3. This is the script that runs.
-    # The source file is available at the path stored in the `$src` variable.
-    # We copy it to the current directory with a predictable name.
-    cp $src ./config.org
+    # Make the source available under a predictable name
+    cp "$src" ./config.org
 
-    # Run the emacs command to tangle the org file.
-    # --batch runs Emacs without the UI.
-    # The output will be 'init.el' in the current directory, because your
-    # config.org specifies '#+property: header-args:emacs-lisp :tangle ./init.el'
-    emacs --batch --load org --eval '(org-babel-tangle-file "config.org")'
+    # Tangle with explicit Org and ob-tangle loading and error handling
+    ${emacsPkg}/bin/emacs --batch \
+      --eval "(require 'org)" \
+      --eval "(require 'ob-tangle)" \
+      --eval "(condition-case err
+                    (progn
+                      (org-babel-tangle-file \"config.org\" \"init.el\")
+                      (kill-emacs 0))
+                  (error
+                   (princ (format \"Tangling error: %s\" (error-message-string err)))
+                   (kill-emacs 1)))"
 
-    # The final output of a `runCommand` derivation must be moved to the `$out` path.
-    mv init.el $out
+    # Publish the result as the derivation output (a single file path)
+    mv init.el "$out"
   '';
 
 in
 {
-  # Now, instead of sourcing a local file, we source the *result*
-  # of the build command we defined above.
+  # Keep TeX-related packages in the user environment only (not in the tangle build)
+  home.packages = with pkgs; [
+    texliveMedium
+    emacsPackages.gcmh
+  ];
+
+  # Ensure the interactive Emacs matches the batch Emacs used for tangling
+  programs.emacs = {
+    enable = true;
+    package = emacsPkg;
+  };
+
+  # Link the tangled init.el into XDG config so every rebuild includes the tangle step
   xdg.configFile."emacs/init.el".source = tangled-init-el;
 }
