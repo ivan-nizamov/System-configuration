@@ -31,7 +31,6 @@ in
     bluetuith     # Bluetooth TUI client
     networkmanager  # For nmtui
     yazi
-    # emacs - now configured via programs.emacs in emacs.nix
     # pavucontrol - moved to user-base.nix common packages
     nerd-fonts.jetbrains-mono  # For waybar and rofi icons (keeping for icon support)
     mako  # Notification daemon for Wayland

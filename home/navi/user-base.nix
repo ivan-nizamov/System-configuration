@@ -6,7 +6,7 @@
     # Import desktop configuration for all machines
     imports = [ 
         ./wayland-desktop.nix
-        ./programs/emacs/tangle.nix
+        ./programs/emacs.nix
         ./programs/music/mpd.nix
         ./programs/music/rmpc.nix
         ./programs/vscode/default.nix
