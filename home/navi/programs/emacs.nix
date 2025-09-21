@@ -32,6 +32,8 @@
       ;; -*- lexical-binding: t; -*-
 
       (setq use-package-always-ensure nil)
+      (setq inhibit-startup-screen t)
+      (setq inhibit-startup-message t)
 
       ;; Font configuration
       (set-face-attribute 'default nil
@@ -46,7 +48,6 @@
         (global-ligature-mode t))
 
       ;; Stock UI deletions
-      (setq inhibit-startup-message t)
       (global-display-line-numbers-mode -1)
       (global-hl-line-mode -1)
       (column-number-mode 1)
@@ -54,7 +55,6 @@
       (scroll-bar-mode -1)
       (menu-bar-mode -1)
       (blink-cursor-mode 0)
-      (startup-screen-inhibit-startup-screen 1)
 
       ;; Theme
       (use-package gruvbox-theme
@@ -62,12 +62,13 @@
         (mapc #'disable-theme custom-enabled-themes)
         (load-theme 'gruvbox-dark-hard t))
 
-      ;; Dashboard
-      (use-package dashboard
-        :config
-        (setq dashboard-center-content t
-              dashboard-vertically-center-content t)
-        (dashboard-setup-startup-hook))
+      ;; Dashboard (only when no file arguments)
+      (when (< (length command-line-args) 2)
+        (use-package dashboard
+          :config
+          (setq dashboard-center-content t
+                dashboard-vertically-center-content t)
+          (dashboard-setup-startup-hook)))
 
       ;; Vertico and posframe
       (use-package vertico
@@ -80,17 +81,9 @@
         (vertico-cycle t))
 
       (use-package vertico-posframe
-        :after vertico)
-
-      (use-package vertico-multiform
         :after vertico
         :config
-        (setq vertico-multiform-commands
-              '((t posframe
-                 (vertico-posframe-poshandler . posframe-poshandler-frame-top-center)
-                 (vertico-posframe-border-width . 10)
-                 (vertico-posframe-fallback-mode . vertico-buffer-mode))))
-        (vertico-multiform-mode 1))
+        (vertico-posframe-mode 1))
 
       ;; Persist history
       (use-package savehist
