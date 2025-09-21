@@ -1,53 +1,49 @@
-# ./tangle.nix
-{ pkgs , ...}:
+# /home/navi/System-configuration/home/navi/home.nix
+
+{ config, pkgs, ... }:
 
 let
-  # Choose a high‑quality, upstream Emacs for Wayland: PGTK variant.
-  emacsPkg = pkgs.emacs-pgtk;
+  # The small init.el that bootstraps your config.org
+  emacs-init-el = pkgs.writeText "init.el" ''
+    ;; -*- lexical-binding: t; -*-
 
-  # Read the content of config.org to make the derivation dependent on its content
-  configOrgContent = builtins.readFile ./config.org;
+    ;; Set up package archives
+    (require 'package)
+    (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
+                             ("melpa" . "https://melpa.org/packages/")
+                             ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
+    (package-initialize)
 
-  # Build init.el from config.org content (content-addressed)
-  tangled-init-el = pkgs.runCommand "tangled-init.el" {
-    # Only Emacs is needed to tangle. Keep TeX out of the build closure.
-    buildInputs = [ emacsPkg ];
-  } ''
-    # Write the config.org content to a file
-    cat > config.org <<'EOF_CONFIG_ORG'
-${configOrgContent}
-EOF_CONFIG_ORG
+    ;; Bootstrap use-package
+    (unless (package-installed-p 'use-package)
+      (package-refresh-contents)
+      (package-install 'use-package))
 
-    # Tangle with explicit Org and ob-tangle loading and error handling
-    ${emacsPkg}/bin/emacs --batch \
-      --eval "(require 'org)" \
-      --eval "(require 'ob-tangle)" \
-      --eval "(condition-case err
-                    (progn
-                      (org-babel-tangle-file \"config.org\" \"init.el\")
-                      (kill-emacs 0))
-                  (error
-                   (princ (format \"Tangling error: %s\" (error-message-string err)))
-                   (kill-emacs 1)))"
-
-    # Publish the result as the derivation output
-    mv init.el "$out"
+    ;; The magic line: Tangle and load your org-mode config
+    (org-babel-load-file (expand-file-name "config.org" user-emacs-directory))
   '';
-
 in
 {
-  # Keep TeX-related packages in the user environment only
+  # Install Emacs itself and essential dependencies
   home.packages = with pkgs; [
-    texliveMedium
-    emacsPackages.gcmh
+    emacs-pgtk # Or whatever emacs variant you prefer
+    # Add dependencies for Emacs packages if needed (e.g., for tree-sitter)
+    fd
+    ripgrep
   ];
 
-  # Ensure the interactive Emacs matches the batch Emacs used for tangling
-  programs.emacs = {
-    enable = true;
-    package = emacsPkg;
-  };
+  # This is the core of the solution:
+  # Declaratively place the necessary files in .emacs.d
+  home.file = {
+    # Place the bootstrapper init.el
+    ".emacs.d/init.el" = {
+      source = emacs-init-el;
+    };
 
-  # Link the tangled init.el into XDG config
-  xdg.configFile."emacs/init.el".source = tangled-init-el;
+    # Symlink your config.org from your flake repo
+    ".emacs.d/config.org" = {
+      # This path is relative to home.nix. Adjust if you store it elsewhere.
+      source = ./config.org;
+    };
+  };
 }

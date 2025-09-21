@@ -3,31 +3,6 @@
 
 
 * Setup
-** Packages 
-#+begin_src emacs-lisp
-  ;; Local Variables:
-  ;; byte-compile-warnings: (not undefined-functions)
-  ;; End:
-  
-  (require 'package)
-  (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
-                           ("melpa" . "https://melpa.org/packages/")
-                           ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
-  (package-initialize)
-
-  ;; Bootstrap use-package
-  (unless (package-installed-p 'use-package)
-    (package-refresh-contents)
-    (package-install 'use-package))
-  (require 'use-package)
-  (setq use-package-always-ensure t)
-#+end_src
-
-#+begin_src emacs-lisp
-(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
-(load custom-file 'noerror)
-#+end_src
-
 ** Config Reload
 #+begin_src emacs-lisp
          ;; Set keybinding for reloading config
@@ -110,39 +85,31 @@
 
 ** Vertico posframe
 #+begin_src emacs-lisp
-    ;; Enable Vertico.
-    (use-package vertico
-      ;; :custom
-      ;; (vertico-scroll-margin 0) ;; Different scroll margin
-      ;; (vertico-count 20) ;; Show more candidates
-      ;; (vertico-resize t) ;; Grow and shrink the Vertico minibuffer
-      ;; (vertico-cycle t) ;; Enable cycling for `vertico-next/previous'
-      :init
-      (vertico-mode))
+(use-package vertico
+  :ensure t
+  :init
+  (vertico-mode)
+  :custom
+  (vertico-scroll-margin 0)
+  (vertico-count 20)
+  (vertico-resize t)
+  (vertico-cycle t))
 
-    ;; Persist history over Emacs restarts. Vertico sorts by history position.
-    (use-package savehist
-      :init
-      (savehist-mode))
+(use-package vertico-posframe
+  :ensure t
+  :after vertico  ;; Ensure vertico is loaded before this
+  :config
+  (vertico-posframe-mode 1))
 
-    ;; Emacs minibuffer configurations.
-    (use-package emacs
-      :custom
-      ;; Enable context menu. `vertico-multiform-mode' adds a menu in the minibuffer
-      ;; to switch display modes.
-      (context-menu-mode t)
-      ;; Support opening new minibuffers from inside existing minibuffers.
-      (enable-recursive-minibuffers t)
-      ;; Hide commands in M-x which do not work in the current mode.  Vertico
-      ;; commands are hidden in normal buffers. This setting is useful beyond
-      ;; Vertico.
-      (read-extended-command-predicate #'command-completion-default-include-p)
-      ;; Do not allow the cursor in the minibuffer prompt
-      (minibuffer-prompt-properties
-       '(read-only t cursor-intangible t face minibuffer-prompt)))
+;; Persist history over Emacs restarts.
+(use-package savehist
+  :init
+  (savehist-mode))
 
-    (use-package vertico-posframe)
-    (vertico-posframe-mode 1)
+;; General minibuffer configurations
+(setq enable-recursive-minibuffers t)
+(setq minibuffer-prompt-properties
+      '(read-only t cursor-intangible t face minibuffer-prompt))
 #+end_src
 
 ** Cursor
@@ -214,23 +181,17 @@
      ("CANCELLED" . (:background "#3c3836" :foreground "#928374" :weight bold :strike-through t))))
 #+end_src
 ** Org Roam
-*** Init 
 #+begin_src emacs-lisp
-    (use-package org-roam
-    :init
-    (setq org-roam-directory (file-truename "~/ORG/Roam/")
-          org-roam-dailies-directory "journal/"
-          org-roam-completion-everywhere t
-    )
-#+end_src
-*** Bindings
-#+begin_src emacs-lisp
+(use-package org-roam
+  :ensure t
+  :init
+  (setq org-roam-directory (file-truename "~/ORG/Roam/")
+        org-roam-dailies-directory "journal/"
+        org-roam-completion-everywhere t)
   :bind (("C-c n l" . org-roam-buffer-toggle)
          ("C-c n f" . org-roam-node-find)
          ("C-c n i" . org-roam-node-insert)
-         :map org-roam-dailies-map
-         )
-  :bind-keymap ("C-c n d" . org-roam-dailies-map)
+         ("C-c n d" . org-roam-dailies-map))
   :config
   (require 'org-roam-dailies)
   (setq org-roam-dailies-capture-templates
@@ -239,17 +200,15 @@
            :if-new (file+head "%<%Y-%m-%d>.org"
                               "#+title: %<%Y-%m-%d>\n"))))
   (org-roam-db-autosync-mode))
-#+end_src
-*** Roam UI
-#+begin_src emacs-lisp
-  (use-package org-roam-ui
-:if (locate-library "org-roam-ui")   ;; guard if not in packages.nix
-:after org-roam
-:custom
-(org-roam-ui-sync-theme t)
-(org-roam-ui-follow t)
-(org-roam-ui-update-on-save t)
-(org-roam-ui-open-on-start t))
+
+(use-package org-roam-ui
+  :ensure t
+  :after org-roam ;; This ensures org-roam is fully loaded first
+  :config
+  (setq org-roam-ui-sync-theme t
+        org-roam-ui-follow t
+        org-roam-ui-update-on-save t
+        org-roam-ui-open-on-start t))
 #+end_src
 * Coding
 #+begin_src emacs-lisp
