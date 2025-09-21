@@ -11,7 +11,7 @@ hunspellDicts.es-es
 
 programs.emacs = {
 enable = true;
-package = pkgs.emacs30; # Updated to Emacs 30 due to Emacs 29 removal for CVEs
+package = with pkg: [ ] ; # Updated to Emacs 30 due to Emacs 29 removal for CVEs
 
 extraPackages = epkgs: [
 (epkgs.treesit-grammars.with-grammars (p: with p; [
@@ -255,8 +255,6 @@ extraConfig = ''
           org-roam-ui-update-on-save t
           org-roam-ui-open-on-start t))
 
-(setq org-latex-pdf-process '("xelatex -interaction nonstopmode -output-directory %o %f"))
-
 ;; Coding with Tree-sitter
 (when (and (fboundp 'treesit-available-p) (treesit-available-p))
   (setq major-mode-remap-alist
@@ -271,34 +269,20 @@ extraConfig = ''
           (yaml-mode . yaml-ts-mode)))
   (setq treesit-font-lock-level 4))
 
-(defun my/org-list-checkboxes-region (beg end &optional remove)
-  "In region BEG..END, add [ ] to each plain/ordered list item that lacks one.
-With prefix arg REMOVE (C-u), remove existing checkboxes instead."
-  (interactive
-   (list (if (use-region-p) (region-beginning) (point-min))
-         (if (use-region-p) (region-end) (point-max))
-         current-prefix-arg))
-  (unless (use-region-p)
-    (user-error "No region active — select the list you want to modify"))
+;; Function to add checkboxes to a list
+(defun my/org-list-add-checkboxes ()
+  "Add [ ] to every plain-list item in the current list that lacks one."
+  (interactive)
   (save-excursion
-    (save-restriction
-      (narrow-to-region beg end)
-      (goto-char (point-min))
-      (if remove
-          ;; Remove [X]/[ ]/[-] after bullets like -, +, *, or 1., 1)
-          (while (re-search-forward
-                  "^\\(\\s-*\\(?:[-+*]\\|[0-9]+[.)]\\) \\)\\(\\[[ xX-]\\]\\s-*\\)"
-                  nil t)
-            (replace-match "\\1" nil nil))
-        ;; Add [ ] only if there is no checkbox already
-        (while (re-search-forward
-                "^\\(\\s-*\\(?:[-+*]\\|[0-9]+[.)]\\) \\)\\([^[]\\)"
-                nil t)
-          (replace-match "\\1[ ] \\2" nil nil))))))
+    (org-beginning-of-item-list)
+    (let ((end (save-excursion (org-end-of-item-list) (point))))
+      (while (re-search-forward
+	      "^\\(\\s-*[-+*] \\)\\([^[]\\)" end t)
+	(replace-match "\\1[ ] \\2" nil nil)))))
 
-;; Optional keybinding
+;; Optional: bind it
 (with-eval-after-load 'org
-  (define-key org-mode-map (kbd "C-c x r") #'my/org-list-checkboxes-region))
+  (define-key org-mode-map (kbd "C-c x c") #'my/org-list-add-checkboxes))
 
 '';
 };
