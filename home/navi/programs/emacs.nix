@@ -1,6 +1,14 @@
 { pkgs, ... }:
 
 {
+  home.packages = with pkgs; [
+    hunspell
+    hunspellDicts.en-us
+    hunspellDicts.ro-ro
+    hunspellDicts.ru-ru
+    hunspellDicts.es-es
+  ];
+
   programs.emacs = {
     enable = true;
     package = pkgs.emacs30; # Updated to Emacs 30 due to Emacs 29 removal for CVEs
@@ -17,9 +25,14 @@
         p.tree-sitter-rust
         p.tree-sitter-yaml
       ]))
+      epkgs.consult
       epkgs.dashboard
+      epkgs.eglot
+      epkgs.flyspell-correct
       epkgs.gruvbox-theme
       epkgs.ligature
+      epkgs.marginalia
+      epkgs.orderless
       epkgs.org-modern
       epkgs.org-roam
       epkgs.org-roam-ui
@@ -31,9 +44,80 @@
     extraConfig = ''
       ;; -*- lexical-binding: t; -*-
 
-      (setq use-package-always-ensure nil)
+      ;; Suppress startup screen and message early
       (setq inhibit-startup-screen t)
       (setq inhibit-startup-message t)
+      (setq initial-buffer-choice nil)
+
+      ;; Spell checking setup
+      (setq ispell-program-name "hunspell")
+      (setq ispell-extra-args '("-d" "en_US,ro_RO,ru_RU,es_ES"))
+      (add-hook 'text-mode-hook #'flyspell-mode)
+      (add-hook 'org-mode-hook #'flyspell-mode)
+
+      (use-package flyspell-correct
+        :after flyspell
+        :bind (("C-;" . flyspell-correct-wrapper)
+               :map flyspell-mode-map
+               ("C-;" . flyspell-correct-wrapper)))
+
+      (setq use-package-always-ensure nil)
+
+      ;; Completion framework: Vertico + Consult + Marginalia + Orderless
+      (use-package vertico
+        :init
+        (vertico-mode)
+        :custom
+        (vertico-scroll-margin 0)
+        (vertico-count 20)
+        (vertico-resize t)
+        (vertico-cycle t))
+
+      (use-package vertico-posframe
+        :after vertico
+        :config
+        (vertico-posframe-mode 1))
+
+      (use-package consult
+        :bind (("C-x b" . consult-buffer)
+               ("C-x p b" . consult-bookmark)
+               ("C-x p f" . consult-recent-file)
+               ("M-g g" . consult-goto-line)
+               ("M-g i" . consult-imenu)
+               ("M-s g" . consult-grep)
+               ("M-s L" . consult-line)
+               ("M-s m" . consult-multi-occur)
+               ("M-s r" . consult-ripgrep)
+               ("M-s s" . consult-search)
+               ("M-y" . consult-yank-pop)
+               :map minibuffer-local-map
+               ("C-r" . consult-history))
+        :config
+        (setq consult-project-root-function
+              #'consult--default-project-root-function))
+
+      (use-package marginalia
+        :after vertico
+        :init
+        (marginalia-mode))
+
+      (use-package orderless
+        :custom
+        (completion-styles '(orderless basic))
+        (completion-category-defaults nil)
+        (completion-category-overrides '((file (styles partial-completion)))))
+
+      ;; Coding: Eglot for LSP
+      (use-package eglot
+        :ensure t
+        :hook (prog-mode . eglot-ensure)
+        :config
+        (setq eglot-autoshutdown t
+              eglot-confirm-server-initiated-restart nil)
+        :bind (:map eglot-mode-map
+                    ("C-c a" . eglot-code-actions)
+                    ("C-c r" . eglot-rename)
+                    ("C-c f" . eglot-format)))
 
       ;; Font configuration
       (set-face-attribute 'default nil
@@ -69,21 +153,6 @@
           (setq dashboard-center-content t
                 dashboard-vertically-center-content t)
           (dashboard-setup-startup-hook)))
-
-      ;; Vertico and posframe
-      (use-package vertico
-        :init
-        (vertico-mode)
-        :custom
-        (vertico-scroll-margin 0)
-        (vertico-count 20)
-        (vertico-resize t)
-        (vertico-cycle t))
-
-      (use-package vertico-posframe
-        :after vertico
-        :config
-        (vertico-posframe-mode 1))
 
       ;; Persist history
       (use-package savehist

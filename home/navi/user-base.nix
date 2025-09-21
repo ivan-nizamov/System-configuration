@@ -22,8 +22,8 @@
 
     # Set Emacs as the default editor and other session variables
     home.sessionVariables = {
-      EDITOR = "emacsclient -c";
-      VISUAL = "emacsclient -c";
+      EDITOR = "emacs";
+      VISUAL = "emacs";
     };
 
     # Git configuration with aliases
