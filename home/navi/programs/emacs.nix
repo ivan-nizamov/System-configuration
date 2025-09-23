@@ -1,72 +1,72 @@
 { pkgs, ... }:
 
 {
-home.packages = with pkgs; [
-hunspell
-hunspellDicts.en-us
-hunspellDicts.ro-ro
-hunspellDicts.ru-ru
-hunspellDicts.es-es
-];
+  home.packages = with pkgs; [
+    hunspell
+    hunspellDicts.en-us
+    hunspellDicts.ro-ro
+    hunspellDicts.ru-ru
+    hunspellDicts.es-es
+    ripgrep                 # для consult-ripgrep
+  ];
 
-programs.emacs = {
-enable = true;
-package = pkgs.emacs30; # Updated to Emacs 30 due to Emacs 29 removal for CVEs
+  programs.emacs = {
+    enable = true;
+    package = pkgs.emacs30; # Emacs 30
 
-extraPackages = epkgs: [
-(epkgs.treesit-grammars.with-grammars (p: with p; [
-					  tree-sitter-bash
-					  tree-sitter-c
-					  tree-sitter-cpp
-					  tree-sitter-css
-					  tree-sitter-javascript
-					  tree-sitter-json
-					  tree-sitter-python
-					  tree-sitter-rust
-					  tree-sitter-yaml
-					  ]))
-epkgs.consult
-epkgs.dashboard
-epkgs.eglot
-epkgs.flyspell-correct
-epkgs.gruvbox-theme
-epkgs.ligature
-epkgs.marginalia
-epkgs.orderless
-epkgs.org-modern
-epkgs.org-roam
-epkgs.org-roam-ui
-epkgs.posframe
-epkgs.vertico
-epkgs.vertico-posframe
-];
+    extraPackages = epkgs: [
+      (epkgs.treesit-grammars.with-grammars (p: with p; [
+        tree-sitter-bash
+        tree-sitter-c
+        tree-sitter-cpp
+        tree-sitter-css
+        tree-sitter-javascript
+        tree-sitter-json
+        tree-sitter-python
+        tree-sitter-rust
+        tree-sitter-yaml
+      ]))
+      epkgs.consult
+      epkgs.dashboard
+      epkgs.eglot
+      epkgs.flyspell-correct
+      epkgs.gruvbox-theme
+      epkgs.ligature
+      epkgs.marginalia
+      epkgs.orderless
+      epkgs.org-modern
+      epkgs.org-roam
+      epkgs.org-roam-ui
+      epkgs.posframe
+      epkgs.vertico
+      epkgs.vertico-posframe
+    ];
 
-extraConfig = ''
+    extraConfig = ''
 ;; -*- lexical-binding: t; -*-
 
-;; Suppress startup screen and message early
-(setq inhibit-startup-screen t)
-(setq inhibit-startup-message t)
-(setq initial-buffer-choice nil)
+;;;; Early UI
+(setq inhibit-startup-screen t
+      inhibit-startup-message t
+      initial-buffer-choice nil)
 
-;; Spell checking setup
-(setq ispell-program-name "hunspell")
-(setq ispell-extra-args '("-d" "en_US,ro_RO,ru_RU,es_ES"))
+;;;; Spelling
+(setq ispell-program-name "hunspell"
+      ispell-extra-args '("-d" "en_US,ro_RO,ru_RU,es_ES"))
 (add-hook 'text-mode-hook #'flyspell-mode)
-(add-hook 'org-mode-hook #'flyspell-mode)
-
+(add-hook 'org-mode-hook  #'flyspell-mode)
 (use-package flyspell-correct
-    :after flyspell
-    :bind (("C-;" . flyspell-correct-wrapper)
-           :map flyspell-mode-map
-           ("C-;" . flyspell-correct-wrapper)))
+  :after flyspell
+  :bind (("C-;" . flyspell-correct-wrapper)
+         :map flyspell-mode-map
+         ("C-;" . flyspell-correct-wrapper)))
 
+;;;; Use-package & package mgmt (пусть Nix ставит пакеты)
 (setq use-package-always-ensure nil)
 
-;; Completion framework: Vertico + Consult + Marginalia + Orderless
+;;;; Vertico stack
 (use-package vertico
-    :init
-  (vertico-mode)
+  :init (vertico-mode)
   :custom
   (vertico-scroll-margin 0)
   (vertico-count 20)
@@ -74,103 +74,110 @@ extraConfig = ''
   (vertico-cycle t))
 
 (use-package vertico-posframe
-    :after vertico
-    :config
-    (vertico-posframe-mode 1))
-
-(use-package consult
-    :bind (("C-x b" . consult-buffer)
-           ("C-x p b" . consult-bookmark)
-           ("C-x p f" . consult-recent-file)
-           ("M-g g" . consult-goto-line)
-           ("M-g i" . consult-imenu)
-           ("M-s g" . consult-grep)
-           ("M-s L" . consult-line)
-           ("M-s m" . consult-multi-occur)
-           ("M-s r" . consult-ripgrep)
-           ("M-s s" . consult-search)
-           ("M-y" . consult-yank-pop)
-           :map minibuffer-local-map
-           ("C-r" . consult-history))
-    :config
-    (setq consult-project-root-function
-          #'consult--default-project-root-function))
+  :after vertico
+  :config (vertico-posframe-mode 1))
 
 (use-package marginalia
-    :after vertico
-    :init
-    (marginalia-mode))
+  :after vertico
+  :init (marginalia-mode))
 
 (use-package orderless
-    :custom
+  :custom
   (completion-styles '(orderless basic))
   (completion-category-defaults nil)
   (completion-category-overrides '((file (styles partial-completion)))))
 
-;; Coding: Eglot for LSP
-(use-package eglot
-    :ensure t
-    :hook (prog-mode . eglot-ensure)
-    :config
-    (setq eglot-autoshutdown t
-          eglot-confirm-server-initiated-restart nil)
-    :bind (:map eglot-mode-map
-                ("C-c a" . eglot-code-actions)
-                ("C-c r" . eglot-rename)
-                ("C-c f" . eglot-format)))
+(use-package consult
+  :bind (("C-x b"   . consult-buffer)
+         ("C-x p b" . consult-bookmark)
+         ("C-x p f" . consult-recent-file)
+         ("M-g g"   . consult-goto-line)
+         ("M-g i"   . consult-imenu)
+         ("M-s g"   . consult-grep)
+         ("M-s L"   . consult-line)
+         ("M-s m"   . consult-multi-occur)
+         ("M-s r"   . consult-ripgrep)
+         ("M-s s"   . consult-search)
+         ("M-y"     . consult-yank-pop)
+         :map minibuffer-local-map
+         ("C-r"     . consult-history))
+  :config
+  (setq consult-project-root-function #'consult--default-project-root-function))
 
-;; Font configuration
+;;;; Eglot (без :ensure)
+(use-package eglot
+  :hook (prog-mode . eglot-ensure)
+  :config
+  (setq eglot-autoshutdown t
+        eglot-confirm-server-initiated-restart nil)
+  :bind (:map eglot-mode-map
+              ("C-c a" . eglot-code-actions)
+              ("C-c r" . eglot-rename)
+              ("C-c f" . eglot-format)))
+
+;;;; Font & ligatures
 (set-face-attribute 'default nil
                     :family "Maple Mono NF CN"
-                    :height 180
+                    :height 150
                     :weight 'regular)
 
-;; Ligatures
 (use-package ligature
-    :config
-  (ligature-set-ligatures t '(">>" ">>>" "<<" "<<" "{{" "}}" "{{--" "}}" "/*" "*/" "||" "|||" "&&" "&&&" "::" ":::" "??" "???" "++" "+++" "##" "###" "!!" "!!!" "//" "///" "==" "===" "!=" "!==" "<=" ">=" "=<<" "=>>" "->" "<-" "<->" "=>" "<=>" "<!--" "-->" "<#--" "<!---->" "~~" "~>" "<~" "<~>" "~~>" "<~~" "::=" "=:=" ":>" ":<" "<:" ">:" "<*" "<*>" "*>" "<|" "<|>" "|>" "<+" "<+>" "+>" "</" "</>" "/>" "###" "####" "...." "::" ":::" "++" "+++" "??" "???" "!!" "!!!" "||" "|||" "&&" "&&&" "--" "---" "==" "===" "!=" "!==" "<=" ">=" "=<<" "=>>" "->" "<-" "<->" "=>" "<=>" "<!--" "-->" "<#--" "<!---->" "~~" "~>" "<~" "<~>" "~~>" "<~~" "::=" "=:=" ":>" ":<" "<:" ">:" "<*" "<*>" "*>" "<|" "<|>" "|>" "<+" "<+>" "+>" "</" "</>" "/>"))
+  :config
+  ;; Достаточный набор, включая "->" и "=>"
+  (ligature-set-ligatures t
+    '("->" "=>" "<-" "<->" "<=>" ">>" ">>>" "<<" "<<<" "::" ":::" "==" "===" "!="
+      "<=" ">=" "||" "&&" "++" "--" "/*" "*/" "//" "///" "|>" "<|" "</" "/>" "+>" "<+"
+      "~>" "<~" "<~>" "~~>" "<~~" ":>" ":<" "::=" "=:="))
   (global-ligature-mode t))
 
-;; Stock UI deletions
-(global-display-line-numbers-mode -1)
-(global-hl-line-mode -1)
-(column-number-mode 1)
+;;;; Stock UI off
+(menu-bar-mode -1)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
-(menu-bar-mode -1)
 (blink-cursor-mode 0)
+(global-display-line-numbers-mode -1)
+(column-number-mode 1)
 
-;; Theme
+;;;; Theme
 (use-package gruvbox-theme
-    :init
+  :init
   (mapc #'disable-theme custom-enabled-themes)
   (load-theme 'gruvbox-dark-hard t))
 
-;; Dashboard (only when no file arguments)
+;;;; Dashboard (при старте без файлов)
 (when (< (length command-line-args) 2)
   (use-package dashboard
-      :config
+    :config
     (setq dashboard-center-content t
-          dashboard-vertically-center-content t)
+          dashboard-vertically-center-content t
+          dashboard-items '((recents . 8) (projects . 5) (bookmarks . 5) (agenda . 5))
+          dashboard-startup-banner 'official)
     (dashboard-setup-startup-hook)))
 
-;; Persist history
-(use-package savehist
-    :init
-  (savehist-mode))
+;;;; History
+(use-package savehist :init (savehist-mode))
 
-;; Minibuffer configurations
-(setq enable-recursive-minibuffers t)
-(setq minibuffer-prompt-properties
-      '(read-only t cursor-intangible t face minibuffer-prompt))
-
-;; Cursor
+;;;; Minibuffer QoL
+(setq enable-recursive-minibuffers t
+      minibuffer-prompt-properties '(read-only t cursor-intangible t face minibuffer-prompt))
 (setq-default cursor-type 'bar)
 
-;; Org Mode system
-(setq org-directory "~/ORG/")
-(setq org-agenda-files (directory-files-recursively "~/ORG/Roam/" "\\.org$"))
-(setq org-id-locations-file (expand-file-name ".org-id-locations" user-emacs-directory))
+;;;; Org
+(setq org-directory "~/ORG/"
+      org-agenda-files (directory-files-recursively "~/ORG/Roam/" "\\.org$")
+      org-id-locations-file (expand-file-name ".org-id-locations" user-emacs-directory)
+      org-startup-with-inline-images t
+      org-use-fast-todo-selection t
+      org-todo-keywords '((sequence "TODO(t)" "CALL(l)" "MEETING(m)" "TEST(e)" "HOMEWORK(h)" "PROJECT(p)" "|" "DONE(d)" "CANCELLED(c)"))
+      org-todo-keyword-faces
+      '(("TODO" . (:background "#458588" :foreground "#fbf1c7" :weight bold))
+        ("CALL" . (:background "#689d6a" :foreground "#fbf1c7" :weight bold))
+        ("MEETING" . (:background "#d65d0e" :foreground "#fbf1c7" :weight bold))
+        ("TEST" . (:background "#cc241d" :foreground "#fbf1c7" :weight bold))
+        ("HOMEWORK" . (:background "#b16286" :foreground "#fbf1c7" :weight bold))
+        ("PROJECT" . (:background "#d79921" :foreground "#fbf1c7" :weight bold))
+        ("DONE" . (:background "#98971a" :foreground "#282828" :weight bold))
+        ("CANCELLED" . (:background "#3c3836" :foreground "#928374" :weight bold :strike-through t))))
 
 (org-babel-do-load-languages
  'org-babel-load-languages
@@ -180,25 +187,26 @@ extraConfig = ''
 (global-set-key (kbd "C-c l") 'org-store-link)
 (global-set-key (kbd "C-c a") 'org-agenda)
 
-;; Org Modern UI
+;; Org Modern
 (use-package org-modern)
 (with-eval-after-load 'org (global-org-modern-mode))
 (add-hook 'org-mode-hook #'org-indent-mode)
+;; Вынес визуальные тюнинги из setq-формы и включил перенос строк глобально:
+(global-visual-line-mode t)
 (setq
- org-auto-align-tags nil
- org-tags-column 0
- global-visual-line-mode 1
- org-catch-invisible-edits 'show-and-error
- org-special-ctrl-a/e t
- org-insert-heading-respect-content t
- org-hide-emphasis-markers t
- org-startup-indented t
- org-indent-mode-turns-on-hiding-stars t
- org-modern-fold-stars '(("󰜵" . "󱥧"))
- org-modern-star 'fold
- org-ellipsis "…")
+  org-auto-align-tags nil
+  org-tags-column 0
+  org-catch-invisible-edits 'show-and-error
+  org-special-ctrl-a/e t
+  org-insert-heading-respect-content t
+  org-hide-emphasis-markers t
+  org-startup-indented t
+  org-indent-mode-turns-on-hiding-stars t
+  org-modern-fold-stars '(("󰜵" . "󱥧"))
+  org-modern-star 'fold
+  org-ellipsis "…")
 
-;; Variable font sizes for Org headings
+;; Размеры заголовков Org
 (set-face-attribute 'org-level-1 nil :height 1.5)
 (set-face-attribute 'org-level-2 nil :height 1.35)
 (set-face-attribute 'org-level-3 nil :height 1.2)
@@ -208,98 +216,185 @@ extraConfig = ''
 (set-face-attribute 'org-level-7 nil :height 0.8)
 (set-face-attribute 'org-level-8 nil :height 0.7)
 
-(setq
- org-startup-with-inline-images t
- org-use-fast-todo-selection t
- org-todo-keywords
- '((sequence "TODO(t)" "CALL(l)" "MEETING(m)" "TEST(e)" "HOMEWORK(h)" "PROJECT(p)" "|" "DONE(d)" "CANCELLED(c)"))
- org-todo-keyword-faces
- '(("TODO" . (:background "#458588" :foreground "#fbf1c7" :weight bold))
-   ("CALL" . (:background "#689d6a" :foreground "#fbf1c7" :weight bold))
-   ("MEETING" . (:background "#d65d0e" :foreground "#fbf1c7" :weight bold))
-   ("TEST" . (:background "#cc241d" :foreground "#fbf1c7" :weight bold))
-   ("HOMEWORK" . (:background "#b16286" :foreground "#fbf1c7" :weight bold))
-   ("PROJECT" . (:background "#d79921" :foreground "#fbf1c7" :weight bold))
-   ("DONE" . (:background "#98971a" :foreground "#282828" :weight bold))
-   ("CANCELLED" . (:background "#3c3836" :foreground "#928374" :weight bold :strike-through t))))
-
-;; Org Roam
+;;;; Org-roam (+UI)
 (use-package org-roam
-    :ensure t
-    :init
-    (setq org-roam-v2-ack t)
-    :custom
-    (org-roam-directory "~/ORG/Roam/")
-    (org-roam-dailies-directory "~/ORG/Roam/journal/")
-    (org-roam-completion-everywhere t)
-    :bind (("C-c n l" . org-roam-buffer-toggle)
-           ("C-c n f" . org-roam-node-find)
-           ("C-c n i" . org-roam-node-insert)
-           :map org-mode-map
-           ("C-M-i" . completion-at-point)
-           :map org-roam-dailies-map
-           ("Y" . org-roam-dailies-capture-yesterday)
-           ("T" . org-roam-dailies-capture-tomorrow))
-    :bind-keymap
-    ("C-c n d" . org-roam-dailies-map)
-    :config
-    (require 'org-roam-dailies) ;; Ensure the keymap is available
-    (setq org-roam-dailies-capture-templates '(("d" "default" entry "* %?\nTaken: %(format-time-string \"<%Y-%m-%d %H:%M>\")" :if-new (file+head "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n"))))
-    (org-roam-db-autosync-mode))
+  :init (setq org-roam-v2-ack t)
+  :custom
+  (org-roam-directory "~/ORG/Roam/")
+  (org-roam-dailies-directory "~/ORG/Roam/journal/")
+  (org-roam-completion-everywhere t)
+  :bind (("C-c n l" . org-roam-buffer-toggle)
+         ("C-c n f" . org-roam-node-find)
+         ("C-c n i" . org-roam-node-insert)
+         :map org-mode-map
+         ("C-M-i" . completion-at-point)
+         :map org-roam-dailies-map
+         ("Y" . org-roam-dailies-capture-yesterday)
+         ("T" . org-roam-dailies-capture-tomorrow))
+  :bind-keymap ("C-c n d" . org-roam-dailies-map)
+  :config
+  (require 'org-roam-dailies)
+  (setq org-roam-dailies-capture-templates
+        '(("d" "default" entry
+           "* %?\nTaken: %(format-time-string \"<%Y-%m-%d %H:%M>\")"
+           :if-new (file+head "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n"))))
+  (org-roam-db-autosync-mode))
 
 (use-package org-roam-ui
-    :after org-roam
-    :config
-    (setq org-roam-ui-sync-theme t
-          org-roam-ui-follow t
-          org-roam-ui-update-on-save t
-          org-roam-ui-open-on-start t))
+  :after org-roam
+  :config
+  (setq org-roam-ui-sync-theme t
+        org-roam-ui-follow t
+        org-roam-ui-update-on-save t
+        org-roam-ui-open-on-start t))
 
+;;;; LaTeX export (опционально, нужен xelatex в системе)
 (setq org-latex-pdf-process '("xelatex -interaction nonstopmode -output-directory %o %f"))
 
-;; Coding with Tree-sitter
+;;;; Treesit
 (when (and (fboundp 'treesit-available-p) (treesit-available-p))
   (setq major-mode-remap-alist
-        '((bash-mode . bash-ts-mode)
-          (c-mode . c-ts-mode)
-          (c++-mode . c++-ts-mode)
-          (css-mode . css-ts-mode)
-          (js-mode . js-ts-mode)
-          (json-mode . json-ts-mode)
-          (rust-mode . rust-ts-mode)
+        '((bash-mode   . bash-ts-mode)
+          (c-mode      . c-ts-mode)
+          (c++-mode    . c++-ts-mode)
+          (css-mode    . css-ts-mode)
+          (js-mode     . js-ts-mode)
+          (json-mode   . json-ts-mode)
+          (rust-mode   . rust-ts-mode)
           (python-mode . python-ts-mode)
-          (yaml-mode . yaml-ts-mode)))
+          (yaml-mode   . yaml-ts-mode)))
   (setq treesit-font-lock-level 4))
 
+;;;; Helpers
 (defun my/org-list-checkboxes-region (beg end &optional remove)
-  "In region BEG..END, add [ ] to each plain/ordered list item that lacks one.
-With prefix arg REMOVE (C-u), remove existing checkboxes instead."
+  "В регионе BEG..END добавить [ ] к пунктам списка без чекбоксов.
+С префиксом REMOVE (C-u) — удалить чекбоксы."
   (interactive
    (list (if (use-region-p) (region-beginning) (point-min))
          (if (use-region-p) (region-end) (point-max))
          current-prefix-arg))
   (unless (use-region-p)
-    (user-error "No region active — select the list you want to modify"))
+    (user-error "Нет активного региона — выделите нужный список"))
   (save-excursion
     (save-restriction
       (narrow-to-region beg end)
       (goto-char (point-min))
       (if remove
-          ;; Remove [X]/[ ]/[-] after bullets like -, +, *, or 1., 1)
           (while (re-search-forward
                   "^\\(\\s-*\\(?:[-+*]\\|[0-9]+[.)]\\) \\)\\(\\[[ xX-]\\]\\s-*\\)"
                   nil t)
             (replace-match "\\1" nil nil))
-        ;; Add [ ] only if there is no checkbox already
         (while (re-search-forward
                 "^\\(\\s-*\\(?:[-+*]\\|[0-9]+[.)]\\) \\)\\([^[]\\)"
                 nil t)
           (replace-match "\\1[ ] \\2" nil nil))))))
 
-;; Optional keybinding
 (with-eval-after-load 'org
   (define-key org-mode-map (kbd "C-c x r") #'my/org-list-checkboxes-region))
 
+;; === Leader на ПРОБЕЛ (без Evil) ===
+;; 1) создаём префикс-карту
+(define-prefix-command 'my/leader-map)
+
+;; 2) глобально вешаем на SPC
+(keymap-global-set "SPC" 'my/leader-map)
+
+;; 3) в минибуфере пробел нужен для ввода — оставляем как есть
+(with-eval-after-load 'minibuffer
+  (define-key minibuffer-local-map (kbd "SPC") #'self-insert-command))
+
+;; 4) хоткей «SPC SPC» вставляет обычный пробел
+(define-key my/leader-map (kbd "SPC") #'self-insert-command)
+
+;; 5) which-key, чтобы видеть меню после "SPC"
+(use-package which-key
+  :init (which-key-mode)
+  :config
+  (setq which-key-idle-delay 0.2
+        which-key-separator " → "
+        which-key-prefix-prefix "◂ "))
+
+;; Give the leader map a readable name (optional, nice in hints/describe)
+(define-prefix-command 'my/leader-map nil "SPC Leader")
+
+(with-eval-after-load 'which-key
+  ;; Top-level prefix labels under SPC
+  (which-key-add-keymap-based-replacements my/leader-map
+    "f" "files"
+    "b" "buffers"
+    "w" "windows"
+    "s" "search"
+    "g" "goto"
+    "o" "org"
+    "n" "org-roam"
+    "h" "help"
+    "<escape>" "cancel")
+
+  ;; Optional: label common sub-prefixes/leafs too
+  (which-key-add-keymap-based-replacements my/leader-map
+    "f f" "find file"
+    "f r" "recent files"
+    "f s" "save file"
+    "b b" "switch buffer"
+    "b k" "kill buffer"
+    "w /" "split right"
+    "w -" "split below"
+    "w o" "maximize"
+    "s s" "search line"
+    "s r" "ripgrep"
+    "g g" "goto line"
+    "g i" "imenu"
+    "o a" "agenda"
+    "o l" "store link"
+    "n f" "find node"
+    "n i" "insert node"
+    "n l" "toggle roam buffer"))
+
+;; === Примеры биндов «как в Doom» ===
+;; Files
+(define-key my/leader-map (kbd "f f") #'find-file)
+(define-key my/leader-map (kbd "f r") #'consult-recent-file)
+(define-key my/leader-map (kbd "f s") #'save-buffer)
+
+;; Buffers
+(define-key my/leader-map (kbd "b b") #'consult-buffer)
+(define-key my/leader-map (kbd "b k") #'kill-current-buffer)
+(define-key my/leader-map (kbd "b n") #'next-buffer)
+(define-key my/leader-map (kbd "b p") #'previous-buffer)
+
+;; Windows
+(define-key my/leader-map (kbd "w /") #'split-window-right)
+(define-key my/leader-map (kbd "w -") #'split-window-below)
+(define-key my/leader-map (kbd "w d") #'delete-window)
+(define-key my/leader-map (kbd "w o") #'delete-other-windows)
+(define-key my/leader-map (kbd "w h") #'windmove-left)
+(define-key my/leader-map (kbd "w j") #'windmove-down)
+(define-key my/leader-map (kbd "w k") #'windmove-up)
+(define-key my/leader-map (kbd "w l") #'windmove-right)
+
+;; Search
+(define-key my/leader-map (kbd "s s") #'consult-line)
+(define-key my/leader-map (kbd "s r") #'consult-ripgrep)
+
+;; GoTo
+(define-key my/leader-map (kbd "g g") #'goto-line)
+(define-key my/leader-map (kbd "g i") #'consult-imenu)
+
+;; Org / Org-roam (под твои пакеты)
+(define-key my/leader-map (kbd "o a") #'org-agenda)
+(define-key my/leader-map (kbd "o l") #'org-store-link)
+(define-key my/leader-map (kbd "n f") #'org-roam-node-find)
+(define-key my/leader-map (kbd "n i") #'org-roam-node-insert)
+(define-key my/leader-map (kbd "n l") #'org-roam-buffer-toggle)
+
+;; Help (как Doom: SPC h …)
+(define-key my/leader-map (kbd "h k") #'describe-key)
+(define-key my/leader-map (kbd "h f") #'describe-function)
+(define-key my/leader-map (kbd "h v") #'describe-variable)
+
+;; Удобно уметь отменять лидер — ESC
+(define-key my/leader-map (kbd "<escape>") #'keyboard-quit)
+
 '';
-};
+  };
 }

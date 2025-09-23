@@ -62,12 +62,13 @@
     extraPortals = with pkgs; [
       xdg-desktop-portal-wlr # For screen sharing and screenshots
       xdg-desktop-portal-gtk # For file dialogs
+      xdg-desktop-portal-hyprland # For better Hyprland integration
     ];
     config = {
       common = {
-        default = [ "wlr" "gtk" ];
-        "org.freedesktop.impl.portal.ScreenCast" = [ "wlr" ];
-        "org.freedesktop.impl.portal.Screenshot" = [ "wlr" ];
+        default = [ "wlr" "gtk" "hyprland" ];
+        "org.freedesktop.impl.portal.ScreenCast" = [ "wlr" "hyprland" ];
+        "org.freedesktop.impl.portal.Screenshot" = [ "wlr" "hyprland" ];
       };
     };
   };
@@ -100,6 +101,7 @@
     wl-clipboard
     wf-recorder
     xdg-desktop-portal
+    xdg-desktop-portal-hyprland
     # Ollama for local AI models
     ollama
     file

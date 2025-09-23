@@ -110,6 +110,9 @@ in
     XDG_SESSION_DESKTOP = "Hyprland";
     # Enable portals for screen sharing
     GTK_USE_PORTAL = "1";
+    # Qt Wayland variables for full Wayland enforcement
+    QT_QPA_PLATFORM = "wayland";
+    SAL_USE_VCLPLUGIN = "qt6";  # Forces Qt6 backend
   };
   
   # Hyprland Window Manager
