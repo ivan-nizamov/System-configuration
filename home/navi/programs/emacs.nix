@@ -15,6 +15,7 @@
     package = pkgs.emacs30; # Emacs 30
 
     extraPackages = epkgs: with epkgs; [
+      which-key
       (treesit-grammars.with-grammars (p: with p; [
         tree-sitter-bash
         tree-sitter-c
@@ -51,6 +52,10 @@
 (setq inhibit-startup-screen t
       inhibit-startup-message t
       initial-buffer-choice nil)
+
+;;;; Visual bell (no annoying sound)
+(setq ring-bell-function 'flash-ding)
+(setq visible-bell t)
 
 ;;;; Spelling
 (setq ispell-program-name "hunspell"
@@ -302,30 +307,30 @@
 (with-eval-after-load 'org
   (define-key org-mode-map (kbd "C-c x r") #'my/org-list-checkboxes-region))
 
-;; === Leader на ПРОБЕЛ (без Evil) ===
-;; --- Leader on SPACE (no Evil) ---
+;; === Leader на ОБРАТНУЮ КОСУЮ ЧЕРТУ (без Evil) ===
+;; --- Leader on BACKSLASH (no Evil) ---
 ;; Define a real keymap var (clean, no quirks)
 (defvar my/leader-map (make-sparse-keymap)
-  "Leader keymap under SPACE.")
+  "Leader keymap under BACKSLASH.")
 
 ;; Global leader: pass the *keymap value*, not a quoted symbol
-(keymap-global-set "SPC" my/leader-map)
+(keymap-global-set "\\" my/leader-map)
 
-;; "SPC SPC" inserts a literal space in normal buffers
-(keymap-set my/leader-map "SPC" #'self-insert-command)
+;; "\\ \\" inserts a literal backslash in normal buffers
+(keymap-set my/leader-map "\\" #'self-insert-command)
 
-;; Keep space as space in minibuffer maps (don't wrap in with-eval-after-load)
+;; Keep backslash as backslash in minibuffer maps (don't wrap in with-eval-after-load)
 (dolist (map (list minibuffer-local-map
                    minibuffer-local-ns-map
                    minibuffer-local-completion-map
                    minibuffer-local-must-match-map))
-  (define-key map (kbd "SPC") #'self-insert-command))
+  (define-key map (kbd "\\") #'self-insert-command))
 
-;; (optional) make SPC work on the dashboard
+;; (optional) make \ work on the dashboard
 (with-eval-after-load 'dashboard
-  (keymap-set dashboard-mode-map "SPC" my/leader-map))
+  (keymap-set dashboard-mode-map "\\" my/leader-map))
 
-;; 5) which-key, чтобы видеть меню после "SPC"
+;; 5) which-key, чтобы видеть меню после "\"
 (use-package which-key
   :init (which-key-mode)
   :config
@@ -334,7 +339,7 @@
         which-key-prefix-prefix "◂ "))
 
 (with-eval-after-load 'which-key
-  ;; Top-level prefix labels under SPC
+  ;; Top-level prefix labels under \
   (which-key-add-keymap-based-replacements my/leader-map
     "f" "files"
     "b" "buffers"
@@ -403,7 +408,7 @@
 (define-key my/leader-map (kbd "n i") #'org-roam-node-insert)
 (define-key my/leader-map (kbd "n l") #'org-roam-buffer-toggle)
 
-;; Help (как Doom: SPC h …)
+;; Help (как Doom: \ h …)
 (define-key my/leader-map (kbd "h k") #'describe-key)
 (define-key my/leader-map (kbd "h f") #'describe-function)
 (define-key my/leader-map (kbd "h v") #'describe-variable)
