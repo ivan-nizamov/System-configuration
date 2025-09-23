@@ -198,6 +198,7 @@ in
           "${mod}, R, exec, hyprctl dispatch exec '[float;center;size 50% 40%; pin] kitty --override font_size=12 -e ${pkgs.rmpc}/bin/rmpc'"
           "${mod}, C, exec, hyprctl dispatch exec '[float;center;size 65% 50%; pin] kitty --override font_size=16 -e ${pkgs.nchat}/bin/nchat'"
           "${mod}, V, exec, ${pkgs.vivaldi}/bin/vivaldi"
+          "${mod}, Z, exec, zen"
           "${mod}, E, exec, emacs"
           "${mod}, l, exec, ${config.home.homeDirectory}/bin/org-sync.sh"
 

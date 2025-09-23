@@ -349,6 +349,9 @@
         
         # nchat from unstable
         nchat
+
+        # Zen Browser (from flake input)
+        inputs.zen-browser.packages.${pkgs.system}.default
         
     ] ++ (with pkgs-stable; [
         # Place stable package exceptions here
@@ -429,6 +432,13 @@
       defaultApplications = {
         # Documents
         "application/pdf" = [ "org.pwmt.zathura.desktop" ];
+
+        # Web/HTML (set Zen as default browser)
+        # Note: Desktop file name may vary (e.g., zen.desktop, zen-browser.desktop). Adjust if needed.
+        "x-scheme-handler/http" = [ "zen.desktop" ];
+        "x-scheme-handler/https" = [ "zen.desktop" ];
+        "text/html" = [ "zen.desktop" ];
+        "application/xhtml+xml" = [ "zen.desktop" ];
 
         # Images
         "image/jpeg" = [ "imv.desktop" ];

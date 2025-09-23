@@ -17,6 +17,9 @@
     # VS Code Marketplace overlays for extensions (provides pkgs.vscode-marketplace)
     nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
     nix-vscode-extensions.inputs.nixpkgs.follows = "nixpkgs";
+
+    # Zen Browser (community flake)
+    zen-browser.url = "github:0xc000022070/zen-browser-flake";
   };
 
   outputs = inputs@{ nixpkgs, nixpkgs-stable, home-manager, nix-vscode-extensions, ... }:
