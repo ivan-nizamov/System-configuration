@@ -14,8 +14,8 @@
     enable = true;
     package = pkgs.emacs30; # Emacs 30
 
-    extraPackages = epkgs: [
-      (epkgs.treesit-grammars.with-grammars (p: with p; [
+    extraPackages = epkgs: with epkgs; [
+      (treesit-grammars.with-grammars (p: with p; [
         tree-sitter-bash
         tree-sitter-c
         tree-sitter-cpp
@@ -26,20 +26,22 @@
         tree-sitter-rust
         tree-sitter-yaml
       ]))
-      epkgs.consult
-      epkgs.dashboard
-      epkgs.eglot
-      epkgs.flyspell-correct
-      epkgs.gruvbox-theme
-      epkgs.ligature
-      epkgs.marginalia
-      epkgs.orderless
-      epkgs.org-modern
-      epkgs.org-roam
-      epkgs.org-roam-ui
-      epkgs.posframe
-      epkgs.vertico
-      epkgs.vertico-posframe
+      consult
+      dashboard
+      eglot
+      flyspell-correct
+      gruvbox-theme
+      ligature
+      marginalia
+      orderless
+      org-modern
+      org-roam
+      org-roam-ui
+      posframe
+      vertico
+      vertico-posframe
+      all-the-icons
+      doom-modeline
     ];
 
     extraConfig = ''
@@ -144,6 +146,10 @@
   (mapc #'disable-theme custom-enabled-themes)
   (load-theme 'gruvbox-dark-hard t))
 
+;;;; Modeline
+(use-package doom-modeline
+  :init (doom-modeline-mode 1))
+
 ;;;; Dashboard (при старте без файлов)
 (when (< (length command-line-args) 2)
   (use-package dashboard
@@ -233,6 +239,10 @@
          ("T" . org-roam-dailies-capture-tomorrow))
   :bind-keymap ("C-c n d" . org-roam-dailies-map)
   :config
+  (setq org-roam-capture-templates
+      '(("d" "default" plain "%?"
+         :if-new (file+head "''${slug}.org" "#+title: ''${title}\n")
+         :unnarrowed t)))
   (require 'org-roam-dailies)
   (setq org-roam-dailies-capture-templates
         '(("d" "default" entry
@@ -293,18 +303,27 @@
   (define-key org-mode-map (kbd "C-c x r") #'my/org-list-checkboxes-region))
 
 ;; === Leader на ПРОБЕЛ (без Evil) ===
-;; 1) создаём префикс-карту
-(define-prefix-command 'my/leader-map)
+;; --- Leader on SPACE (no Evil) ---
+;; Define a real keymap var (clean, no quirks)
+(defvar my/leader-map (make-sparse-keymap)
+  "Leader keymap under SPACE.")
 
-;; 2) глобально вешаем на SPC
-(keymap-global-set "SPC" 'my/leader-map)
+;; Global leader: pass the *keymap value*, not a quoted symbol
+(keymap-global-set "SPC" my/leader-map)
 
-;; 3) в минибуфере пробел нужен для ввода — оставляем как есть
-(with-eval-after-load 'minibuffer
-  (define-key minibuffer-local-map (kbd "SPC") #'self-insert-command))
+;; "SPC SPC" inserts a literal space in normal buffers
+(keymap-set my/leader-map "SPC" #'self-insert-command)
 
-;; 4) хоткей «SPC SPC» вставляет обычный пробел
-(define-key my/leader-map (kbd "SPC") #'self-insert-command)
+;; Keep space as space in minibuffer maps (don't wrap in with-eval-after-load)
+(dolist (map (list minibuffer-local-map
+                   minibuffer-local-ns-map
+                   minibuffer-local-completion-map
+                   minibuffer-local-must-match-map))
+  (define-key map (kbd "SPC") #'self-insert-command))
+
+;; (optional) make SPC work on the dashboard
+(with-eval-after-load 'dashboard
+  (keymap-set dashboard-mode-map "SPC" my/leader-map))
 
 ;; 5) which-key, чтобы видеть меню после "SPC"
 (use-package which-key
@@ -313,9 +332,6 @@
   (setq which-key-idle-delay 0.2
         which-key-separator " → "
         which-key-prefix-prefix "◂ "))
-
-;; Give the leader map a readable name (optional, nice in hints/describe)
-(define-prefix-command 'my/leader-map nil "SPC Leader")
 
 (with-eval-after-load 'which-key
   ;; Top-level prefix labels under SPC
