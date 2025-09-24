@@ -105,6 +105,9 @@
     # Ollama for local AI models
     ollama
     file
+
+    # Application launcher (Walker)
+    walker
   ];
 
   # Load udev rules from packages (grants device access to user without sudo)
