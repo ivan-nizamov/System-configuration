@@ -18,6 +18,10 @@
     nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
     nix-vscode-extensions.inputs.nixpkgs.follows = "nixpkgs";
 
+    # Walker application launcher (provides HM module at inputs.walker.homeManagerModules.default)
+    walker.url = "github:abenz1267/walker";
+    walker.inputs.nixpkgs.follows = "nixpkgs";
+
     # Zen Browser (community flake)
     zen-browser.url = "github:0xc000022070/zen-browser-flake";
   };

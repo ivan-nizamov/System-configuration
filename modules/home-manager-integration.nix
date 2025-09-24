@@ -40,8 +40,15 @@ in
   # home/navi/user-base.nix and is shared by all hosts, plus host-specific config.
   home-manager.users.navi = { config, pkgs, lib, host, inputs, pkgs-unstable, pkgs-stable, ... }: {
     imports = [
+      # Enable the Walker Home Manager module from the flake input
+      inputs.walker.homeManagerModules.default
+
+      # Core user configuration and host-specific overrides
       ../home/navi/user-base.nix
       ../hosts/${host.name}/user-config.nix
+
+      # Walker configuration (user-level)
+      ../home/navi/desktop/walker.nix
     ];
   };
 }
