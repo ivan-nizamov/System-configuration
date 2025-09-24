@@ -189,9 +189,9 @@ in
 
         bind = [
           # Application launcher keys
+          "ALT, SPACE, exec, walker"
           "${mod}, RETURN, exec, kitty"
           "${mod}, F, exec, ${pkgs.nautilus}/bin/nautilus"
-          "${mod}, T, exec, ${pkgs.rofi}/bin/rofi -show drun -theme ~/.config/rofi/theme"
           "${mod}, B, exec, hyprctl dispatch exec '[float;center;size 50% 50%; pin] kitty --override font_size=16 -e ${pkgs.btop}/bin/btop'"
           "${mod}, M, exec, hyprctl dispatch exec '[float;center;size 80% 50%; pin] kitty -e ${pkgs.bluetuith}/bin/bluetuith'"
           "${mod}, N, exec, hyprctl dispatch exec '[float;center;size 35% 60%; pin] kitty --override font_size=16 -e ${pkgs.networkmanager}/bin/nmtui'"
