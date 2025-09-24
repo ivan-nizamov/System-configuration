@@ -8,6 +8,7 @@
     hunspellDicts.ru-ru
     hunspellDicts.es-es
     ripgrep                 # для consult-ripgrep
+    curl                    # Для AnkiConnect тестирования (опционально, но рекомендуется)
   ];
 
   programs.emacs = {
@@ -43,6 +44,7 @@
       vertico-posframe
       all-the-icons
       doom-modeline
+      anki-editor             # Для создания Anki-карточек из Org mode
     ];
 
     extraConfig = ''
@@ -262,6 +264,29 @@
         org-roam-ui-follow t
         org-roam-ui-update-on-save t
         org-roam-ui-open-on-start t))
+
+;;;; Anki integration (anki-editor)
+(use-package anki-editor
+  :after org
+  :config
+  (setq anki-editor-create-decks t          ;; Auto-create decks if they don't exist
+        anki-editor-org-tags-as-anki-tags t ;; Sync Org tags to Anki tags
+        anki-editor-anki-connect-listening-address "127.0.0.1"  ;; Default AnkiConnect address
+        anki-editor-anki-connect-listening-port 8765)           ;; Default port
+  ;; Optional: Keybindings for common actions
+  :bind (:map org-mode-map
+              ("C-c a p" . anki-editor-push-notes)     ;; Push notes to Anki
+              ("C-c a i" . anki-editor-insert-note)    ;; Insert new note template
+              ("C-c a c" . anki-editor-cloze-region))) ;; Cloze a selected region
+
+;; Optional: Org Capture templates for Anki cards
+(setq org-capture-templates
+      '(("a" "Anki Basic" entry
+         (file+headline "~/ORG/Roam/Inbox.org" "Anki Inbox")  ;; Adjust path as needed
+         "* %t %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Basic\n:ANKI_DECK: Default\n:END:\n** Front\n%?\n** Back\n")
+        ("A" "Anki Cloze" entry
+         (file+headline "~/ORG/Roam/Inbox.org" "Anki Inbox")  ;; Adjust path as needed
+         "* %t %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Cloze\n:ANKI_DECK: Default\n:END:\n** Text\n%x\n")))
 
 ;;;; LaTeX export (опционально, нужен xelatex в системе)
 (setq org-latex-pdf-process '("xelatex -interaction nonstopmode -output-directory %o %f"))
