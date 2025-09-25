@@ -41,6 +41,7 @@ in
     wl-clipboard
     wf-recorder
     xdg-desktop-portal
+    nautilus
   ];
 
   # macOS-like notifications (mako) with Gruvbox Dark palette
@@ -191,14 +192,15 @@ in
         bind = [
           # Application launcher keys
           "${mod}, RETURN, exec, kitty"
-          "${mod}, F, exec, ${pkgs.nautilus}/bin/nautilus"
+          "${mod}, SPACE, exec, rofi -show drun"
+          "${mod}, A, exec, ${pkgs.nautilus}/bin/nautilus"
+          "${mod}, E, exec, emacs"
           "${mod}, B, exec, hyprctl dispatch exec '[float;center;size 50% 50%; pin] kitty --override font_size=16 -e ${pkgs.btop}/bin/btop'"
+          "${mod}, Z, exec, zen"
           "${mod}, M, exec, hyprctl dispatch exec '[float;center;size 80% 50%; pin] kitty -e ${pkgs.bluetuith}/bin/bluetuith'"
           "${mod}, N, exec, hyprctl dispatch exec '[float;center;size 35% 60%; pin] kitty --override font_size=16 -e ${pkgs.networkmanager}/bin/nmtui'"
           "${mod}, R, exec, hyprctl dispatch exec '[float;center;size 50% 40%; pin] kitty --override font_size=12 -e ${pkgs.rmpc}/bin/rmpc'"
           "${mod}, C, exec, hyprctl dispatch exec '[float;center;size 65% 50%; pin] kitty --override font_size=16 -e ${pkgs.nchat}/bin/nchat'"
-          "${mod}, B, exec, zen"
-          "${mod}, E, exec, emacs"
           "${mod}, l, exec, ${config.home.homeDirectory}/bin/org-sync.sh"
 
           # Window management keys
@@ -206,7 +208,7 @@ in
           "${mod}, Q, exec, hyprctl dispatch forcekillactive"
           "${mod} SHIFT, F, togglefloating,"
           "${mod} SHIFT, M, exit,"
-          "${mod}, Space, fullscreen, 0"
+          "${mod}, F, fullscreen, 0"
           "${mod}, Left, movefocus, l"
           "${mod}, Right, movefocus, r"
           "${mod}, Up, movefocus, u"
