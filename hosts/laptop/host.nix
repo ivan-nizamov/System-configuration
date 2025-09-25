@@ -32,18 +32,8 @@
   # NetworkManager for connectivity
   networking.networkmanager.enable = true;
 
-  # OPTIONAL: enable the firewall; the curfew units below only toggle NM,
-  # not iptables. If you really want hard-cut, keep firewall disabled OR
-  # add nftables rules here instead of ad-hoc iptables in scripts.
+  # OPTIONAL: enable the firewall; 
   # networking.firewall.enable = true;
-
-  # Network Curfew System - Enable and configure
-  services.networkCurfew = {
-    enable = true;
-    startTime = "20:30:00";  # Networking disabled at 20:30
-    endTime = "06:00:00";    # Networking enabled at 06:00
-    persistent = true;       # Catches up missed executions after reboots
-  };
 
   # Sound and screen sharing
   services.pipewire = {

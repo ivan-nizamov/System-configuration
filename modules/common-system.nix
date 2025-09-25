@@ -4,7 +4,6 @@
 {
   # Import additional modules
   imports = [
-    ./network-curfew.nix
     ./syncthing.nix
   ];
   # Use the host name defined in flake.nix.  This makes it easy to
