@@ -102,6 +102,7 @@ in
     };
   };
 
+
   home.sessionVariables = {
     NIXOS_OZONE_WL = "1"; # Enable Wayland for Electron apps
     # MOZ_ENABLE_WAYLAND = "1"; # If you want Firefox to use Wayland
@@ -189,7 +190,6 @@ in
 
         bind = [
           # Application launcher keys
-          "ALT, SPACE, exec, walker"
           "${mod}, RETURN, exec, kitty"
           "${mod}, F, exec, ${pkgs.nautilus}/bin/nautilus"
           "${mod}, B, exec, hyprctl dispatch exec '[float;center;size 50% 50%; pin] kitty --override font_size=16 -e ${pkgs.btop}/bin/btop'"
@@ -197,8 +197,7 @@ in
           "${mod}, N, exec, hyprctl dispatch exec '[float;center;size 35% 60%; pin] kitty --override font_size=16 -e ${pkgs.networkmanager}/bin/nmtui'"
           "${mod}, R, exec, hyprctl dispatch exec '[float;center;size 50% 40%; pin] kitty --override font_size=12 -e ${pkgs.rmpc}/bin/rmpc'"
           "${mod}, C, exec, hyprctl dispatch exec '[float;center;size 65% 50%; pin] kitty --override font_size=16 -e ${pkgs.nchat}/bin/nchat'"
-          "${mod}, V, exec, ${pkgs.vivaldi}/bin/vivaldi"
-          "${mod}, Z, exec, zen"
+          "${mod}, B, exec, zen"
           "${mod}, E, exec, emacs"
           "${mod}, l, exec, ${config.home.homeDirectory}/bin/org-sync.sh"
 
