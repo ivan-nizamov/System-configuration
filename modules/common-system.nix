@@ -32,7 +32,7 @@
   users.users.navi = {
     isNormalUser = true;
     shell = pkgs.zsh;
-    extraGroups = [ "wheel" "networkmanager" "input" "video" "bluetooth" ];
+    extraGroups = [ "wheel" "networkmanager" "input" "video" "bluetooth" "docker" ];
   };
 
   # Enable zsh system-wide
@@ -81,6 +81,9 @@
   # default on NixOS.  Consider hardening or restricting access
   # further in a production environment.
   services.openssh.enable = true;
+
+  # Enable Docker
+  virtualisation.docker.enable = true;
 
   # Install a handful of useful utilities system‑wide.  These are
   # available to all users.  Add packages here that you want
