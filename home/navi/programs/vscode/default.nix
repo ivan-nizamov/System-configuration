@@ -24,6 +24,9 @@
         "terminal.integrated.fontFamily" = "'Maple Mono NF CN', 'Maple Mono', 'monospace', monospace";
         # Gruvbox Dark already selected
         "workbench.colorTheme" = "Gruvbox Dark Hard";
+        "files.autoSave" = "afterDelay";
+        "files.autoSaveDelay" = 1000;
+
 
         # Token color customizations for org-checkboxes scopes
         "editor.tokenColorCustomizations" = {

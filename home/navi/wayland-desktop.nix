@@ -183,10 +183,7 @@ in
           "ignorealpha 0.70, gtk-layer-shell"
         ];
 
-        gestures = {
-          workspace_swipe = true;
-          workspace_swipe_fingers = 3;
-        };
+        gesture = [ "3, horizontal, workspace" ];
 
 
         bind = [
