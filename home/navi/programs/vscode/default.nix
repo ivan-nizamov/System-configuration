@@ -27,8 +27,17 @@
         "files.autoSave" = "afterDelay";
         "files.autoSaveDelay" = 1000;
 
+        # NEW: Semantic token italics
+        "editor.semanticTokenColorCustomizations" = {
+          "rules" = {
+            "interface" = { "italic" = true; };
+            "selfParameter" = { "italic" = true; };
+            "keyword" = { "italic" = true; };
+            "*.static" = { "italic" = true; };
+          };
+        };
 
-        # Token color customizations for org-checkboxes scopes
+        # Token color customizations (kept your org-checkbox rules, plus appended italic rule)
         "editor.tokenColorCustomizations" = {
           "textMateRules" = [
             {
@@ -75,9 +84,32 @@
               "scope" = [ "keyword.bullet" ];
               "settings" = { "fontStyle" = "bold"; };
             }
+
+            # NEW: your italic TextMate scopes
+            {
+              "scope" = [
+                "constant.language.undefined"
+                "constant.language.null"
+                "constant.language.nullptr"
+                "meta.type keyword.operator.expression.typeof"
+                "meta.type keyword.operator.expression.keyof"
+                "keyword.control"
+                "keyword.function"
+                "keyword.operator.new"
+                "keyword.operator.borrow.and.rust"
+                "storage.type"
+                "storage.modifier"
+                "variable.language.this"
+                "markup.italic"
+              ];
+              "settings" = {
+                "fontStyle" = "italic";
+              };
+            }
           ];
         };
       };
     };
   };
 }
+
