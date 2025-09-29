@@ -8,7 +8,7 @@
 
     # Only keep options here that you are *sure* are top-level HM module options.
     # `font` is usually a safe one.
-    font = "Maple Mono NF CN 10";
+    font = "Maple Mono Variable 10";
     theme = "~/.config/rofi/theme.rasi";
    
     # Most Rofi config settings will go into extraConfig.

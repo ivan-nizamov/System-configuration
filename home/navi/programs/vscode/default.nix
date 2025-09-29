@@ -14,14 +14,14 @@
       ];
 
       userSettings = {
-        "editor.fontFamily" = "'Maple Mono NF CN', 'Maple Mono', 'monospace', monospace";
+        "editor.fontFamily" = "'Maple Mono Variable', 'Maple Mono', 'monospace', monospace";
         "editor.fontLigatures" = true;
         "editor.smoothScrolling" = true;
         "editor.cursorSmoothCaretAnimation" = "on";
         "workbench.list.smoothScrolling" = true;
         "terminal.integrated.smoothScrolling" = true;
         "editor.cursorBlinking" = "smooth";
-        "terminal.integrated.fontFamily" = "'Maple Mono NF CN', 'Maple Mono', 'monospace', monospace";
+        "terminal.integrated.fontFamily" = "'Maple Mono Variable', 'Maple Mono', 'monospace', monospace";
         # Gruvbox Dark already selected
         "workbench.colorTheme" = "Gruvbox Dark Hard";
         "files.autoSave" = "afterDelay";
