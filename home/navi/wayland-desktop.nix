@@ -32,6 +32,7 @@ in
     networkmanager  # For nmtui
     yazi
     # pavucontrol - moved to user-base.nix common packages
+    nerd-fonts.jetbrains-mono  # For waybar and rofi icons (keeping for icon support)
     mako  # Notification daemon for Wayland
     xdg-desktop-portal-wlr  # For screen sharing
     xdg-desktop-portal-gtk  # For file dialogs
@@ -40,6 +41,7 @@ in
     wl-clipboard
     wf-recorder
     xdg-desktop-portal
+    nautilus
   ];
 
   # macOS-like notifications (mako) with Gruvbox Dark palette

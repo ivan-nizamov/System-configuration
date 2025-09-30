@@ -82,7 +82,7 @@
     programs.kitty = {
         enable = true;
         font = {
-            name = "Maple Mono Variable";
+            name = "Maple Mono NF CN";
             size = 20;
         };
         themeFile = "gruvbox-dark";
@@ -174,7 +174,7 @@
         };
         
         font = {
-            name = "Maple Mono Variable";
+            name = "Maple Mono NF CN";
             size = 11;
         };
 
@@ -212,16 +212,6 @@
         ];
     };
 
-    # User-level UDisks2 frontend for automounting with tray icon and notifications
-    services.udiskie = {
-        enable = true;
-        settings = {
-            automount = true;
-            notify = true;
-            tray = true;
-        };
-    };
-
     # Configure btop to refresh at 100ms
     xdg.configFile."btop/btop.conf".text = ''
         # Update time in milliseconds, recommended 2000 ms or above for better performance.
@@ -238,7 +228,7 @@
             icon-theme = "Papirus-Dark";
             cursor-theme = "macOS";
             color-scheme = "prefer-dark";
-            font-name = "Maple Mono Variable 11";
+            font-name = "Maple Mono NF CN 11";
         };
         
         "org/gnome/desktop/wm/preferences" = {
@@ -326,6 +316,7 @@
         bitwarden-desktop
         
         # Fonts
+        maple-mono.NF-CN
         inter
         
         # Theme packages
@@ -358,6 +349,9 @@
         
         # nchat from unstable
         nchat
+
+	# Libre Office
+	libreoffice-qt6-fresh
 
         # Zen Browser (from flake input)
         inputs.zen-browser.packages.${pkgs.system}.default

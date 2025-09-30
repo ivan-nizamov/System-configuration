@@ -124,7 +124,7 @@
 
 ;;;; Font & ligatures
 (set-face-attribute 'default nil
-                    :family "Maple Mono Variable"
+                    :family "Maple Mono NF CN"
                     :height 150
                     :weight 'regular)
 

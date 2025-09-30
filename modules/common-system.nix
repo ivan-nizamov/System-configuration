@@ -54,14 +54,6 @@
   # Real-time audio group (for low-latency audio)
   security.rtkit.enable = true;
 
-  # Enable GVFS and UDisks2 for Nautilus automounting of removable media
-  services.gvfs.enable = true;      # GNOME Virtual File System (used by Nautilus)
-  services.udisks2.enable = true;   # Device detection and mount backend
-  services.devmon.enable = true;    # Optional helper for broader automount support
-
-  # Ensure PolicyKit is available so non-root mounts are authorized
-  security.polkit.enable = true;
-
   # XDG Desktop Portal configuration for screen sharing (applies to all hosts)
   xdg.portal = {
     enable = true;
@@ -105,8 +97,6 @@
     bat
     gh
     usbutils  # for lsusb
-    ntfs3g    # NTFS read/write support for removable drives
-    exfatprogs # exFAT utilities (formatting/checking)
     # Screen sharing and recording tools (added for all hosts)
     grim
     slurp
@@ -160,50 +150,10 @@
   boot.loader.efi.canTouchEfiVariables = true;
   # boot.loader.systemd-boot.configurationLimit = 3;  # Commented out to keep all generations
 
-  # Ensure kernel support for common removable-drive filesystems
-  # ntfs3 (kernel) helps blkid probing; ntfs-3g (userland) handles RW mount
-  boot.supportedFilesystems = [ "ntfs" "exfat" ];
-
   # Label your generations in the boot menu so you can quickly
   # identify which host they belong to.  This string will appear
   # alongside the generation number and date.
   system.nixos.label = "nixos-${host.name}";
-
-  # Fonts: install vendored Maple Mono Variable and set system default for monospace.
-  # Canonical family name we target is "Maple Mono Variable". Fallbacks provided
-  # in case the internal family name differs.
-  fonts = {
-    packages = with pkgs; [
-      (callPackage ../packages/maple-mono-variable.nix {})
-      # Provide Nerd Font symbols so icon glyphs render correctly
-      nerd-fonts.symbols-only
-    ];
-    fontDir.enable = true;
-    enableGhostscriptFonts = true;
-    fontconfig = {
-      defaultFonts = {
-        monospace = [ "Maple Mono Variable" "Maple Mono" "Maple Mono NF" "Maple Mono NF CN" ];
-      };
-      # Alias so requests for our canonical name resolve to installed families
-      localConf = ''
-        <?xml version="1.0"?>
-        <!DOCTYPE fontconfig SYSTEM "urn:fontconfig:fonts.dtd">
-        <fontconfig>
-          <alias>
-            <family>Maple Mono Variable</family>
-            <prefer>
-              <family>Maple Mono</family>
-              <family>Maple Mono NF</family>
-              <family>Maple Mono NF CN</family>
-              <!-- Fallbacks for missing icon glyphs -->
-              <family>Symbols Nerd Font Mono</family>
-              <family>Symbols Nerd Font</family>
-            </prefer>
-          </alias>
-        </fontconfig>
-      '';
-    };
-  };
 
   # The state version must match the release you initially
   # installed your system with.  Do not bump this when you

@@ -126,7 +126,7 @@
       * {
         border: none;
         border-radius: 0;
-        font-family: "Maple Mono Variable", FontAwesome, sans-serif;
+        font-family: "Maple Mono NF CN", FontAwesome, sans-serif;
         font-size: 14px;
         min-height: 0;
       }
