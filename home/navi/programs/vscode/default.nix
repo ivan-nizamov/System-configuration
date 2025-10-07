@@ -11,6 +11,7 @@
       # Identifier: publicus.org-checkbox (unpinned)
       extensions = with pkgs.vscode-marketplace; [
         publicus.org-checkbox
+        esbenp.prettier-vscode
       ];
 
       userSettings = {
@@ -100,8 +101,44 @@
         "workbench.colorTheme" = "Gruvbox Dark Hard";
         "workbench.list.smoothScrolling" = true;
         "diffEditor.codeLens" = true;
+        
+        # Prettier settings
+        "editor.formatOnSave" = true;
+        "editor.defaultFormatter" = "esbenp.prettier-vscode";
+        "[html]" = { "editor.defaultFormatter" = "esbenp.prettier-vscode"; };
+        "[astro]" = { "editor.defaultFormatter" = "esbenp.prettier-vscode"; };
+        "prettier.printWidth" = 100;
+        "prettier.tabWidth" = 2;
+        "prettier.htmlWhitespaceSensitivity" = "ignore";
+        "prettier.plugins" = [
+          "prettier-plugin-astro"
+          "prettier-plugin-tailwindcss"
+        ];
+        "emmet.includeLanguages" = {
+          "astro" = "html";
+        };
+        
+        # Document hierarchy settings
+        "editor.folding" = true;
+        "editor.foldingStrategy" = "auto";
+        "editor.showFoldingControls" = "always";
       };
     };
+  };
+  
+  # Prettier configuration file
+  home.file.".prettierrc" = {
+    text = ''
+      {
+        "plugins": ["prettier-plugin-astro", "prettier-plugin-tailwindcss"],
+        "overrides": [{ "files": "*.astro", "options": { "parser": "astro" } }],
+        "printWidth": 100,
+        "htmlWhitespaceSensitivity": "ignore"
+      }
+    '';
+    onChange = ''
+      echo "Prettier configuration updated"
+    '';
   };
 }
 

@@ -141,6 +141,9 @@ in
         input = {
           kb_layout = "us";
           follow_mouse = 1;
+          # Disable mouse acceleration
+          accel_profile = "flat";
+          sensitivity = 0.0;  # 0.0 is neutral, negative values slow down, positive speed up
           touchpad = {
             natural_scroll = true;
             disable_while_typing = true;
