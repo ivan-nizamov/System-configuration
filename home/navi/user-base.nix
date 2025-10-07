@@ -355,6 +355,9 @@
 
         # Zen Browser (from flake input)
         inputs.zen-browser.packages.${pkgs.system}.default
+
+        # AI/Development tools
+        pkgs.codex
         
     ] ++ (with pkgs-stable; [
         # Place stable package exceptions here
