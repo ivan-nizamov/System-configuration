@@ -183,10 +183,16 @@ in
           "ignorealpha 0.70, gtk-layer-shell"
         ];
 
-        gesture = [ "3, horizontal, workspace" ];
-
+        # 3-finger swipe gestures for workspace navigation (replaces deprecated workspace_swipe)
+        # gestures = {
+        #   workspace_swipe = 1;  # DEPRECATED - removed in favor of bind gestures below
+        # };
 
         bind = [
+          # 3-finger swipe for workspace navigation
+          "${mod}, swipe:3:left, workspace, r-"
+          "${mod}, swipe:3:right, workspace, r+"
+          
           # Application launcher keys
           "${mod}, RETURN, exec, kitty"
           "${mod}, SPACE, exec, rofi -show drun"
