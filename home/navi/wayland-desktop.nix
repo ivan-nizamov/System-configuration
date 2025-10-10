@@ -144,6 +144,7 @@ in
           # Disable mouse acceleration
           accel_profile = "flat";
           sensitivity = 0.0;  # 0.0 is neutral, negative values slow down, positive speed up
+          natural_scroll = true;
           touchpad = {
             natural_scroll = true;
             disable_while_typing = true;
@@ -186,16 +187,16 @@ in
           "ignorealpha 0.70, gtk-layer-shell"
         ];
 
-        # 3-finger swipe gestures for workspace navigation (replaces deprecated workspace_swipe)
-        # gestures = {
-        #   workspace_swipe = 1;  # DEPRECATED - removed in favor of bind gestures below
-        # };
+        # Enable three-finger swipes for workspace navigation
+        gestures = {
+          gesture = "3, horizontal, workspace";
+          workspace_swipe_distance = 500;
+          workspace_swipe_invert = true;
+          workspace_swipe_create_new = true;
+          workspace_swipe_forever = true;
+        };
 
         bind = [
-          # 3-finger swipe for workspace navigation
-          "${mod}, swipe:3:left, workspace, r-"
-          "${mod}, swipe:3:right, workspace, r+"
-          
           # Application launcher keys
           "${mod}, RETURN, exec, kitty"
           "${mod}, SPACE, exec, rofi -show drun"
