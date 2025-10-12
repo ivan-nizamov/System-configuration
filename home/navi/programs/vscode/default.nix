@@ -13,7 +13,7 @@
         jdinhlife.gruvbox
         publicus.org-checkbox
         esbenp.prettier-vscode
-        bradlc.vscode-tailwindcss
+        # bradlc.vscode-tailwindcss
       ];
 
       userSettings = {
