@@ -10,8 +10,10 @@
       # Install the Org Checkboxes extension from the VS Code Marketplace
       # Identifier: publicus.org-checkbox (unpinned)
       extensions = with pkgs.vscode-marketplace; [
+        jdinhlife.gruvbox
         publicus.org-checkbox
         esbenp.prettier-vscode
+        bradlc.vscode-tailwindcss
       ];
 
       userSettings = {
@@ -101,7 +103,11 @@
         "workbench.colorTheme" = "Gruvbox Dark Hard";
         "workbench.list.smoothScrolling" = true;
         "diffEditor.codeLens" = true;
-        
+
+        "files.associations" = {
+          "*.css" = "tailwindcss";
+        };
+
         # Prettier settings
         "editor.formatOnSave" = true;
         "editor.defaultFormatter" = "esbenp.prettier-vscode";
@@ -141,4 +147,3 @@
     '';
   };
 }
-
