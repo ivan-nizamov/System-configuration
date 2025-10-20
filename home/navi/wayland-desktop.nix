@@ -130,7 +130,6 @@ in
           "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
           "waybar"
           "gammastep -o"  # Apply red tint once at startup
-          "kitty"  # Launch kitty terminal on startup
         ];
 
         # Monitor configuration is now handled in hosts/desktop/user-config.nix
