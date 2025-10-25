@@ -50,9 +50,10 @@
   # Disable PulseAudio (conflicts with PipeWire)
   services.pulseaudio.enable = false;
   
-    
   # Real-time audio group (for low-latency audio)
   security.rtkit.enable = true;
+  # Persist ALSA state across reboots so device settings stick
+  hardware.alsa.enablePersistence = true;
 
   # XDG Desktop Portal configuration for screen sharing (applies to all hosts)
   xdg.portal = {
@@ -97,6 +98,8 @@
     bat
     gh
     usbutils  # for lsusb
+    pavucontrol  # GUI mixing utility
+    wireplumber  # PipeWire session manager tools
     # Screen sharing and recording tools (added for all hosts)
     grim
     slurp
