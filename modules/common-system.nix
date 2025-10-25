@@ -82,6 +82,11 @@
   # further in a production environment.
   services.openssh.enable = true;
 
+  # Allow Nautilus and other file managers to access removable devices (e.g. cameras)
+  services.gvfs.enable = true;
+  services.udisks2.enable = true;
+  security.polkit.enable = true;
+
   # Enable Docker
   virtualisation.docker.enable = true;
 
@@ -110,6 +115,7 @@
     # Ollama for local AI models
     ollama
     file
+    exodus
 
   ];
 
