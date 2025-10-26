@@ -114,7 +114,6 @@
     xdg-desktop-portal-hyprland
     # Ollama for local AI models
     ollama
-    davinci-resolve
     file
     exodus
 
