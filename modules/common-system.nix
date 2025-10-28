@@ -114,6 +114,7 @@
     xdg-desktop-portal-hyprland
     # Ollama for local AI models
     ollama
+    zoom-us
     file
     exodus
 
