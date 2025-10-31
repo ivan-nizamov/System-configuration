@@ -221,32 +221,6 @@
         # For now, we're only setting the update_ms.
     '';
 
-    # Configure dconf settings for GNOME applications (including Nautilus)
-    dconf.settings = {
-        "org/gnome/desktop/interface" = {
-            gtk-theme = "Gruvbox-Dark-BL";
-            icon-theme = "Papirus-Dark";
-            cursor-theme = "macOS";
-            color-scheme = "prefer-dark";
-            font-name = "Maple Mono NF CN 11";
-        };
-        
-        "org/gnome/desktop/wm/preferences" = {
-            theme = "Gruvbox-Dark-BL";
-        };
-        
-        # Nautilus (Files) specific settings
-        "org/gnome/nautilus/preferences" = {
-            default-folder-viewer = "icon-view";
-            search-filter-time-type = "last_modified";
-            show-hidden-files = false;
-        };
-        
-        "org/gnome/nautilus/icon-view" = {
-            default-zoom-level = "standard";
-        };
-    };
-
     # Additional command‑line tools installed into your user
     # environment.  These do not require root and will not affect
     # other users.
@@ -323,9 +297,7 @@
         gruvbox-gtk-theme
         papirus-icon-theme
         apple-cursor
-        
-        # Additional theming support
-        gnome-themes-extra
+        # Additional GTK theming support
         gtk-engine-murrine
 
         # Screen capture
