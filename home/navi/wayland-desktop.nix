@@ -201,6 +201,7 @@ in
           "${mod}, SPACE, exec, rofi -show drun"
           "${mod}, A, exec, ${pkgs.nautilus}/bin/nautilus"
           "${mod}, E, exec, emacs"
+          "${mod}, V, exec, code"
           "${mod}, B, exec, hyprctl dispatch exec '[float;center;size 50% 50%; pin] kitty --override font_size=16 -e ${pkgs.btop}/bin/btop'"
           "${mod}, Z, exec, zen"
           "${mod}, M, exec, hyprctl dispatch exec '[float;center;size 80% 50%; pin] kitty -e ${pkgs.bluetuith}/bin/bluetuith'"
